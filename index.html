@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ITCOM Store</title>
+  <meta name="description" content="ITCOM — laptops, desktops, monitors, networking, storage and accessories for business and home." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#catalog">Skip to products</a>
+
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span>Free delivery on orders over €300</span>
+      <span class="topbar__right">
+        <span>Business accounts &amp; VAT invoices</span>
+        <span aria-hidden="true">·</span>
+        <a href="tel:+38300000000">+383 00 000 000</a>
+      </span>
+    </div>
+  </div>
+
+  <header class="header" id="top">
+    <div class="container header__inner">
+      <a class="logo" href="#top" aria-label="ITCOM home">
+        <img src="assets/favicon.svg" alt="" width="32" height="32" />
+        <span>IT<strong>COM</strong></span>
+      </a>
+
+      <form class="search" role="search" onsubmit="return false">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search" type="search" placeholder="Search laptops, monitors, routers…" aria-label="Search products" autocomplete="off" />
+        <kbd>/</kbd>
+      </form>
+
+      <nav class="header__actions" aria-label="Account">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <button class="icon-btn" id="wishlistBtn" aria-label="Show wishlist">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+          <span class="badge" id="wishCount" hidden>0</span>
+        </button>
+        <button class="icon-btn cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+          <span class="cart-btn__label">Cart</span>
+          <span class="badge" id="cartCount" hidden>0</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="container">
+      <ul class="cats" id="categoryNav" aria-label="Categories"></ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <span class="eyebrow">New season · Business-grade hardware</span>
+          <h1>Equip your team with <span class="grad">reliable IT</span>, delivered fast.</h1>
+          <p>Laptops, workstations, networking and storage from the brands you trust. Official warranty, VAT invoices and expert support.</p>
+          <div class="hero__cta">
+            <a href="#catalog" class="btn btn--primary btn--lg">Shop all products</a>
+            <button class="btn btn--ghost btn--lg" data-jump-cat="Laptops">Browse laptops</button>
+          </div>
+          <ul class="hero__stats">
+            <li><strong>2–3 day</strong><span>delivery</span></li>
+            <li><strong>24 mo</strong><span>warranty</span></li>
+            <li><strong>30 day</strong><span>returns</span></li>
+          </ul>
+        </div>
+        <div class="hero__art" aria-hidden="true">
+          <div class="hero__card hero__card--a" id="heroCardA"></div>
+          <div class="hero__card hero__card--b" id="heroCardB"></div>
+          <div class="hero__glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container usp" aria-label="Why ITCOM">
+      <div class="usp__item">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div><strong>Fast delivery</strong><span>Tracked shipping nationwide</span></div>
+      </div>
+      <div class="usp__item">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div><strong>Official warranty</strong><span>Authorised reseller</span></div>
+      </div>
+      <div class="usp__item">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        <div><strong>30‑day returns</strong><span>No questions asked</span></div>
+      </div>
+      <div class="usp__item">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div><strong>Expert support</strong><span>Talk to real technicians</span></div>
+      </div>
+    </section>
+
+    <section class="container catalog" id="catalog">
+      <aside class="filters" id="filters" aria-label="Filters">
+        <div class="filters__head">
+          <h2>Filters</h2>
+          <button class="link-btn" id="resetFilters">Reset</button>
+        </div>
+
+        <fieldset class="filter">
+          <legend>Category</legend>
+          <div id="catFilters" class="filter__list"></div>
+        </fieldset>
+
+        <fieldset class="filter">
+          <legend>Brand</legend>
+          <div id="brandFilters" class="filter__list"></div>
+        </fieldset>
+
+        <fieldset class="filter">
+          <legend>Max price <output id="priceOut"></output></legend>
+          <input type="range" id="priceRange" min="0" max="5000" step="10" />
+        </fieldset>
+
+        <fieldset class="filter">
+          <legend>Availability</legend>
+          <label class="check"><input type="checkbox" id="inStock" /> In stock only</label>
+          <label class="check"><input type="checkbox" id="onSale" /> On sale</label>
+        </fieldset>
+
+        <button class="btn btn--primary btn--block filters__close" id="closeFilters">Show results</button>
+      </aside>
+
+      <div class="results">
+        <div class="toolbar">
+          <div>
+            <h2 class="results__title" id="resultsTitle">All products</h2>
+            <p class="muted" id="resultsCount"></p>
+          </div>
+          <div class="toolbar__right">
+            <button class="btn btn--ghost filters__open" id="openFilters">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M7 12h10M10 18h4"/></svg>
+              Filters
+            </button>
+            <label class="select">
+              <span class="sr-only">Sort by</span>
+              <select id="sort">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="rating">Top rated</option>
+                <option value="name">Name A–Z</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="chips" id="activeChips"></div>
+        <div class="grid" id="grid" aria-live="polite"></div>
+        <div class="empty" id="empty" hidden>
+          <svg class="icon icon--xl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <h3>No products match</h3>
+          <p class="muted">Try another search term or remove some filters.</p>
+          <button class="btn btn--primary" id="emptyReset">Clear filters</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="container b2b">
+      <div class="b2b__card">
+        <div>
+          <span class="eyebrow eyebrow--light">ITCOM Business</span>
+          <h2>Outfitting an office?</h2>
+          <p>Volume pricing, net‑30 invoicing, device imaging and on‑site installation for teams of every size.</p>
+        </div>
+        <form class="b2b__form" id="b2bForm" novalidate>
+          <label class="sr-only" for="b2bEmail">Work email</label>
+          <input id="b2bEmail" type="email" placeholder="you@company.com" required />
+          <button class="btn btn--light" type="submit">Request a quote</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div>
+        <a class="logo logo--footer" href="#top"><img src="assets/favicon.svg" alt="" width="28" height="28" /><span>IT<strong>COM</strong></span></a>
+        <p class="muted">IT equipment for business &amp; home. Authorised reseller of leading hardware brands.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul id="footerCats"></ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Shipping &amp; delivery</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Warranty &amp; service</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About ITCOM</a></li>
+          <li><a href="#">Business accounts</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>© <span id="year"></span> ITCOM. All rights reserved.</span>
+      <span class="pay">Visa · Mastercard · Bank transfer · Cash on delivery</span>
+    </div>
+  </footer>
+
+  <!-- Cart drawer -->
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="drawer" id="cart" aria-label="Shopping cart" aria-hidden="true">
+    <div class="drawer__head">
+      <h2>Your cart</h2>
+      <button class="icon-btn" data-close aria-label="Close cart">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="ship-meter" id="shipMeter"></div>
+    <ul class="cart-list" id="cartList"></ul>
+    <div class="cart-empty" id="cartEmpty">
+      <svg class="icon icon--xl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      <p>Your cart is empty.</p>
+      <button class="btn btn--primary" data-close>Continue shopping</button>
+    </div>
+    <div class="drawer__foot" id="cartFoot">
+      <dl class="totals" id="cartTotals"></dl>
+      <button class="btn btn--primary btn--block btn--lg" id="checkoutBtn">Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Product / checkout / wishlist modal -->
+  <dialog class="modal" id="modal">
+    <button class="icon-btn modal__close" data-close-modal aria-label="Close">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal__body" id="modalBody"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/products.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
