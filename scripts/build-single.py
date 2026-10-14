@@ -15,7 +15,7 @@ css = (root / "css/styles.css").read_text()
 favicon = "data:image/svg+xml;base64," + base64.b64encode((root / "assets/favicon.svg").read_bytes()).decode()
 
 html = html.replace('<link rel="stylesheet" href="css/styles.css" />', f"<style>\n{css}\n</style>")
-for js in ("js/products.js", "js/app.js"):
+for js in ("js/products.js", "js/art.js", "js/app.js"):
     html = html.replace(f'<script src="{js}"></script>', f"<script>\n{(root / js).read_text()}\n</script>")
 html = html.replace('href="assets/favicon.svg"', f'href="{favicon}"').replace('src="assets/favicon.svg"', f'src="{favicon}"')
 
