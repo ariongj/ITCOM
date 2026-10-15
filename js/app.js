@@ -50,8 +50,18 @@
   const catIcon = (id) => ICON[CATS.find((c) => c.id === id)?.icon] || ICON.grid;
 
   /* ================================================================ ndihmës për produktet */
-  const media = (p, cls = "") =>
-    `<div class="media ${cls}">${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" />` : window.productArt(p)}</div>`;
+  const imgSrc = (p) => p.img || `assets/products/${p.id}.webp`;
+  const media = (p, cls = "", eager = false) =>
+    `<div class="media ${cls}"><img src="${esc(imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${eager ? "" : 'loading="lazy"'} decoding="async" /></div>`;
+  // Nëse një foto mungon, shfaqet vizatimi i produktit.
+  document.addEventListener("error", (e) => {
+    const el = e.target;
+    if (el.tagName === "IMG" && el.dataset.pid && byId[el.dataset.pid]) el.outerHTML = window.productArt(byId[el.dataset.pid]);
+  }, true);
+
+  const LOGOS = window.BRAND_LOGOS || {};
+  const logoSvg = (name, cls = "") => (LOGOS[name] ? `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${LOGOS[name].path}"/></svg>` : "");
+  const brandMark = (name) => `<span class="bmark ${LOGOS[name] ? "" : "bmark--text"}">${logoSvg(name)}<span>${esc(name)}</span></span>`;
 
   const rate = (r) => r.toFixed(1).replace(".", ",");
   const stars = (r) => `<span class="stars" style="--pct:${(r / 5) * 100}%" aria-label="Vlerësuar ${rate(r)} nga 5"></span>`;
@@ -190,7 +200,7 @@
     const rows = items.map((it, i) => `
       <label class="check ${it.count || it.checked ? "" : "is-zero"}" data-label="${esc(String(it.label).toLowerCase())}" data-rank="${i}" ${!more && i >= limit && !it.checked ? "hidden" : ""}>
         <input type="checkbox" data-fk="${esc(it.fk)}" ${it.checked ? "checked" : ""} ${!it.count && !it.checked ? "disabled" : ""} />
-        <span>${esc(it.label)}</span><span class="count">${it.count}</span>
+        <span>${it.html || esc(it.label)}</span><span class="count">${it.count}</span>
       </label>`).join("");
     const btn = items.length > limit ? `<button type="button" class="link-btn facet__more" data-more="${esc(fid)}">${more ? "Shfaq më pak" : `Shfaq të gjitha (${items.length})`}</button>` : "";
     return rows + btn;
@@ -228,7 +238,7 @@
       <div class="presets">${presets}</div>`, priceActive() ? 1 : 0));
 
     const brands = [...new Set(pool.map((p) => p.brand))].sort((a, b) => a.localeCompare(b));
-    const brandItems = brands.map((b) => ({ fk: "brand:" + b, label: b, count: PRODUCTS.filter((p) => p.brand === b && matches(p, "brand")).length, checked: state.brands.has(b) }));
+    const brandItems = brands.map((b) => ({ fk: "brand:" + b, label: b, html: brandMark(b), count: PRODUCTS.filter((p) => p.brand === b && matches(p, "brand")).length, checked: state.brands.has(b) }));
     groups.push(facetGroup("brand", "Brendi",
       (brands.length > 8 ? `<input type="search" class="facet__search" data-bsearch placeholder="Kërko ndër ${brands.length} marka" aria-label="Kërko markat" />` : "") + checkList("brand", brandItems, 8),
       state.brands.size));
@@ -280,27 +290,28 @@
 
   function card(p) {
     const w = wish.has(p.id), inCart = cartQty(p.id) > 0, cmp = compare.includes(p.id), d = discount(p);
-    const addBtn = `<button type="button" class="btn btn--outline add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="Shto ${esc(p.name)} në shportë">${svg(inCart ? ICON.check : ICON.bag)}${addLabel(p, inCart)}</button>`;
+    const addBtn = (cls) => `<button type="button" class="btn ${cls} add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="Shto ${esc(p.name)} në shportë">${svg(inCart ? ICON.check : ICON.bag)}${addLabel(p, inCart)}</button>`;
     return `
       <article class="card" data-id="${p.id}">
         <div class="card__media" data-open="${p.id}">
           ${media(p)}
-          <div class="tags">${d ? `<span class="tag tag--sale">−${d}%</span>` : ""}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}</div>
+          <div class="tags">${d ? `<span class="tag tag--sale">−${d}%</span>` : ""}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}${!p.stock ? `<span class="tag">Jashtë stokut</span>` : ""}</div>
+          ${p.stock ? `<div class="card__quick">${addBtn("btn--primary")}</div>` : ""}
         </div>
         <div class="card__actions">
           <button type="button" class="icon-btn ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Shto në"} listën e dëshirave">${svg(ICON.heart)}</button>
           <button type="button" class="icon-btn ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}" aria-label="${cmp ? "Hiq nga krahasimi" : "Shto për krahasim"}">${svg(ICON.compare)}</button>
         </div>
         <div class="card__body">
-          <span class="card__brand">${esc(p.brand)}</span>
+          <div class="card__meta">${brandMark(p.brand)}<span class="rating">${stars(p.rating)} ${rate(p.rating)}</span></div>
           <h3 class="card__title" data-open="${p.id}">${esc(p.name)}</h3>
-          <div class="rating">${stars(p.rating)} ${rate(p.rating)} <span>(${p.reviews})</span></div>
           <p class="card__specs">${esc(keySpecs(p).join(" · "))}</p>
           <p class="card__desc">${esc(p.desc)}</p>
-          <div class="card__price"><div>${priceHTML(p)}</div><div class="card__inst">${inst(p)}</div>${stockLabel(p)}</div>
-          <div class="card__foot">${addBtn}</div>
+          <div class="card__price">${priceHTML(p)}</div>
+          <div class="card__sub"><span class="card__inst">${inst(p)}</span>${p.stock && p.stock <= 5 ? stockLabel(p) : ""}</div>
+          <div class="card__foot">${addBtn("btn--outline")}</div>
         </div>
-        <div class="card__side"><div>${priceHTML(p)}</div><div class="card__inst">${inst(p)}</div>${stockLabel(p)}${addBtn}</div>
+        <div class="card__side"><div>${priceHTML(p)}</div><div class="card__inst">${inst(p)}</div>${stockLabel(p)}${addBtn("btn--primary")}</div>
       </article>`;
   }
 
@@ -366,41 +377,51 @@
 
   /* ================================================================ ballina */
   const SLIDES = [
-    { id: "lp-mba13m4", eyebrow: "E re · Apple M4", title: "MacBook Air 13\" M4", text: "16 GB memorie si standard, dizajn i heshtur pa ventilator dhe deri në 18 orë bateri.", tint: "#7d93b8" },
-    { id: "lp-x1c12", eyebrow: "Për biznes", title: "ThinkPad X1 Carbon Gen 12", text: "Pak më shumë se një kilogram, me ekran 2.8K OLED dhe siguri të nivelit korporativ.", tint: "#9aa3b0" },
-    { id: "mn-g80sd", eyebrow: "4K · 240 Hz · QD‑OLED", title: "Samsung Odyssey OLED G8", text: "Monitori më i qartë me frekuencë të lartë, me panel OLED kundër reflektimit.", tint: "#8a8fb5" },
+    { id: "lp-mba13m4", eyebrow: "E re · Apple M4", head: "MacBook Air", em: "më i shpejti deri tani.", text: "16 GB memorie si standard, dizajn krejtësisht i heshtur dhe deri në 18 orë bateri.", tint: "#9fb3d6",
+      specs: [["18 orë", "bateri"], ["1,24 kg", "pesha"], ["M4", "çipi"]] },
+    { id: "lp-x1c12", eyebrow: "Për biznes", head: "ThinkPad X1 Carbon", em: "puna, pa kompromis.", text: "Pak më shumë se një kilogram, ekran 2.8K OLED dhe siguri e nivelit korporativ.", tint: "#b8bec9",
+      specs: [["1,09 kg", "fibër karboni"], ["32 GB", "memorie"], ["OLED", "2.8K"]] },
+    { id: "mn-g80sd", eyebrow: "4K · 240 Hz · QD‑OLED", head: "Odyssey OLED G8", em: "çdo kornizë, e përsosur.", text: "Monitori më i qartë me frekuencë të lartë, me panel QD‑OLED kundër reflektimit.", tint: "#a6a9d6",
+      specs: [["240 Hz", "frekuenca"], ["0,03 ms", "reagimi"], ["32\"", "4K UHD"]] },
   ];
   let slide = 0, slideTimer;
+  const SLIDE_MS = 7000;
 
   function renderHero() {
+    $("#slider").style.setProperty("--slide-ms", SLIDE_MS + "ms");
     $("#slides").innerHTML = SLIDES.map((s, i) => {
       const p = byId[s.id];
       return `<div class="slide" style="--tint:${s.tint}" role="group" aria-roledescription="sllajd" aria-label="${i + 1} nga ${SLIDES.length}">
-        <div>
-          <span class="slide__eyebrow">${esc(s.eyebrow)}</span>
-          <h2>${esc(s.title)}</h2>
+        <div class="slide__copy">
+          <span class="eyebrow">${esc(s.eyebrow)}</span>
+          <h2>${esc(s.head)} <em>${esc(s.em)}</em></h2>
           <p>${esc(s.text)}</p>
           <div class="slide__price"><b>${fmt(p.price)}</b>${p.old ? `<s>${fmt(p.old)}</s>` : ""}<small>${inst(p)}</small></div>
           <div class="slide__cta">
             <button type="button" class="btn btn--primary btn--lg" data-add="${p.id}">Shto në shportë</button>
             <button type="button" class="btn btn--ghost btn--lg" data-open="${p.id}">Shiko detajet</button>
           </div>
+          <div class="slide__specs">${s.specs.map(([b, t]) => `<div><b>${esc(b)}</b><span>${esc(t)}</span></div>`).join("")}</div>
         </div>
-        <div class="slide__art" data-open="${p.id}">${window.productArt(p)}</div>
+        <div class="slide__stage" data-open="${p.id}">
+          <div class="slide__tag">${brandMark(p.brand)}<b>${rate(p.rating)} ★ · ${p.reviews} vlerësime</b>${stockLabel(p)}</div>
+          <img src="${esc(imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${i ? 'loading="lazy"' : ""} />
+        </div>
       </div>`;
     }).join("");
-    $("#dots").innerHTML = SLIDES.map((s, i) => `<button type="button" role="tab" data-slide="${i}" aria-label="Shfaq ${esc(s.title)}"></button>`).join("");
+    $("#dots").innerHTML = SLIDES.map((s, i) => `<button type="button" role="tab" data-slide="${i}" aria-label="Shfaq ${esc(s.head)}"></button>`).join("");
     goSlide(0);
 
     const maxStorage = Math.max(...PRODUCTS.filter((p) => p.cat === "Ruajtja e të dhënave").map(discount));
     const PROMOS = [
-      { small: "Rrjeti", title: "Kaloni në Wi‑Fi 7", link: "Shiko access point‑et", art: "nw-u7pro", key: "wifi7" },
-      { small: "Ruajtja e të dhënave", title: `SSD dhe disqe deri në −${maxStorage}%`, link: "Shiko ofertat", art: "st-990pro2", key: "storage" },
+      { small: "Rrjeti", title: "Wi‑Fi 7 <em>ka mbërritur.</em>", link: "Shiko access point‑et", art: "nw-u7pro", key: "wifi7", dark: true },
+      { small: "Ruajtja e të dhënave", title: `SSD dhe disqe deri në <em>−${maxStorage}%</em>`, link: "Shiko ofertat", art: "st-990pro2", key: "storage" },
+      { small: "Për lojëra", title: "Laptopë <em>gaming</em> me RTX", link: "Shiko laptopët", art: "lp-legion5", key: "gaming" },
     ];
     $("#promos").innerHTML = PROMOS.map((pr) => `
-      <button type="button" class="promo" data-promo="${pr.key}">
-        <span><small>${esc(pr.small)}</small><span class="promo__title">${esc(pr.title)}</span><span class="link">${esc(pr.link)}</span></span>
-        <span class="promo__art">${window.productArt(byId[pr.art])}</span>
+      <button type="button" class="promo ${pr.dark ? "promo--dark" : ""}" data-promo="${pr.key}">
+        <span><span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${pr.title}</span><span class="promo__link">${esc(pr.link)}</span></span>
+        <span class="promo__art"><img src="${esc(imgSrc(byId[pr.art]))}" alt="" data-pid="${pr.art}" loading="lazy" /></span>
       </button>`).join("");
   }
 
@@ -413,13 +434,23 @@
   function autoSlide() {
     clearInterval(slideTimer);
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    slideTimer = setInterval(() => goSlide(slide + 1), 7000);
+    slideTimer = setInterval(() => goSlide(slide + 1), SLIDE_MS);
   }
 
   function renderHome() {
-    $("#catTiles").innerHTML = CATS.map((c) => {
-      const items = PRODUCTS.filter((p) => p.cat === c.id).sort(SORTS.featured);
-      return `<button type="button" class="cat-tile" data-cat="${esc(c.id)}">${media(items[0])}<b>${esc(c.id)}</b><small>${plural(items.length, "produkt", "produkte")}</small></button>`;
+    const LAYOUT = { "Laptopë": "tile--xl", "Monitorë": "tile--wide", "Rrjeti": "tile--wide", "Serverë & UPS": "tile--wide" };
+    const HERO_IMG = { "Laptopë": "lp-mbp14m4p", "Monitorë": "mn-u2724d", "Kompjuterë": "dt-macmini", "Tabletë": "tb-ipadair", "Rrjeti": "nw-udmpro", "Ruajtja e të dhënave": "st-ds923", "Aksesorë": "pr-xm5", "Komponentë": "cp-4070s", "Printerë": "pt-4102fdw", "Serverë & UPS": "sv-t160" };
+    const order = ["Laptopë", "Monitorë", "Kompjuterë", "Tabletë", "Rrjeti", "Ruajtja e të dhënave", "Aksesorë", "Komponentë", "Printerë", "Serverë & UPS"];
+    $("#catTiles").innerHTML = order.map((c) => {
+      const items = PRODUCTS.filter((p) => p.cat === c);
+      const art = byId[HERO_IMG[c]] || items[0];
+      const brands = [...new Set(items.map((p) => p.brand))].filter((b) => LOGOS[b]).slice(0, 4);
+      return `<button type="button" class="tile ${LAYOUT[c] || ""}" data-cat="${esc(c)}">
+        <b>${esc(c)}</b><small>${plural(items.length, "produkt", "produkte")}</small>
+        <span class="tile__arrow">${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}</span>
+        ${LAYOUT[c] === "tile--xl" ? `<span class="tile__brands">${brands.map((b) => logoSvg(b)).join("")}</span>` : ""}
+        <span class="tile__art"><img src="${esc(imgSrc(art))}" alt="" data-pid="${art.id}" loading="lazy" /></span>
+      </button>`;
     }).join("");
 
     const deals = PRODUCTS.filter((p) => p.old && p.stock).sort(SORTS.discount).slice(0, 10);
@@ -427,8 +458,20 @@
 
     const counts = {};
     PRODUCTS.forEach((p) => { counts[p.brand] = (counts[p.brand] || 0) + 1; });
-    $("#brandRail").innerHTML = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 18)
-      .map(([b, n]) => `<button type="button" class="brand-tile" data-brand="${esc(b)}"><span>${esc(b)}<small>${plural(n, "produkt", "produkte")}</small></span></button>`).join("");
+    const brandList = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const chip = ([b, n], hidden) => `<button type="button" class="brand-chip" data-brand="${esc(b)}" style="--brand:${LOGOS[b] ? LOGOS[b].hex : "currentColor"}" ${hidden ? 'tabindex="-1" aria-hidden="true"' : ""}>${logoSvg(b)}<span>${esc(b)}</span><small>${n}</small></button>`;
+    // Lista përsëritet dy herë që shiriti të lëvizë pa ndërprerje.
+    $("#brandRail").innerHTML = brandList.map((x) => chip(x, false)).join("") + brandList.map((x) => chip(x, true)).join("");
+    $("#footerBrands").innerHTML = brandList.filter(([b]) => LOGOS[b]).map(([b]) => `<button type="button" data-brand="${esc(b)}">${logoSvg(b)}${esc(b)}</button>`).join("");
+
+    $("#bizStats").innerHTML = [
+      [PRODUCTS.length, "produkte në stok"],
+      [brandList.length, "marka"],
+      ["24 muaj", "garanci"],
+      ["24–48 h", "dërgesë"],
+    ].map(([n, t]) => `<div><dt>${t}</dt><dd>${n}</dd></div>`).join("");
+    $("#bizCollage").innerHTML = [["sv-t160", "Serverë"], ["nw-cbs350", "Rrjeti"], ["st-ds923", "NAS"]]
+      .map(([id, label]) => `<div><span>${label}</span><img src="${esc(imgSrc(byId[id]))}" alt="" data-pid="${id}" loading="lazy" /></div>`).join("");
 
     $("#footerCats").innerHTML = CATS.map((c) => `<li><button type="button" data-cat="${esc(c.id)}">${esc(c.id)}</button></li>`).join("");
     $("#year").textContent = new Date().getFullYear();
@@ -453,7 +496,9 @@
     let s = Math.max(0, Math.floor((end - now) / 1000));
     const h = String(Math.floor(s / 3600)).padStart(2, "0"); s %= 3600;
     const m = String(Math.floor(s / 60)).padStart(2, "0");
-    $("#countdown").textContent = `${h}:${m}:${String(s % 60).padStart(2, "0")}`;
+    $("#cdH").textContent = h;
+    $("#cdM").textContent = m;
+    $("#cdS").textContent = String(s % 60).padStart(2, "0");
   }
 
   /* ================================================================ menyja e kategorive */
@@ -467,7 +512,7 @@
         <h3><button type="button" data-cat="${esc(c.id)}">${svg(catIcon(c.id))}${esc(c.id)}</button></h3>
         <ul>${list.map(([v, n]) => `<li><button type="button" data-mega="${esc(c.id)}|${def.key}|${esc(v)}">${esc(def.fmt ? def.fmt(Number(v)) : v)} <span>${n}</span></button></li>`).join("")}</ul>
       </div>`;
-    }).join("");
+    }).join("") + `<div class="mega__brands">${[...new Set(PRODUCTS.map((p) => p.brand))].sort().map((b) => `<button type="button" data-brand="${esc(b)}">${brandMark(b)}</button>`).join("")}</div>`;
   }
   function toggleMega(open) {
     const btn = $("#megaBtn");
@@ -807,7 +852,7 @@
       <div class="pdp">
         <div class="pdp__media">${media(p)}</div>
         <div class="pdp__info">
-          <div class="pdp__meta"><span class="card__brand">${esc(p.brand)}</span><span>${esc(p.cat)}</span><span class="mono">${esc(p.id.toUpperCase())}</span></div>
+          <div class="pdp__brand">${brandMark(p.brand)}<span>${esc(p.cat)}</span><span class="mono">${esc(p.id.toUpperCase())}</span></div>
           <h2>${esc(p.name)}</h2>
           <div class="pdp__meta"><span class="rating">${stars(p.rating)} ${rate(p.rating)} · ${p.reviews} vlerësime</span>${stockLabel(p)}</div>
           <ul class="pdp__highlights">${p.specs.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
@@ -1090,7 +1135,7 @@
 
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info]");
+    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-all-brands]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
     if (!t) return;
@@ -1108,6 +1153,7 @@
     else if ("deals" in d) { resetFilters(); state.onSale = true; state.sort = "discount"; render(); goCatalog(); }
     else if (d.promo) {
       if (d.promo === "wifi7") { resetFilters("Rrjeti"); state.f.wifi = new Set(["Wi‑Fi 7"]); }
+      else if (d.promo === "gaming") { resetFilters("Laptopë"); state.f.type = new Set(["Gaming"]); }
       else { resetFilters("Ruajtja e të dhënave"); state.onSale = true; state.sort = "discount"; }
       render(); goCatalog();
     }
@@ -1119,6 +1165,8 @@
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
     else if (d.info) openInfo(d.info);
+    else if (d.slideDir) { goSlide(slide + Number(d.slideDir)); autoSlide(); }
+    else if ("allBrands" in d) { resetFilters(); expandedFacets.add("brand"); closedFacets.delete("brand"); render(); goCatalog(); }
     else if ("close" in d) closeCart();
     else if ("closeModal" in d) closeModal();
   });
@@ -1234,8 +1282,8 @@
 
   // Sllajderi: ndalon kur miu është sipër; rrëshqitje me gisht
   const slider = $("#slider");
-  slider.addEventListener("mouseenter", () => clearInterval(slideTimer));
-  slider.addEventListener("mouseleave", autoSlide);
+  slider.addEventListener("mouseenter", () => { clearInterval(slideTimer); slider.classList.add("is-paused"); });
+  slider.addEventListener("mouseleave", () => { slider.classList.remove("is-paused"); autoSlide(); });
   slider.addEventListener("focusin", () => clearInterval(slideTimer));
   let sx = null, swiped = false;
   slider.addEventListener("pointerdown", (e) => { sx = e.clientX; swiped = false; });

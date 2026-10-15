@@ -2,7 +2,7 @@
 
 A fast, dependency‑free storefront for IT equipment: laptops, desktops, monitors, tablets, networking, storage, peripherals, components, printers, servers and UPS.
 
-The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The design is a quiet, premium style: neutral palette, black primary buttons and the Geist typeface.
+The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The design is an editorial premium style: studio product renders, large Geist type with Instrument Serif accents, a bento category grid, a dark business section and a moving band of brand logos.
 
 ## Features
 
@@ -64,17 +64,19 @@ python3 -m http.server 8000
 
 To host on **GitHub Pages**: Settings → Pages → Deploy from branch → choose the branch and `/ (root)`.
 
-## Products and photos
+## Products, images and logos
 
 All products live in `js/products.js`. Each product has a price, optional old price (shows as a discount), stock, rating, specs and an `attrs` object that feeds the filters. Filters per category are defined in `FACETS` in the same file.
 
-Products currently show studio‑style renders drawn by `js/art.js`. To use real photos, put images in `assets/products/` and add an `img` field:
+**Product images** are 3D studio renders in `assets/products/<id>.webp` (800 × 600, transparent background). To use a real photo instead, replace that file or set `img` on the product:
 
 ```js
-{ id: "lp-x1c12", name: "Lenovo ThinkPad X1 Carbon Gen 12", img: "assets/products/lp-x1c12.webp", ... }
+{ id: "lp-x1c12", name: "Lenovo ThinkPad X1 Carbon Gen 12", img: "assets/products/lp-x1c12.jpg", ... }
 ```
 
-Photos on a white or transparent background look best. Any product without `img` keeps its render.
+Photos on a white or transparent background look best. If an image is missing, the store falls back to the drawing in `js/art.js`.
+
+**Brand logos** are in `js/brands.js`, generated from [Simple Icons](https://simpleicons.org) (CC0). Brands without an icon there (Microsoft, Canon, Brother, Jabra, APC, HPE, CalDigit, Sapphire) are shown as text. Logos are trademarks of their owners.
 
 ## Customise
 

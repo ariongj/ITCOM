@@ -20,7 +20,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -90,33 +90,48 @@
   </header>
 
   <main>
-    <section class="container home">
-      <div class="hero-grid">
-        <div class="slider" id="slider" aria-roledescription="carousel" aria-label="Produktet e veçuara">
+    <section class="hero" aria-label="Produktet e veçuara">
+      <div class="container hero__inner">
+        <div class="slider" id="slider" aria-roledescription="carousel">
           <div class="slider__track" id="slides"></div>
           <div class="slider__nav">
             <div class="slider__dots" id="dots" role="tablist" aria-label="Zgjidhni sllajdin"></div>
+            <div class="slider__arrows">
+              <button class="icon-btn" data-slide-dir="-1" aria-label="Sllajdi i mëparshëm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button class="icon-btn" data-slide-dir="1" aria-label="Sllajdi tjetër"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
           </div>
         </div>
-        <div class="promos" id="promos"></div>
       </div>
+    </section>
 
-      <ul class="usp" aria-label="Pse ITCOM">
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><div><b>Dërgesë brenda 24–48 orëve</b><span>Në gjithë Kosovën</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div><b>Garanci zyrtare</b><span>24 muaj për çdo produkt</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><div><b>Paguani si t'ju përshtatet</b><span>Në dorëzim, me kartelë ose me këste</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><div><b>Kthim brenda 14 ditëve</b><span>Thjesht dhe pa pagesë</span></div></li>
-      </ul>
+    <section class="marquee" aria-labelledby="brandTitle">
+      <div class="container marquee__head">
+        <h2 id="brandTitle" class="eyebrow">Markat që ofrojmë</h2>
+        <button class="link-btn" data-all-brands>Shiko të gjitha markat</button>
+      </div>
+      <div class="marquee__viewport"><div class="marquee__track" id="brandRail"></div></div>
+    </section>
+
+    <section class="container home">
+      <div class="promos" id="promos"></div>
 
       <section class="block" aria-labelledby="catTitle">
-        <div class="block__head"><h2 id="catTitle">Blini sipas kategorisë</h2></div>
-        <div class="cat-tiles" id="catTiles"></div>
+        <div class="block__head">
+          <div><span class="eyebrow">Katalogu</span><h2 id="catTitle">Gjeni pajisjen e duhur</h2></div>
+          <button class="link-btn" data-cat="All">Të gjitha produktet →</button>
+        </div>
+        <div class="bento" id="catTiles"></div>
       </section>
 
       <section class="block deals" id="deals" aria-labelledby="dealsTitle">
         <div class="block__head">
-          <h2 id="dealsTitle">Ofertat e ditës</h2>
-          <div class="countdown" aria-live="off">Përfundojnë pas <span id="countdown" class="num">00:00:00</span></div>
+          <div><span class="eyebrow">Vetëm sot</span><h2 id="dealsTitle">Ofertat e ditës</h2></div>
+          <div class="countdown" aria-live="off" id="countdownBox">
+            <span><b id="cdH">00</b><small>orë</small></span><i>:</i>
+            <span><b id="cdM">00</b><small>min</small></span><i>:</i>
+            <span><b id="cdS">00</b><small>sek</small></span>
+          </div>
           <div class="rail-nav">
             <button class="icon-btn" data-rail="dealsRail" data-dir="-1" aria-label="Lëviz majtas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
             <button class="icon-btn" data-rail="dealsRail" data-dir="1" aria-label="Lëviz djathtas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
@@ -124,19 +139,40 @@
         </div>
         <div class="rail" id="dealsRail"></div>
       </section>
+    </section>
 
+    <section class="biz" aria-labelledby="bizTitle">
+      <div class="container biz__inner">
+        <div class="biz__copy">
+          <span class="eyebrow eyebrow--band">ITCOM Business</span>
+          <h2 id="bizTitle">Infrastrukturë IT për zyrën tuaj, <em>nga një vend</em>.</h2>
+          <p>Laptopë për ekipin, rrjet Wi‑Fi 7, ruajtje NAS dhe UPS për serverin. Çmime për sasi, faturim me TVSH dhe instalim në vend.</p>
+          <dl class="biz__stats" id="bizStats"></dl>
+          <form class="b2b__form" id="b2bForm" novalidate>
+            <label class="sr-only" for="b2bEmail">Email-i i punës</label>
+            <input id="b2bEmail" type="email" placeholder="ju@kompania.com" required />
+            <button class="btn btn--white" type="submit">Kërkoni ofertë</button>
+          </form>
+        </div>
+        <div class="biz__collage" id="bizCollage" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="container home">
       <section class="block" id="recentBlock" aria-labelledby="recentTitle" hidden>
         <div class="block__head">
-          <h2 id="recentTitle">Shikuar së fundmi</h2>
+          <div><span class="eyebrow">Historiku juaj</span><h2 id="recentTitle">Shikuar së fundmi</h2></div>
           <button class="link-btn" id="recentClear">Pastro historikun</button>
         </div>
         <div class="rail" id="recentRail"></div>
       </section>
 
-      <section class="block" aria-labelledby="brandTitle">
-        <div class="block__head"><h2 id="brandTitle">Markat kryesore</h2></div>
-        <div class="brands" id="brandRail"></div>
-      </section>
+      <ul class="services" aria-label="Pse ITCOM">
+        <li><span class="services__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><b>Dërgesë brenda 24–48 orëve</b><span>Në gjithë Kosovën, falas mbi 300 €</span></li>
+        <li><span class="services__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><b>Garanci 24 muaj</b><span>Për çdo produkt, me servis të organizuar</span></li>
+        <li><span class="services__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span><b>Pagesë me këste</b><span>Deri në 12 muaj, ose në dorëzim</span></li>
+        <li><span class="services__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><b>Kthim brenda 14 ditëve</b><span>Pa pyetje, pa komplikime</span></li>
+      </ul>
     </section>
 
     <section class="container catalog" id="catalog" aria-labelledby="resultsTitle">
@@ -207,23 +243,10 @@
       </div>
     </section>
 
-    <section class="container b2b">
-      <div class="b2b__card">
-        <div>
-          <span class="eyebrow eyebrow--band">ITCOM Business</span>
-          <h2>Pajisni zyrën tuaj me ITCOM</h2>
-          <p>Çmime për sasi, faturim me TVSH, konfigurim i pajisjeve dhe instalim në vend për ekipe të çdo madhësie.</p>
-        </div>
-        <form class="b2b__form" id="b2bForm" novalidate>
-          <label class="sr-only" for="b2bEmail">Email-i i punës</label>
-          <input id="b2bEmail" type="email" placeholder="ju@kompania.com" required />
-          <button class="btn btn--white" type="submit">Kërkoni ofertë</button>
-        </form>
-      </div>
-    </section>
   </main>
 
   <footer class="footer">
+    <div class="container footer__brands" id="footerBrands" aria-label="Markat"></div>
     <div class="container footer__grid">
       <div>
         <a class="logo logo--footer" href="#top"><img src="assets/favicon.svg" alt="" width="26" height="26" /><span>ITCOM</span></a>
@@ -302,6 +325,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="js/products.js"></script>
+  <script src="js/brands.js"></script>
   <script src="js/art.js"></script>
   <script src="js/app.js"></script>
 </body>
