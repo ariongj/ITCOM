@@ -21,6 +21,11 @@ window.STORE = {
   expressFee: 5,
   installments: 12,
   phone: "+383 44 000 000",
+  // Numri i WhatsApp-it për porosi (vetëm shifra, me prefiksin e shtetit, p.sh. "38344123456").
+  // Kur plotësohet, në porosi shfaqet butoni "Porosit me WhatsApp" dhe porositë vijnë direkt te ju.
+  whatsapp: "",
+  email: "",
+  siteUrl: "https://ariongj.github.io/ITCOM/",
 };
 
 window.CATEGORIES = [

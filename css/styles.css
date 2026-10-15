@@ -617,6 +617,32 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .success code { font: 500 15px var(--font-mono); background: var(--surface-2); padding: 6px 12px; border-radius: 6px; }
 .wishlist h2 { font-size: 26px; margin-bottom: 18px; }
 
+/* Info pages (delivery, returns, warranty…) */
+.modal.modal--info { width: min(780px, calc(100% - 24px)); }
+.info { max-width: 68ch; display: grid; gap: 14px; color: var(--ink-2); }
+.info .eyebrow { margin-bottom: -6px; }
+.info h2 { font-size: 30px; color: var(--ink); letter-spacing: -0.03em; padding-right: 44px; }
+.info h3 { font-size: 17px; color: var(--ink); margin-top: 10px; }
+.info ul { display: grid; gap: 6px; padding-left: 0; }
+.info li { display: flex; gap: 10px; }
+.info li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--muted); margin-top: .6em; flex: none; }
+.info .lead { font-size: 17px; color: var(--ink); }
+.info__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.info__facts div { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 2px; }
+.info__facts b { font-size: 20px; color: var(--ink); font-weight: 600; letter-spacing: -0.02em; }
+.info__facts span { font-size: 13px; color: var(--muted); }
+.info__contact { display: grid; gap: 10px; }
+.info__contact a, .info__contact div { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; color: var(--ink); }
+.info__contact a:hover { border-color: var(--ink); }
+.info__contact b { user-select: all; font-weight: 600; }
+.info__nav { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--line); padding-top: 16px; margin-top: 8px; }
+.info__nav button { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); }
+.info__nav button:hover, .info__nav button[aria-current="page"] { border-color: var(--ink); color: var(--ink); }
+.topbar__link { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+.btn--wa { background: #1f8f4e; color: #fff; }
+.btn--wa:hover { opacity: .9; }
+.summary .btn + .btn { margin-top: 8px; }
+
 /* ==========================================================================
    Toast
    ========================================================================== */

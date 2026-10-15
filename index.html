@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>ITCOM Store</title>
   <meta name="description" content="ITCOM — laptopë, kompjuterë, monitorë, pajisje rrjeti, ruajtje të dhënash dhe aksesorë për biznese dhe shtëpi." />
+  <meta name="theme-color" content="#101114" />
+  <link rel="canonical" href="https://ariongj.github.io/ITCOM/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ITCOM" />
+  <meta property="og:locale" content="sq_AL" />
+  <meta property="og:title" content="ITCOM — Pajisje IT për biznese dhe shtëpi" />
+  <meta property="og:description" content="Laptopë, kompjuterë, monitorë, rrjet dhe ruajtje të dhënash. Dërgesë në gjithë Kosovën, garanci 24 muaj, pagesë me këste." />
+  <meta property="og:url" content="https://ariongj.github.io/ITCOM/" />
+  <meta property="og:image" content="https://ariongj.github.io/ITCOM/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,7 +34,7 @@
         <span>Garanci 24 muaj</span>
         <span>Pagesë me këste deri në 12 muaj</span>
       </span>
-      <span class="topbar__right">Shërbimi për klientë <b id="phoneText"></b></span>
+      <span class="topbar__right"><button type="button" class="topbar__link" data-info="contact">Shërbimi për klientë</button> <b id="phoneText"></b></span>
     </div>
   </div>
 
@@ -224,19 +236,20 @@
       <div>
         <h4>Ndihmë</h4>
         <ul>
-          <li><a href="#top">Dërgesa</a></li>
-          <li><a href="#top">Kthimi i produkteve</a></li>
-          <li><a href="#top">Garancia dhe servisi</a></li>
-          <li><a href="#top">Pagesa me këste</a></li>
+          <li><button type="button" data-info="delivery">Dërgesa</button></li>
+          <li><button type="button" data-info="returns">Kthimi i produkteve</button></li>
+          <li><button type="button" data-info="warranty">Garancia dhe servisi</button></li>
+          <li><button type="button" data-info="installments">Pagesa me këste</button></li>
+          <li><button type="button" data-info="contact">Kontakti</button></li>
         </ul>
       </div>
       <div>
         <h4>Kompania</h4>
         <ul>
-          <li><a href="#top">Rreth ITCOM</a></li>
-          <li><a href="#top">Llogari biznesi</a></li>
-          <li><a href="#top">Karriera</a></li>
-          <li><a href="#top">Politika e privatësisë</a></li>
+          <li><button type="button" data-info="about">Rreth ITCOM</button></li>
+          <li><button type="button" data-info="business">Llogari biznesi</button></li>
+          <li><button type="button" data-info="careers">Karriera</button></li>
+          <li><button type="button" data-info="privacy">Politika e privatësisë</button></li>
         </ul>
       </div>
     </div>

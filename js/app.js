@@ -646,6 +646,146 @@
   }
   function closeModal() { if (modal.open) modal.close(); }
 
+  // Çdo produkt dhe faqe informuese ka lidhjen e vet (p.sh. #lp-x1c12, #info-delivery) që mund të ndahet.
+  function setHash(h) {
+    try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch { /* ignore */ }
+  }
+  modal.addEventListener("close", () => setHash(""));
+  function route() {
+    const h = location.hash.slice(1);
+    if (byId[h]) openProduct(h);
+    else if (h.startsWith("info-") && INFO[h.slice(5)]) openInfo(h.slice(5));
+  }
+  window.addEventListener("hashchange", route);
+
+  /* ================================================================ faqet informuese */
+  const INFO = {
+    delivery: {
+      title: "Dërgesa",
+      html: () => `
+        <p class="lead">Dërgojmë në gjithë Kosovën, zakonisht brenda 24–48 orëve në ditë pune.</p>
+        <div class="info__facts">
+          <div><b>${fmt(S.shippingFee)}</b><span>Dërgesë standarde</span></div>
+          <div><b>Falas</b><span>Për porosi mbi ${fmt0(S.freeShippingFrom)}</span></div>
+          <div><b>+${fmt(S.expressFee)}</b><span>Dërgesë e shpejtë, ditën tjetër të punës</span></div>
+          <div><b>Falas</b><span>Marrje në dyqan</span></div>
+        </div>
+        <h3>Si funksionon</h3>
+        <ul>
+          <li>Pas porosisë ju kontaktojmë në telefon për ta konfirmuar.</li>
+          <li>Korrieri ju telefonon para se të vijë te adresa juaj.</li>
+          <li>Paguani në dorëzim, me para në dorë ose me kartelë.</li>
+          <li>Kontrolloni paketimin para se ta pranoni. Nëse është i dëmtuar, mos e pranoni dhe na lajmëroni.</li>
+        </ul>`,
+    },
+    returns: {
+      title: "Kthimi i produkteve",
+      html: () => `
+        <p class="lead">Mund ta ktheni produktin brenda 14 ditëve nga pranimi, pa pasur nevojë të jepni arsye.</p>
+        <h3>Kushtet</h3>
+        <ul>
+          <li>Produkti duhet të jetë i paprekur, me të gjitha pjesët dhe me paketimin origjinal.</li>
+          <li>Bashkëngjitni faturën ose numrin e porosisë.</li>
+          <li>Softueri dhe licencat e aktivizuara, si dhe produktet e hapura për arsye higjienike, nuk kthehen.</li>
+        </ul>
+        <h3>Hapat</h3>
+        <ul>
+          <li>Na kontaktoni dhe na jepni numrin e porosisë.</li>
+          <li>Sillni produktin në dyqan ose ne organizojmë marrjen e tij.</li>
+          <li>Pas kontrollit, paratë kthehen brenda 14 ditëve me të njëjtën mënyrë pagese.</li>
+        </ul>`,
+    },
+    warranty: {
+      title: "Garancia dhe servisi",
+      html: () => `
+        <p class="lead">Çdo produkt vjen me garanci 24‑mujore. Disa prodhues ofrojnë edhe më gjatë, dhe kjo shënohet te specifikimet.</p>
+        <h3>Çfarë mbulon garancia</h3>
+        <ul>
+          <li>Defektet e fabrikës dhe prishjet gjatë përdorimit normal.</li>
+          <li>Riparimin ose zëvendësimin e pjesës, pa pagesë.</li>
+        </ul>
+        <h3>Çfarë nuk mbulon</h3>
+        <ul>
+          <li>Dëmtimet fizike, nga lëngjet ose nga rryma.</li>
+          <li>Ndërhyrjet nga servise të paautorizuara.</li>
+          <li>Konsumin normal, si bateritë pas ciklit të tyre të jetës.</li>
+        </ul>
+        <h3>Si të aplikoni</h3>
+        <ul><li>Sillni produktin me faturën ose fletën e garancisë, ose na kontaktoni që ta marrim ne.</li></ul>`,
+    },
+    installments: {
+      title: "Pagesa me këste",
+      html: () => `
+        <p class="lead">Blini sot dhe paguani deri në ${S.installments} këste mujore me kartelat e bankave partnere.</p>
+        <div class="info__facts">
+          <div><b>${fmt(1200)}</b><span>Çmimi i produktit</span></div>
+          <div><b>${S.installments} × ${fmt(1200 / S.installments)}</b><span>Këstet mujore</span></div>
+        </div>
+        <ul>
+          <li>Zgjidhni "Me këste mujore" kur përfundoni porosinë.</li>
+          <li>Kushtet e sakta varen nga banka juaj dhe konfirmohen para pagesës.</li>
+        </ul>`,
+    },
+    contact: {
+      title: "Kontakti",
+      html: () => `
+        <p class="lead">Jemi këtu për pyetje rreth produkteve, porosive ose ofertave për biznese.</p>
+        <div class="info__contact">
+          <div>${svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>')}<span>Telefoni <b>${esc(S.phone)}</b></span></div>
+          ${S.whatsapp ? `<a href="https://wa.me/${esc(S.whatsapp)}" target="_blank" rel="noopener">${svg('<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/>')}<span>Shkruani në WhatsApp</span></a>` : ""}
+          ${S.email ? `<div>${svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/>')}<span>Email <b>${esc(S.email)}</b></span></div>` : ""}
+        </div>`,
+    },
+    about: {
+      title: "Rreth ITCOM",
+      html: () => `
+        <p class="lead">ITCOM ofron pajisje IT për biznese dhe shtëpi: laptopë, kompjuterë, monitorë, rrjet, ruajtje të dhënash dhe aksesorë nga markat më të njohura.</p>
+        <p>Zgjedhim produktet me kujdes, i përshkruajmë me specifika të sakta dhe ju ndihmojmë të gjeni pajisjen e duhur, qoftë për një student apo për një zyrë të tërë.</p>`,
+    },
+    business: {
+      title: "Llogari biznesi",
+      html: () => `
+        <p class="lead">Për kompani, institucione dhe shkolla që blejnë rregullisht.</p>
+        <ul>
+          <li>Çmime për sasi dhe oferta të personalizuara.</li>
+          <li>Faturë me TVSH dhe pagesë me transfertë bankare.</li>
+          <li>Konfigurim i pajisjeve, instalim në vend dhe mirëmbajtje.</li>
+          <li>Një person kontakti për të gjitha porositë tuaja.</li>
+        </ul>
+        <p>Kërkoni ofertë te seksioni ITCOM Business në fund të faqes, ose na kontaktoni në telefon.</p>`,
+    },
+    careers: {
+      title: "Karriera",
+      html: () => `<p class="lead">Aktualisht nuk kemi pozita të hapura.</p><p>Nëse dëshironi të punoni me ne në shitje, servis ose logjistikë, na kontaktoni dhe do t'ju njoftojmë kur të hapet një pozitë.</p>`,
+    },
+    privacy: {
+      title: "Politika e privatësisë",
+      html: () => `
+        <p class="lead">Mbledhim vetëm të dhënat që na duhen për të përpunuar dhe dërguar porosinë tuaj.</p>
+        <ul>
+          <li>Emrin, telefonin, email‑in dhe adresën i përdorim vetëm për porosinë dhe komunikimin me ju.</li>
+          <li>Nuk i shesim dhe nuk i ndajmë të dhënat tuaja me palë të treta, përveç korrierit që dërgon porosinë.</li>
+          <li>Shporta, lista e dëshirave dhe produktet e shikuara ruhen vetëm në shfletuesin tuaj.</li>
+          <li>Mund të kërkoni në çdo kohë që të dhënat tuaja të fshihen.</li>
+        </ul>`,
+    },
+  };
+
+  function openInfo(key) {
+    const page = INFO[key];
+    if (!page) return;
+    toggleMega(false);
+    const nav = ["delivery", "returns", "warranty", "installments", "contact", "business"];
+    openModal(`
+      <article class="info">
+        <span class="eyebrow">ITCOM</span>
+        <h2>${esc(page.title)}</h2>
+        ${page.html()}
+        <nav class="info__nav" aria-label="Faqe të tjera">${nav.map((k) => `<button type="button" data-info="${k}" ${k === key ? 'aria-current="page"' : ""}>${esc(INFO[k].title)}</button>`).join("")}</nav>
+      </article>`, "modal--info");
+    setHash("info-" + key);
+  }
+
   /* ================================================================ faqja e produktit */
   function openProduct(id) {
     const p = byId[id];
@@ -653,6 +793,7 @@
     hideSuggest();
     toggleMega(false);
     addRecent(id);
+    setHash(id);
     const d = discount(p);
     const related = PRODUCTS.filter((x) => x.cat === p.cat && x.id !== p.id).sort((a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price)).slice(0, 6);
     const specRows = [
@@ -845,7 +986,8 @@
           <h3>Përmbledhja e porosisë</h3>
           <ul>${cart.map((l) => `<li><span>${l.qty} × ${esc(byId[l.id].name)}</span><span class="num">${fmt(byId[l.id].price * l.qty)}</span></li>`).join("")}</ul>
           <dl class="totals" id="coTotals"></dl>
-          <button class="btn btn--primary btn--block btn--lg" type="submit">Porosit</button>
+          <button class="btn btn--primary btn--block btn--lg" type="submit" value="site">Porosit</button>
+          ${S.whatsapp ? `<button class="btn btn--wa btn--block btn--lg" type="submit" value="wa">Porosit me WhatsApp</button>` : ""}
         </aside>
       </form>`, "modal--checkout");
 
@@ -888,6 +1030,24 @@
       }
       if (firstBad) { firstBad.focus(); return; }
       const t = totals(delivery());
+      if (e.submitter?.value === "wa" && S.whatsapp) {
+        // Porosia dërgohet si mesazh WhatsApp te dyqani; shporta mbetet derisa klienti ta konfirmojë.
+        const payLabel = { cod: "Pagesë në dorëzim", inst: "Me këste mujore", bank: "Transfertë bankare" }[form.pay.value];
+        const delLabel = { standard: "Dërgesë standarde", express: "Dërgesë e shpejtë", pickup: "Marrje në dyqan" }[delivery()];
+        const lines = [
+          "Përshëndetje ITCOM, dua të porosis:",
+          ...cart.map((l) => `• ${l.qty} × ${byId[l.id].name} (${byId[l.id].id.toUpperCase()}) – ${fmt(byId[l.id].price * l.qty)}`),
+          `Totali: ${fmt(t.total)} (${delLabel}, ${payLabel})`,
+          "",
+          `Emri: ${form.name.value.trim()}${form.company.value.trim() ? ` (${form.company.value.trim()})` : ""}`,
+          `Telefoni: ${form.phone.value.trim()}`,
+          `Email: ${form.email.value.trim()}`,
+          `Adresa: ${form.address.value.trim()}, ${form.zip.value.trim()} ${form.city.value.trim()}`,
+        ];
+        window.open(`https://wa.me/${S.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
+        toast("U hap WhatsApp me porosinë tuaj. Dërgojeni mesazhin për ta përfunduar.");
+        return;
+      }
       const orderNo = "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
       const email = form.email.value.trim();
       cart = [];
@@ -930,7 +1090,7 @@
 
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal]");
+    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
     if (!t) return;
@@ -958,6 +1118,7 @@
     else if (d.rail) { const r = $("#" + d.rail); r.scrollBy({ left: Number(d.dir) * r.clientWidth * 0.8, behavior: "smooth" }); }
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
+    else if (d.info) openInfo(d.info);
     else if ("close" in d) closeCart();
     else if ("closeModal" in d) closeModal();
   });
@@ -1112,7 +1273,27 @@
   tickCountdown();
   setInterval(tickCountdown, 1000);
 
-  // Lidhje e drejtpërdrejtë: index.html#lp-x1c12 hap produktin.
-  const hash = location.hash.slice(1);
-  if (byId[hash]) openProduct(hash);
+  // Të dhëna të strukturuara për motorët e kërkimit (Google).
+  try {
+    const ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: PRODUCTS.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Product", name: p.name, sku: p.id.toUpperCase(), brand: { "@type": "Brand", name: p.brand },
+          description: p.desc, category: p.cat, url: S.siteUrl + "#" + p.id,
+          aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating, reviewCount: p.reviews },
+          offers: { "@type": "Offer", price: p.price.toFixed(2), priceCurrency: S.currency, availability: p.stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" },
+        },
+      })),
+    });
+    document.head.appendChild(ld);
+  } catch { /* ignore */ }
+
+  // Lidhje e drejtpërdrejtë: #lp-x1c12 hap produktin, #info-delivery hap faqen e dërgesës.
+  route();
 })();

@@ -29,6 +29,30 @@ Light and dark themes, responsive down to small phones, keyboard accessible, res
 
 > Checkout is a front‑end demo: no order is sent and no payment is taken. Connect it to a backend or a platform (Shopify, WooCommerce, a payment provider) to take real orders.
 
+## Live site
+
+The store is published with GitHub Pages at **https://ariongj.github.io/ITCOM/** from the `gh-pages` branch. To update the live site, push the latest commit to `gh-pages`:
+
+```bash
+git push origin HEAD:gh-pages
+```
+
+Every product and info page has its own shareable link, for example `#lp-x1c12` (a product) or `#info-delivery` (delivery terms).
+
+## Taking real orders with WhatsApp
+
+Set your number in `js/products.js`:
+
+```js
+whatsapp: "38344123456",   // digits only, with country code
+```
+
+Checkout then shows **Porosit me WhatsApp**. It opens WhatsApp with the full order (products, total, delivery, payment and the customer's details) ready to send to you. The Kontakti page also gets a WhatsApp button. Set `email` to show an email address on the Kontakti page.
+
+## Store policies
+
+The info pages (Dërgesa, Kthimi, Garancia, Pagesa me këste, Privatësia and others) are in `INFO` in `js/app.js`. The texts are sensible defaults that match the store's stated terms (24–48 h delivery, 14‑day returns, 24‑month warranty); review them against your real policies before launch.
+
 ## Run it
 
 Plain HTML/CSS/JS. Open `index.html` or serve the folder:
