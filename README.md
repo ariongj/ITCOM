@@ -2,6 +2,8 @@
 
 A fast, dependency‑free storefront for IT equipment: laptops, desktops, monitors, tablets, networking, storage, peripherals, components, printers, servers and UPS.
 
+The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The design is a quiet, premium style: neutral palette, black primary buttons and the Geist typeface.
+
 ## Features
 
 **Shopping**
