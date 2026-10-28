@@ -290,28 +290,33 @@
 
   function card(p) {
     const w = wish.has(p.id), inCart = cartQty(p.id) > 0, cmp = compare.includes(p.id), d = discount(p);
-    const addBtn = (cls) => `<button type="button" class="btn ${cls} add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="Shto ${esc(p.name)} në shportë">${svg(inCart ? ICON.check : ICON.bag)}${addLabel(p, inCart)}</button>`;
+    const addBtn = (cls) => `<button type="button" class="btn ${cls} add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="Shto ${esc(p.name)} në shportë">${svg(inCart ? ICON.check : ICON.cart)}${addLabel(p, inCart)}</button>`;
+    const ship = p.price >= S.freeShippingFrom ? "Dërgesë falas" : `Dërgesë ${fmt(S.shippingFee)}`;
     return `
       <article class="card" data-id="${p.id}">
         <div class="card__media" data-open="${p.id}">
           ${media(p)}
-          <div class="tags">${d ? `<span class="tag tag--sale">−${d}%</span>` : ""}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}${!p.stock ? `<span class="tag">Jashtë stokut</span>` : ""}</div>
-          ${p.stock ? `<div class="card__quick">${addBtn("btn--primary")}</div>` : ""}
+          <div class="tags">${d ? `<span class="tag tag--sale">−${d}%</span>` : ""}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}</div>
         </div>
         <div class="card__actions">
           <button type="button" class="icon-btn ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Shto në"} listën e dëshirave">${svg(ICON.heart)}</button>
           <button type="button" class="icon-btn ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}" aria-label="${cmp ? "Hiq nga krahasimi" : "Shto për krahasim"}">${svg(ICON.compare)}</button>
         </div>
         <div class="card__body">
-          <div class="card__meta">${brandMark(p.brand)}<span class="rating">${stars(p.rating)} ${rate(p.rating)}</span></div>
+          <div class="card__meta">${brandMark(p.brand)}<span class="mono">${esc(p.id.toUpperCase())}</span></div>
           <h3 class="card__title" data-open="${p.id}">${esc(p.name)}</h3>
+          <div class="rating">${stars(p.rating)} <span>${rate(p.rating)} (${p.reviews})</span></div>
           <p class="card__specs">${esc(keySpecs(p).join(" · "))}</p>
           <p class="card__desc">${esc(p.desc)}</p>
           <div class="card__price">${priceHTML(p)}</div>
-          <div class="card__sub"><span class="card__inst">${inst(p)}</span>${p.stock && p.stock <= 5 ? stockLabel(p) : ""}</div>
-          <div class="card__foot">${addBtn("btn--outline")}</div>
+          <div class="card__sub">
+            <span class="card__inst">${inst(p)}</span>
+            ${stockLabel(p)}
+            ${p.stock ? `<span class="card__ship">${svg(ICON.truck)}${ship}</span>` : ""}
+          </div>
+          <div class="card__foot">${addBtn("btn--cta")}</div>
         </div>
-        <div class="card__side"><div>${priceHTML(p)}</div><div class="card__inst">${inst(p)}</div>${stockLabel(p)}${addBtn("btn--primary")}</div>
+        <div class="card__side"><div>${priceHTML(p)}</div><div class="card__inst">${inst(p)}</div>${stockLabel(p)}${addBtn("btn--cta")}</div>
       </article>`;
   }
 
@@ -377,50 +382,44 @@
 
   /* ================================================================ ballina */
   const SLIDES = [
-    { id: "lp-mba13m4", eyebrow: "E re · Apple M4", head: "MacBook Air", em: "më i shpejti deri tani.", text: "16 GB memorie si standard, dizajn krejtësisht i heshtur dhe deri në 18 orë bateri.", tint: "#9fb3d6",
-      specs: [["18 orë", "bateri"], ["1,24 kg", "pesha"], ["M4", "çipi"]] },
-    { id: "lp-x1c12", eyebrow: "Për biznes", head: "ThinkPad X1 Carbon", em: "puna, pa kompromis.", text: "Pak më shumë se një kilogram, ekran 2.8K OLED dhe siguri e nivelit korporativ.", tint: "#b8bec9",
-      specs: [["1,09 kg", "fibër karboni"], ["32 GB", "memorie"], ["OLED", "2.8K"]] },
-    { id: "mn-g80sd", eyebrow: "4K · 240 Hz · QD‑OLED", head: "Odyssey OLED G8", em: "çdo kornizë, e përsosur.", text: "Monitori më i qartë me frekuencë të lartë, me panel QD‑OLED kundër reflektimit.", tint: "#a6a9d6",
-      specs: [["240 Hz", "frekuenca"], ["0,03 ms", "reagimi"], ["32\"", "4K UHD"]] },
+    { id: "lp-mba13m4", label: "E re", title: "MacBook Air 13\" me çipin M4", text: "16 GB memorie, deri në 18 orë bateri. Tani në stok, me dërgesë falas.", bg: "linear-gradient(110deg, #0a2a6b 0%, #1450c8 100%)" },
+    { id: "mn-g5", label: "Ofertë", title: "Monitorë gaming deri në −17%", text: "Samsung Odyssey G5 27\" QHD 165 Hz, vetëm këtë javë.", bg: "linear-gradient(110deg, #3b0a14 0%, #c8102e 100%)" },
+    { id: "lp-e14g6", label: "Për zyrë", title: "Laptopë biznesi nga 529 €", text: "ThinkPad, EliteBook dhe Latitude me Windows 11 Pro dhe garanci 24 muaj.", bg: "linear-gradient(110deg, #10213f 0%, #2d4f8a 100%)" },
   ];
   let slide = 0, slideTimer;
-  const SLIDE_MS = 7000;
+  const SLIDE_MS = 6000;
 
   function renderHero() {
-    $("#slider").style.setProperty("--slide-ms", SLIDE_MS + "ms");
     $("#slides").innerHTML = SLIDES.map((s, i) => {
       const p = byId[s.id];
-      return `<div class="slide" style="--tint:${s.tint}" role="group" aria-roledescription="sllajd" aria-label="${i + 1} nga ${SLIDES.length}">
-        <div class="slide__copy">
-          <span class="eyebrow">${esc(s.eyebrow)}</span>
-          <h2>${esc(s.head)} <em>${esc(s.em)}</em></h2>
+      const d = discount(p);
+      return `<div class="slide" style="--bg1:${s.bg}" role="group" aria-roledescription="banner" aria-label="${i + 1} nga ${SLIDES.length}">
+        <div>
+          <span class="slide__label">${esc(s.label)}</span>
+          <h2>${esc(s.title)}</h2>
           <p>${esc(s.text)}</p>
           <div class="slide__price"><b>${fmt(p.price)}</b>${p.old ? `<s>${fmt(p.old)}</s>` : ""}<small>${inst(p)}</small></div>
           <div class="slide__cta">
-            <button type="button" class="btn btn--primary btn--lg" data-add="${p.id}">Shto në shportë</button>
+            <button type="button" class="btn btn--cta btn--lg" data-add="${p.id}">${svg(ICON.cart)} Shto në shportë</button>
             <button type="button" class="btn btn--ghost btn--lg" data-open="${p.id}">Shiko detajet</button>
           </div>
-          <div class="slide__specs">${s.specs.map(([b, t]) => `<div><b>${esc(b)}</b><span>${esc(t)}</span></div>`).join("")}</div>
         </div>
-        <div class="slide__stage" data-open="${p.id}">
-          <div class="slide__tag">${brandMark(p.brand)}<b>${rate(p.rating)} ★ · ${p.reviews} vlerësime</b>${stockLabel(p)}</div>
+        <div class="slide__art" data-open="${p.id}">
+          ${d ? `<span class="slide__sticker"><span><b>−${d}%</b><small>zbritje</small></span></span>` : ""}
           <img src="${esc(imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${i ? 'loading="lazy"' : ""} />
         </div>
       </div>`;
     }).join("");
-    $("#dots").innerHTML = SLIDES.map((s, i) => `<button type="button" role="tab" data-slide="${i}" aria-label="Shfaq ${esc(s.head)}"></button>`).join("");
+    $("#dots").innerHTML = SLIDES.map((s, i) => `<button type="button" role="tab" data-slide="${i}" aria-label="Shfaq: ${esc(s.title)}"></button>`).join("");
     goSlide(0);
 
-    const maxStorage = Math.max(...PRODUCTS.filter((p) => p.cat === "Ruajtja e të dhënave").map(discount));
     const PROMOS = [
-      { small: "Rrjeti", title: "Wi‑Fi 7 <em>ka mbërritur.</em>", link: "Shiko access point‑et", art: "nw-u7pro", key: "wifi7", dark: true },
-      { small: "Ruajtja e të dhënave", title: `SSD dhe disqe deri në <em>−${maxStorage}%</em>`, link: "Shiko ofertat", art: "st-990pro2", key: "storage" },
-      { small: "Për lojëra", title: "Laptopë <em>gaming</em> me RTX", link: "Shiko laptopët", art: "lp-legion5", key: "gaming" },
+      { small: "Rrjeti", title: "Wi‑Fi 7 për shtëpi dhe zyrë", link: "Shiko produktet", art: "nw-u7pro", key: "wifi7", bg: "#eaf1ff" },
+      { small: "Për lojëra", title: "Laptopë gaming me RTX", link: "Shiko laptopët", art: "lp-legion5", key: "gaming", bg: "#fff2e6" },
     ];
     $("#promos").innerHTML = PROMOS.map((pr) => `
-      <button type="button" class="promo ${pr.dark ? "promo--dark" : ""}" data-promo="${pr.key}">
-        <span><span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${pr.title}</span><span class="promo__link">${esc(pr.link)}</span></span>
+      <button type="button" class="promo" data-promo="${pr.key}" style="--pbg:${pr.bg}">
+        <span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${esc(pr.title)}</span><span class="promo__link">${esc(pr.link)}</span>
         <span class="promo__art"><img src="${esc(imgSrc(byId[pr.art]))}" alt="" data-pid="${pr.art}" loading="lazy" /></span>
       </button>`).join("");
   }
@@ -438,40 +437,44 @@
   }
 
   function renderHome() {
-    const LAYOUT = { "Laptopë": "tile--xl", "Monitorë": "tile--wide", "Rrjeti": "tile--wide", "Serverë & UPS": "tile--wide" };
-    const HERO_IMG = { "Laptopë": "lp-mbp14m4p", "Monitorë": "mn-u2724d", "Kompjuterë": "dt-macmini", "Tabletë": "tb-ipadair", "Rrjeti": "nw-udmpro", "Ruajtja e të dhënave": "st-ds923", "Aksesorë": "pr-xm5", "Komponentë": "cp-4070s", "Printerë": "pt-4102fdw", "Serverë & UPS": "sv-t160" };
-    const order = ["Laptopë", "Monitorë", "Kompjuterë", "Tabletë", "Rrjeti", "Ruajtja e të dhënave", "Aksesorë", "Komponentë", "Printerë", "Serverë & UPS"];
-    $("#catTiles").innerHTML = order.map((c) => {
-      const items = PRODUCTS.filter((p) => p.cat === c);
-      const art = byId[HERO_IMG[c]] || items[0];
-      const brands = [...new Set(items.map((p) => p.brand))].filter((b) => LOGOS[b]).slice(0, 4);
-      return `<button type="button" class="tile ${LAYOUT[c] || ""}" data-cat="${esc(c)}">
-        <b>${esc(c)}</b><small>${plural(items.length, "produkt", "produkte")}</small>
-        <span class="tile__arrow">${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}</span>
-        ${LAYOUT[c] === "tile--xl" ? `<span class="tile__brands">${brands.map((b) => logoSvg(b)).join("")}</span>` : ""}
-        <span class="tile__art"><img src="${esc(imgSrc(art))}" alt="" data-pid="${art.id}" loading="lazy" /></span>
-      </button>`;
-    }).join("");
+    const count = (c) => PRODUCTS.filter((p) => p.cat === c).length;
+    $("#sideCats").innerHTML = CATS.map((c) => `<li><button type="button" data-cat="${esc(c.id)}">${svg(catIcon(c.id))}<span>${esc(c.id)}</span><small>${count(c.id)}</small></button></li>`).join("");
+    $("#searchCat").innerHTML = `<option value="All">Të gjitha</option>` + CATS.map((c) => `<option value="${esc(c.id)}">${esc(c.id)}</option>`).join("");
 
     const deals = PRODUCTS.filter((p) => p.old && p.stock).sort(SORTS.discount).slice(0, 10);
     $("#dealsRail").innerHTML = deals.map(card).join("");
 
+    // Raftet me produkte, si në dyqanet e mëdha
+    const SHELVES = [
+      { title: "Më të shiturat", list: PRODUCTS.filter((p) => p.stock).sort(SORTS.reviews).slice(0, 10), all: "reviews" },
+      { title: "Laptopë", list: PRODUCTS.filter((p) => p.cat === "Laptopë").sort(SORTS.featured).slice(0, 10), cat: "Laptopë" },
+      { title: "Monitorë", list: PRODUCTS.filter((p) => p.cat === "Monitorë").sort(SORTS.featured).slice(0, 10), cat: "Monitorë" },
+      { title: "Rrjeti dhe Wi‑Fi", list: PRODUCTS.filter((p) => p.cat === "Rrjeti").sort(SORTS.featured).slice(0, 10), cat: "Rrjeti" },
+      { title: "Aksesorë", list: PRODUCTS.filter((p) => p.cat === "Aksesorë").sort(SORTS.featured).slice(0, 10), cat: "Aksesorë" },
+    ];
+    $("#shelves").innerHTML = SHELVES.map((sh, i) => `
+      <section class="container shelf" aria-labelledby="shelf${i}">
+        <div class="shelf__head">
+          <h2 id="shelf${i}">${esc(sh.title)}</h2>
+          <button class="shelf__all" ${sh.cat ? `data-cat="${esc(sh.cat)}"` : 'data-bestsellers'}>Shiko të gjitha</button>
+          <div class="shelf__nav">
+            <button class="icon-btn" data-rail="shelfRail${i}" data-dir="-1" aria-label="Lëviz majtas">${svg('<path d="m15 18-6-6 6-6"/>')}</button>
+            <button class="icon-btn" data-rail="shelfRail${i}" data-dir="1" aria-label="Lëviz djathtas">${svg('<path d="m9 18 6-6-6-6"/>')}</button>
+          </div>
+        </div>
+        <div class="rail" id="shelfRail${i}">${sh.list.map(card).join("")}</div>
+      </section>`).join("");
+
+    const HERO_IMG = { "Laptopë": "lp-x1c12", "Monitorë": "mn-u2724d", "Kompjuterë": "dt-macmini", "Tabletë": "tb-ipadair", "Rrjeti": "nw-u7pro", "Ruajtja e të dhënave": "st-990pro2", "Aksesorë": "pr-xm5", "Komponentë": "cp-4070s", "Printerë": "pt-l2350dw", "Serverë & UPS": "ups-br1500" };
+    $("#catTiles").innerHTML = CATS.map((c) => {
+      const art = byId[HERO_IMG[c.id]] || PRODUCTS.find((p) => p.cat === c.id);
+      return `<button type="button" class="cat-card" data-cat="${esc(c.id)}">${media(art)}<b>${esc(c.id)}</b><small>${plural(count(c.id), "produkt", "produkte")}</small></button>`;
+    }).join("");
+
     const counts = {};
     PRODUCTS.forEach((p) => { counts[p.brand] = (counts[p.brand] || 0) + 1; });
-    const brandList = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    const chip = ([b, n], hidden) => `<button type="button" class="brand-chip" data-brand="${esc(b)}" style="--brand:${LOGOS[b] ? LOGOS[b].hex : "currentColor"}" ${hidden ? 'tabindex="-1" aria-hidden="true"' : ""}>${logoSvg(b)}<span>${esc(b)}</span><small>${n}</small></button>`;
-    // Lista përsëritet dy herë që shiriti të lëvizë pa ndërprerje.
-    $("#brandRail").innerHTML = brandList.map((x) => chip(x, false)).join("") + brandList.map((x) => chip(x, true)).join("");
-    $("#footerBrands").innerHTML = brandList.filter(([b]) => LOGOS[b]).map(([b]) => `<button type="button" data-brand="${esc(b)}">${logoSvg(b)}${esc(b)}</button>`).join("");
-
-    $("#bizStats").innerHTML = [
-      [PRODUCTS.length, "produkte në stok"],
-      [brandList.length, "marka"],
-      ["24 muaj", "garanci"],
-      ["24–48 h", "dërgesë"],
-    ].map(([n, t]) => `<div><dt>${t}</dt><dd>${n}</dd></div>`).join("");
-    $("#bizCollage").innerHTML = [["sv-t160", "Serverë"], ["nw-cbs350", "Rrjeti"], ["st-ds923", "NAS"]]
-      .map(([id, label]) => `<div><span>${label}</span><img src="${esc(imgSrc(byId[id]))}" alt="" data-pid="${id}" loading="lazy" /></div>`).join("");
+    $("#brandRail").innerHTML = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([b, n]) =>
+      `<button type="button" class="brand-tile" data-brand="${esc(b)}" style="--brand-color:${LOGOS[b] ? LOGOS[b].hex : "#111827"}">${LOGOS[b] ? logoSvg(b) : `<span class="brand-tile__word">${esc(b)}</span>`}<span>${esc(b)}</span><small>${plural(n, "produkt", "produkte")}</small></button>`).join("");
 
     $("#footerCats").innerHTML = CATS.map((c) => `<li><button type="button" data-cat="${esc(c.id)}">${esc(c.id)}</button></li>`).join("");
     $("#year").textContent = new Date().getFullYear();
@@ -548,6 +551,7 @@
   }
   function hideSuggest() { $("#suggest").hidden = true; }
   function applySearch(q, cat = "All") {
+    clearTimeout(sgTimer);
     resetFilters(cat);
     state.q = q.trim();
     $("#search").value = state.q;
@@ -650,7 +654,7 @@
       const p = byId[b.dataset.add];
       const inCart = cartQty(p.id) > 0;
       b.classList.toggle("added", inCart);
-      b.innerHTML = `${svg(inCart ? ICON.check : ICON.bag)}${addLabel(p, inCart)}`;
+      b.innerHTML = `${svg(inCart ? ICON.check : ICON.cart)}${addLabel(p, inCart)}`;
     });
     $$("[data-cmp]").forEach((b) => {
       const on = compare.includes(b.dataset.cmp);
@@ -1123,19 +1127,9 @@
   }
   function bump(sel) { const el = $(sel); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
 
-  /* ================================================================ tema */
-  function applyTheme(t) { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; }
-  applyTheme(saved.get("theme", null));
-  $("#themeToggle").addEventListener("click", () => {
-    const root = document.documentElement;
-    const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-    applyTheme(dark ? "light" : "dark");
-    saved.set("theme", dark ? "light" : "dark");
-  });
-
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-all-brands]");
+    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-all-brands],[data-bestsellers]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
     if (!t) return;
@@ -1166,6 +1160,7 @@
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
     else if (d.info) openInfo(d.info);
     else if (d.slideDir) { goSlide(slide + Number(d.slideDir)); autoSlide(); }
+    else if ("bestsellers" in d) { resetFilters(); state.sort = "reviews"; render(); goCatalog(); }
     else if ("allBrands" in d) { resetFilters(); expandedFacets.add("brand"); closedFacets.delete("brand"); render(); goCatalog(); }
     else if ("close" in d) closeCart();
     else if ("closeModal" in d) closeModal();
@@ -1276,9 +1271,10 @@
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (sgActive >= 0 && items[sgActive]) items[sgActive].click();
-      else applySearch(search.value);
+      else applySearch(search.value, $("#searchCat").value);
     } else if (e.key === "Escape") { hideSuggest(); }
   });
+  $("#searchBtn").addEventListener("click", () => applySearch(search.value, $("#searchCat").value));
 
   // Sllajderi: ndalon kur miu është sipër; rrëshqitje me gisht
   const slider = $("#slider");

@@ -2,7 +2,7 @@
 
 A fast, dependency‑free storefront for IT equipment: laptops, desktops, monitors, tablets, networking, storage, peripherals, components, printers, servers and UPS.
 
-The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The design is an editorial premium style: studio product renders, large Geist type with Instrument Serif accents, a bento category grid, a dark business section and a moving band of brand logos.
+The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The design follows big electronics retailers (Best Buy, Gjirafa50, Foleja): navy store header with a category search bar, category sidebar beside a banner carousel, deal and product shelves of white cards with orange "add to cart" buttons, a brand grid and a dark footer.
 
 ## Features
 
