@@ -15,6 +15,7 @@ import { EffectComposer } from "./vendor/addons/postprocessing/EffectComposer.js
 import { RenderPass } from "./vendor/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "./vendor/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "./vendor/addons/postprocessing/OutputPass.js";
+import { GTAOPass } from "./vendor/addons/postprocessing/GTAOPass.js";
 
 /* ------------------------------------------------------------------ helpers */
 const RB = (w, h, d, r = 0.3, s = 3) => new RoundedBoxGeometry(w, h, d, s, Math.max(0.001, Math.min(r, w / 2 - 0.001, h / 2 - 0.001, d / 2 - 0.001)));
@@ -46,6 +47,47 @@ function canvasTex(w, h, draw) {
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 4;
   return t;
+}
+
+// Finned heatsink: a base plate with fins rising towards +z. Fins run along y ("y") or x ("x").
+function finSink(parent, w, h, d, mat, x, y, z, along = "y", pitch = 0.42) {
+  const g = new THREE.Group();
+  g.position.set(x, y, z);
+  parent.add(g);
+  add(g, RB(w, h, d * 0.35, 0.12, 1), mat, 0, 0, d * 0.175);
+  const span = along === "y" ? w : h;
+  const n = Math.max(2, Math.floor(span / pitch));
+  const fins = new THREE.InstancedMesh(new THREE.BoxGeometry(along === "y" ? 0.14 : w, along === "y" ? h : 0.14, d * 0.66), mat, n);
+  const m4 = new THREE.Matrix4();
+  for (let i = 0; i < n; i++) {
+    const o = -span / 2 + (i + 0.5) * (span / n);
+    m4.makeTranslation(along === "y" ? o : 0, along === "y" ? 0 : o, d * 0.66);
+    fins.setMatrixAt(i, m4);
+  }
+  g.add(fins);
+  return g;
+}
+
+// Braided sleeve: a flat ribbon of strands following a curve; `spread` is the ribbon direction.
+const sleeveTex = {};
+function sleeveMat(color) {
+  const t = (sleeveTex[color] ||= canvasTex(32, 64, (c, w, h) => {
+    c.fillStyle = color; c.fillRect(0, 0, w, h);
+    c.strokeStyle = isLight(color) ? "rgba(0,0,0,.18)" : "rgba(255,255,255,.12)"; c.lineWidth = 3;
+    for (let y = -w; y < h + w; y += 8) { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y + w); c.stroke(); }
+  }));
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.75, metalness: 0.05 });
+}
+function cable(parent, pts, strands, spread, color, r = 0.17) {
+  const mat = sleeveMat(color);
+  const dir = spread.clone().normalize();
+  for (let i = 0; i < strands; i++) {
+    const off = dir.clone().multiplyScalar((i - (strands - 1) / 2) * r * 2.15);
+    const curve = new THREE.CatmullRomCurve3(pts.map((p) => p.clone().add(off)));
+    const m = add(parent, new THREE.TubeGeometry(curve, 36, r, 8, false), mat);
+    m.material.map.repeat.set(1, 30);
+  }
 }
 
 const spinners = new Set(); // fan blade groups that rotate while the viewer runs
@@ -99,42 +141,61 @@ export const PCIE_Y = fy(19.5);
 
 function motherboard(spec = {}) {
   const g = new THREE.Group();
-  const pcbCol = spec.color || "#26282c";
+  const pcbCol = spec.color || "#1b1c1f";
   const acc = spec.accent || "#5b5f68";
   const light = isLight(pcbCol);
-  add(g, RB(MB_W, MB_H, 0.18, 0.1, 1), M.pcb(pcbCol), 0, 0, 0.09);
-  // fine silk-screen detail
-  const silk = canvasTex(512, 640, (c, w, h) => {
-    // tidy circuit traces: short orthogonal runs, like real PCB routing
-    c.strokeStyle = light ? "rgba(0,0,0,.07)" : "rgba(255,255,255,.05)"; c.lineWidth = 2;
-    let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    for (let i = 0; i < 70; i++) {
-      let x = Math.round(rnd() * w / 16) * 16, y = Math.round(rnd() * h / 16) * 16;
-      c.beginPath(); c.moveTo(x, y);
-      for (let k = 0; k < 3; k++) { if (k % 2) y += (rnd() - 0.5) * 120; else x += (rnd() - 0.5) * 120; c.lineTo(x, y); }
-      c.stroke();
-    }
-    c.fillStyle = light ? "rgba(0,0,0,.25)" : "rgba(255,255,255,.22)"; c.font = "bold 30px Arial"; c.fillText(spec.label || "", 40, h - 60);
+  // PCB with printed markings (no fake traces: real boards look calm from a distance)
+  const print = canvasTex(512, 640, (c, w, h) => {
+    c.fillStyle = pcbCol; c.fillRect(0, 0, w, h);
+    const ink = light ? "rgba(0,0,0,.28)" : "rgba(255,255,255,.28)";
+    c.fillStyle = ink; c.font = "bold 13px Arial";
+    const k = w / MB_W;
+    for (const [t, x, y] of [["PCIE_1", 1, 18.9], ["PCIE_2", 1, 26.4], ["M2_1", 3, 16.3], ["M2_2", 3, 23.9], ["DDR5_A1", 18, 1.6], ["CPU_FAN", 15.5, 2.8], ["ATX_24P", 22.2, 9.9]]) c.fillText(t, x * k, y * k);
+    c.font = "bold 30px Arial"; c.fillText(spec.label || "", 1.2 * k, 29.6 * k);
+    c.fillStyle = light ? "rgba(0,0,0,.18)" : "rgba(255,255,255,.08)";
+    for (let i = 0; i < 26; i++) c.fillRect((14 + (i % 13) * 0.55) * k, (12.5 + Math.floor(i / 13) * 0.5) * k, 3, 3); // SMD pads
   });
-  add(g, new THREE.PlaneGeometry(MB_W, MB_H), new THREE.MeshStandardMaterial({ map: silk, transparent: true, roughness: 0.6 }), 0, 0, 0.19);
-  const accMat = M.metal(acc, 0.35, 0.7);
-  const darkMat = M.metal(light ? "#d9dce1" : "#1a1b1e", 0.4, 0.5);
-  // rear I/O shroud + VRM heatsinks
-  add(g, RB(3.2, 13, 3.4, 0.4), accMat, fx(1.6), fy(6.5), 1.9);
-  add(g, RB(10.5, 2.8, 2.6, 0.4), accMat, fx(9.5), fy(2.2), 1.5);
-  add(g, RB(2.6, 9, 2.6, 0.4), accMat, fx(5.2), fy(8.8), 1.5);
-  // socket
-  add(g, RB(4.2, 4.2, 0.5, 0.1), M.metal("#b9bdc4", 0.25, 0.9), SOCKET.x, SOCKET.y, 0.45);
-  // RAM slots (4)
-  for (let i = 0; i < 4; i++) add(g, RB(0.55, 13.3, 0.7, 0.05, 1), darkMat, fx(18.6 + i * 0.95), fy(8.8), 0.55);
-  // 24-pin
-  add(g, RB(0.9, 5, 1.2, 0.1), darkMat, fx(23.4), fy(13), 0.8);
-  // PCIe slots
-  for (const [y, len] of [[19.5, 8.9], [27, 8.9]]) add(g, RB(len, 0.7, 0.9, 0.08, 1), M.metal(light ? "#c9ccd2" : "#3a3d43", 0.3, 0.7), fx(1 + len / 2), fy(y), 0.6);
-  // M.2 heatsinks + chipset
-  add(g, RB(11, 1.6, 0.5, 0.15), accMat, fx(8.5), fy(17.2), 0.45);
-  add(g, RB(11, 1.6, 0.5, 0.15), accMat, fx(8.5), fy(24.8), 0.45);
-  add(g, RB(5.5, 5, 1, 0.3), accMat, fx(18.5), fy(24.5), 0.65);
+  add(g, RB(MB_W, MB_H, 0.18, 0.1, 1), new THREE.MeshStandardMaterial({ map: print, roughness: 0.78, metalness: 0.1 }), 0, 0, 0.09);
+  const accMat = M.metal(acc, 0.38, 0.75);
+  const darkMat = M.metal(light ? "#d9dce1" : "#141518", 0.45, 0.5);
+  const black = M.plastic(light ? "#e4e6ea" : "#0d0e10", 0.55);
+  // rear I/O cover with an accent line
+  add(g, RB(3.4, 13, 3.6, 0.4), darkMat, fx(1.7), fy(6.5), 1.9);
+  add(g, RB(0.2, 11.5, 0.2, 0.05, 1), accMat, fx(3.45), fy(6.5), 3.3);
+  // VRM: chokes under finned heatsinks
+  const choke = M.metal("#6d7178", 0.4, 0.8);
+  for (let i = 0; i < 10; i++) add(g, RB(0.8, 0.8, 0.6, 0.08, 1), choke, fx(5.2 + i * 0.95), fy(4.4), 0.48);
+  for (let i = 0; i < 8; i++) add(g, RB(0.8, 0.8, 0.6, 0.08, 1), choke, fx(7.4), fy(5.8 + i * 0.95), 0.48);
+  finSink(g, 10.5, 2.8, 2.6, accMat, fx(9.6), fy(2.2), 0.2, "y");
+  finSink(g, 2.6, 9, 2.6, accMat, fx(5.3), fy(8.9), 0.2, "x");
+  for (let i = 0; i < 6; i++) add(g, CYL(0.28, 0.28, 0.9, 16), M.metal("#2b2d31", 0.3, 0.9), fx(9.4 + i * 0.7), fy(5.4), 0.6).rotation.x = Math.PI / 2;
+  // CPU socket with retention frame
+  add(g, RB(5.6, 5.6, 0.3, 0.15, 1), M.metal("#9ea3ab", 0.3, 0.9), SOCKET.x, SOCKET.y, 0.35);
+  add(g, RB(4.2, 4.2, 0.5, 0.1), M.metal("#b9bdc4", 0.25, 0.9), SOCKET.x, SOCKET.y, 0.5);
+  add(g, RB(0.2, 5, 0.2, 0.05, 1), M.metal("#c6cad1", 0.25, 0.9), SOCKET.x + 3.1, SOCKET.y, 0.5);
+  // RAM slots with latches
+  for (let i = 0; i < 4; i++) {
+    const x = fx(18.6 + i * 0.95);
+    add(g, RB(0.55, 13.3, 0.7, 0.05, 1), darkMat, x, fy(8.8), 0.55);
+    for (const y of [fy(2.0), fy(15.6)]) add(g, RB(0.6, 0.5, 1.1, 0.05, 1), black, x, y, 0.75);
+  }
+  // power connectors: 24-pin and 8-pin EPS
+  add(g, RB(1, 5.2, 1.3, 0.1, 1), black, fx(23.5), fy(13), 0.85);
+  add(g, RB(2.2, 1, 1.2, 0.1, 1), black, fx(2.4), fy(0.9), 0.8);
+  // PCIe: armoured main slot, plain second slot
+  add(g, RB(8.9, 0.75, 1, 0.08, 1), M.metal(light ? "#d0d3d8" : "#8c9199", 0.25, 0.9), fx(1 + 4.45), fy(19.5), 0.6);
+  add(g, RB(8.9, 0.7, 0.9, 0.08, 1), darkMat, fx(1 + 4.45), fy(27), 0.55);
+  // M.2 heatsinks with grooves, chipset cover with a badge
+  for (const y of [17.2, 24.8]) {
+    add(g, RB(11, 1.7, 0.5, 0.15), accMat, fx(8.5), fy(y), 0.45);
+    for (let k = 0; k < 3; k++) add(g, RB(10.4, 0.08, 0.06, 0.02, 1), darkMat, fx(8.5), fy(y) - 0.45 + k * 0.45, 0.72);
+  }
+  add(g, RB(5.6, 5.2, 1, 0.3), accMat, fx(18.5), fy(24.5), 0.65);
+  const badge = canvasTex(256, 256, (c, w, h) => { c.fillStyle = "#0d0e10"; c.beginPath(); c.arc(w / 2, h / 2, w / 2 - 6, 0, 7); c.fill(); c.strokeStyle = acc; c.lineWidth = 8; c.stroke(); c.fillStyle = "#e8e9ec"; c.font = "bold 46px Arial"; c.textAlign = "center"; c.fillText((spec.label || "").split(" ").pop() || "", w / 2, h / 2 + 16); });
+  add(g, new THREE.CircleGeometry(1.8, 48), new THREE.MeshStandardMaterial({ map: badge, roughness: 0.3, metalness: 0.4 }), fx(18.5), fy(24.5), 1.16);
+  // front‑panel headers + SATA
+  for (let i = 0; i < 4; i++) add(g, RB(1.4, 0.6, 0.6, 0.05, 1), black, fx(12 + i * 2.2), fy(29.8), 0.4);
+  for (let i = 0; i < 2; i++) add(g, RB(0.6, 1.2, 0.8, 0.05, 1), black, fx(23.7), fy(20 + i * 1.5), 0.5);
   return g;
 }
 
@@ -142,10 +203,14 @@ function motherboard(spec = {}) {
 function ramSticks(spec = {}, rgb) {
   const g = new THREE.Group();
   const c = spec.color || "#1d1e22";
+  const body = M.metal(c, 0.42, 0.65);
+  const edge = M.metal(shade(c, isLight(c) ? -0.12 : 0.1), 0.3, 0.8);
   for (const i of [1, 3]) {
     const x = fx(18.6 + i * 0.95);
-    add(g, RB(0.72, 13.3, 3.8, 0.15, 2), M.metal(c, 0.4, 0.6), x, fy(8.8), 2.8);
-    if (spec.rgb) add(g, RB(0.74, 13.1, 0.6, 0.1, 1), M.glow(rgb || "#ffffff", rgb ? 2.4 : 1.2), x, fy(8.8), 4.95);
+    add(g, RB(0.18, 13.3, 3.4, 0.05, 1), M.pcb("#0f3d24"), x, fy(8.8), 2.5);                      // module PCB
+    for (const s of [-1, 1]) add(g, RB(0.2, 13.3, 3.6, 0.08, 1), body, x + s * 0.24, fy(8.8), 2.7); // heat spreaders
+    add(g, RB(0.75, 13.3, 0.35, 0.1, 1), edge, x, fy(8.8), 4.45);                                   // top rail
+    if (spec.rgb) add(g, RB(0.6, 12.9, 0.55, 0.12, 1), M.glow(rgb || "#ffffff", rgb ? 2.2 : 1), x, fy(8.8), 4.85);
   }
   return g;
 }
@@ -222,23 +287,43 @@ function graphicsCard(spec = {}, rgb) {
   const L = (spec.len || 260) / 10;
   const th = (spec.slots || 2) * 2;
   const shroudCol = spec.color || "#202226";
-  add(g, RB(L, th - 0.6, 12, 0.5), M.plastic(shroudCol, 0.45), L / 2, -th / 2 - 0.1, 6.4);
-  add(g, RB(L, 0.3, 12, 0.15, 1), M.metal("#2a2c31", 0.35, 0.85), L / 2, 0.1, 6.4);
-  add(g, RB(0.15, th + 1.2, 12.8, 0.05, 1), M.metal("#b8bdc6", 0.3, 0.9), -0.1, -th / 2 + 0.3, 6.4);
-  // edge accent facing the glass
-  add(g, RB(L * 0.55, 0.45, 0.12, 0.05, 1), M.glow(rgb || "#ffffff", rgb ? 2.2 : 0.8), L * 0.55, -th * 0.45, 12.45);
-  const logo = canvasTex(512, 96, (c, w, h) => { c.fillStyle = "#e8e9ec"; c.font = "bold 58px Arial"; c.fillText(spec.label || "GEFORCE RTX", 10, 70); });
-  add(g, new THREE.PlaneGeometry(L * 0.38, L * 0.38 * 96 / 512), new THREE.MeshStandardMaterial({ map: logo, transparent: true }), L * 0.24, -th * 0.45, 12.42);
-  // fans on the underside
+  const light = isLight(shroudCol);
+  const shroud = M.plastic(shroudCol, 0.42);
+  const trim = M.metal(light ? "#c9ccd2" : "#3b3e45", 0.3, 0.85);
+  const ft = L * 0.24; // flow-through section at the end: fins visible
+  const body = L - ft;
+  // shroud
+  add(g, RB(body, th - 0.8, 12, 0.6), shroud, body / 2, -th / 2 - 0.2, 6.4);
+  // outer (glass-facing) face: sculpted trim panel + dark slot
+  add(g, RB(body - 2, th * 0.5, 0.3, 0.12, 1), trim, body / 2 + 0.4, -th * 0.42, 12.45);
+  add(g, RB(body - 4, 0.18, 0.12, 0.05, 1), M.plastic("#050506"), body / 2 + 0.6, -th * 0.72, 12.5);
+  if (rgb || light) add(g, RB(L * 0.42, 0.28, 0.12, 0.05, 1), M.glow(rgb || "#ffffff", rgb ? 2 : 0.8), body * 0.6, -th * 0.18, 12.62);
+  const logo = canvasTex(512, 96, (c, w, h) => { c.fillStyle = light ? "#2a2c31" : "#e8e9ec"; c.font = "bold 58px Arial"; c.fillText(spec.label || "GEFORCE RTX", 10, 70); });
+  add(g, new THREE.PlaneGeometry(L * 0.34, L * 0.34 * 96 / 512), new THREE.MeshStandardMaterial({ map: logo, transparent: true }), L * 0.21, -th * 0.42, 12.62);
+  // flow-through: fin stack between top and bottom frames
+  const fins = new THREE.InstancedMesh(new THREE.BoxGeometry(0.1, th - 1.4, 11.4), M.metal("#b9bec6", 0.3, 0.9), Math.floor(ft / 0.32));
+  const m4 = new THREE.Matrix4();
+  for (let i = 0; i < fins.count; i++) { m4.makeTranslation(body + 0.2 + i * 0.32, -th / 2 - 0.2, 6.4); fins.setMatrixAt(i, m4); }
+  g.add(fins);
+  add(g, RB(ft, 0.5, 12, 0.2, 1), shroud, body + ft / 2, -th + 0.45, 6.4);
+  add(g, RB(0.6, th - 0.8, 12, 0.2, 1), shroud, L - 0.3, -th / 2 - 0.2, 6.4);
+  // backplate (top) with vents over the flow-through
+  add(g, RB(L, 0.3, 12, 0.15, 1), M.metal(light ? "#d7dade" : "#1f2125", 0.35, 0.85), L / 2, 0.1, 6.4);
+  for (let i = 0; i < 6; i++) add(g, RB(0.35, 0.06, 9, 0.03, 1), M.plastic("#050506"), body + 0.8 + i * (ft - 1.6) / 5, 0.27, 6.4);
+  // PCIe bracket with vents
+  add(g, RB(0.15, th + 1.2, 12.8, 0.05, 1), M.metal("#43474e", 0.4, 0.85), -0.1, -th / 2 + 0.3, 6.4);
+  // fans underneath
   const n = spec.fans || 2;
   const fs = Math.min(9.6, (L - 2) / n - 0.4);
   for (let i = 0; i < n; i++) {
-    const f = fan(fs, { frame: shroudCol, blades: "#1a1b1f", depth: 1.2 });
+    const f = fan(fs, { frame: shroudCol, blades: light ? "#e9eaee" : "#1a1b1f", depth: 1.2 });
     f.rotation.x = Math.PI / 2;
     f.position.set(1 + (L - 2) * (i + 0.5) / n, -th + 0.1, 6.4);
     g.add(f);
   }
-  add(g, RB(2.4, 0.9, 1.6, 0.1, 1), M.plastic("#0b0c0e"), L - 4, 0.6, 6);
+  // 16-pin power socket on the outer edge
+  add(g, RB(2.2, 1, 0.9, 0.1, 1), M.plastic("#0b0c0e"), body * 0.7, -0.75, 12.5);
+  g.userData.power = new THREE.Vector3(body * 0.7, -0.75, 13);
   return g;
 }
 
@@ -264,8 +349,8 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   const g = new THREE.Group();
   const light = isLight(color);
   // satin aluminium for dark cases, powder‑coated steel for light ones
-  const shell = light ? M.metal(shade(color, -0.1), 0.45, 0.1) : M.metal(shade(color, -0.02), 0.32, 0.65);
-  const inner = light ? M.metal(shade(color, -0.16), 0.6, 0.1) : M.metal("#121317", 0.55, 0.35);
+  const shell = light ? M.metal(shade(color, -0.1), 0.45, 0.1) : M.metal(shade(color, -0.03), 0.5, 0.35);
+  const inner = light ? M.metal(shade(color, -0.16), 0.6, 0.1) : M.metal("#0f1013", 0.65, 0.25);
   const t = 0.5;
   add(g, RB(D, H, t, 0.2), inner, 0, H / 2, -W / 2 + t / 2);               // back
   add(g, RB(D, t, W, 0.25), shell, 0, H - t / 2, 0);                      // top
@@ -327,10 +412,11 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
 
 // Smoked tempered glass: dark tint, sharp reflections.
 function glassMat(light = false) {
-  return new THREE.MeshPhysicalMaterial({ color: light ? "#dbe2ec" : "#202733", transparent: true, opacity: light ? 0.12 : 0.2, roughness: 0.02, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.4, depthWrite: false });
+  return new THREE.MeshPhysicalMaterial({ color: light ? "#e6ebf2" : "#3a4250", transparent: true, opacity: light ? 0.07 : 0.1, roughness: 0.02, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.9, depthWrite: false });
 }
 
 /* ------------------------------------------------------------------ full PC */
+const sleeve = (b) => (isLight(b.caseColor || "#16171a") ? "#e9eaee" : "#17181b");
 // b = { case, caseColor, mb, cpu, ram, gpu, cooler, psu, rgb }  (each a BUILD spec object, possibly null)
 export function assemble(b) {
   const { W, H, D } = CASE;
@@ -376,6 +462,16 @@ export function assemble(b) {
     const gpu = graphicsCard({ ...b.gpu, label: b.gpuLabel }, rgb);
     gpu.position.set(-D / 2 + 1.2, mbY + PCIE_Y + 0.3, zb + 0.5);
     root.add(gpu);
+    if (b.psu) {
+      const p = gpu.userData.power.clone().add(gpu.position);
+      cable(root, [p, new THREE.Vector3(p.x, p.y + 0.3, p.z + 2.2), new THREE.Vector3(p.x + 1.5, 13.5, p.z + 1.2), new THREE.Vector3(p.x + 2.5, 10.2, zb + 3.5)], 6, new THREE.Vector3(1, 0, 0), sleeve(b), 0.15);
+    }
+  }
+  if (b.mb && b.psu) {
+    const s24 = new THREE.Vector3(mbX + fx(23.5) + 0.6, mbY + fy(13), zb + 0.9);
+    cable(root, [new THREE.Vector3(5.6, 24, zb), new THREE.Vector3(6.6, 25.5, zb + 2.6), new THREE.Vector3(6.4, s24.y, zb + 2.4), new THREE.Vector3(s24.x + 0.3, s24.y, s24.z)], 12, new THREE.Vector3(0, 1, 0), sleeve(b), 0.19);
+    const eps = new THREE.Vector3(mbX + fx(2.4), mbY + fy(0.9) + 0.6, zb + 0.9);
+    cable(root, [new THREE.Vector3(eps.x - 1, H - 1.2, zb + 0.2), new THREE.Vector3(eps.x - 0.5, H - 1.6, zb + 1.8), new THREE.Vector3(eps.x, eps.y + 0.8, zb + 1.4), eps], 8, new THREE.Vector3(1, 0, 0), sleeve(b), 0.13);
   }
   if (rgb) {
     const glowLight = new THREE.PointLight(rgb, isLight(b.caseColor || "#16171a") ? 18 : 55, 60, 1.6);
@@ -419,6 +515,8 @@ export function createViewer(container) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -432,6 +530,10 @@ export function createViewer(container) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
   const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(50, 90, 80);
+  key.castShadow = true;
+  key.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
+  Object.assign(key.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 40, far: 220 });
+  key.shadow.bias = -0.0004; key.shadow.normalBias = 0.04; key.shadow.radius = 4;
   const rim = new THREE.DirectionalLight(0x9db8ff, 2.6); rim.position.set(-70, 60, -60);
   const fill = new THREE.HemisphereLight(0xdfe6ff, 0x0b0c10, 0.35);
   scene.add(key, rim, fill);
@@ -470,10 +572,19 @@ export function createViewer(container) {
   const home = () => { camera.position.set(58, 46, 108); controls.target.set(0, 21, 0); controls.update(); };
   home();
 
-  let composer = null, bloom = null;
+  let composer = null, bloom = null, ao = null;
   try {
-    composer = new EffectComposer(renderer);
+    // multisampled target: the composer otherwise loses the canvas anti-aliasing
+    composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 }));
     composer.addPass(new RenderPass(scene, camera));
+    if (!small) {
+      // contact shadows where parts meet; see-through materials are left out of the AO depth pass
+      ao = new GTAOPass(scene, camera, 1, 1, undefined, { radius: 2.2, distanceExponent: 1.4, thickness: 1.5, scale: 1, samples: 12 });
+      ao.blendIntensity = 0.85;
+      const hide = ao.overrideVisibility.bind(ao);
+      ao.overrideVisibility = () => { hide(); scene.traverse((o) => { if (o.isMesh && (o.material.transparent || o.userData.noAO)) o.visible = false; }); };
+      composer.addPass(ao);
+    }
     bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 2.2);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
@@ -489,6 +600,13 @@ export function createViewer(container) {
   function setBuild(b) {
     if (pc) { scene.remove(pc); disposeTree(pc); spinners.clear(); }
     pc = assemble(b);
+    pc.traverse((o) => {
+      if (!o.isMesh) return;
+      const m = o.material;
+      o.castShadow = !m.transparent && !(m.emissiveIntensity > 1);
+      o.receiveShadow = !m.transparent;
+      if (!m.transparent) m.envMapIntensity = 0.6; // deeper blacks: less studio sheen on dark parts
+    });
     scene.add(pc);
   }
 
