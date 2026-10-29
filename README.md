@@ -85,7 +85,7 @@ To host on **GitHub Pages**: Settings → Pages → Deploy from branch → choos
 
 All products live in `js/products.js`. Each product has a price, optional old price (shows as a discount), stock, rating, specs and an `attrs` object that feeds the filters. Filters per category are defined in `FACETS` in the same file.
 
-**Product images** are 3D studio renders in `assets/products/<id>.webp` (800 × 600, transparent background). To use a real photo instead, replace that file or set `img` on the product:
+**Product images**: 15 products use official manufacturer photos from `assets/products/photo/` (sources in `assets/products/photo/SOURCES.md`); the rest are 3D studio renders in `assets/products/<id>.webp` (800 × 600, transparent background). Products with `reviews: 0` show “Ende pa vlerësime” instead of stars. To use a real photo instead, replace that file or set `img` on the product:
 
 ```js
 { id: "lp-x1c12", name: "Lenovo ThinkPad X1 Carbon Gen 12", img: "assets/products/lp-x1c12.jpg", ... }

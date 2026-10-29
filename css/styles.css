@@ -1200,3 +1200,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; }
 
 /* "Të gjitha kategoritë" already covers "all", so drop the duplicate link where space is tight */
 @media (max-width: 1560px) { #catNav li:first-child { display: none; } }
+
+/* Manufacturer photos: white backgrounds blend into the card */
+.media img[src*="products/photo/"]:not([src*="/photo/dark/"]) { mix-blend-mode: multiply; }
+.card__media .media img[src*="products/photo/"] { transform: none; }

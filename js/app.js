@@ -305,7 +305,7 @@
         <div class="card__body">
           <div class="card__meta">${brandMark(p.brand)}<span class="mono">${esc(p.id.toUpperCase())}</span></div>
           <h3 class="card__title" data-open="${p.id}">${esc(p.name)}</h3>
-          <div class="rating">${stars(p.rating)} <span>${rate(p.rating)} (${p.reviews})</span></div>
+          <div class="rating">${p.reviews ? `${stars(p.rating)} <span>${rate(p.rating)} (${p.reviews})</span>` : '<span class="muted">Ende pa vlerësime</span>'}</div>
           <p class="card__specs">${esc(keySpecs(p).join(" · "))}</p>
           <p class="card__desc">${esc(p.desc)}</p>
           <div class="card__price">${priceHTML(p)}</div>
@@ -863,7 +863,7 @@
         <div class="pdp__info">
           <div class="pdp__brand">${brandMark(p.brand)}<span>${esc(p.cat)}</span><span class="mono">${esc(p.id.toUpperCase())}</span></div>
           <h2>${esc(p.name)}</h2>
-          <div class="pdp__meta"><span class="rating">${stars(p.rating)} ${rate(p.rating)} · ${p.reviews} vlerësime</span>${stockLabel(p)}</div>
+          <div class="pdp__meta"><span class="rating">${p.reviews ? `${stars(p.rating)} ${rate(p.rating)} · ${p.reviews} vlerësime` : "Ende pa vlerësime"}</span>${stockLabel(p)}</div>
           <ul class="pdp__highlights">${p.specs.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
           <div class="pdp__buybox">
             <div class="pdp__price">${priceHTML(p)}${d ? `<span class="pdp__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}</div>
@@ -951,7 +951,7 @@
     const maxRating = Math.max(...ps.map((p) => p.rating));
     const rows = [
       ["Çmimi", ps.map((p) => `<span class="${p.price === minPrice ? "best" : ""}">${fmt(p.price)}</span>`), ps.map((p) => p.price)],
-      ["Vlerësimi", ps.map((p) => `<span class="${p.rating === maxRating ? "best" : ""}">${rate(p.rating)} ★</span> <span class="muted">(${p.reviews})</span>`), ps.map((p) => p.rating)],
+      ["Vlerësimi", ps.map((p) => (p.reviews ? `<span class="${p.rating === maxRating ? "best" : ""}">${rate(p.rating)} ★</span> <span class="muted">(${p.reviews})</span>` : '<span class="muted">Pa vlerësime</span>')), ps.map((p) => p.rating)],
       ["Disponueshmëria", ps.map(stockLabel), ps.map((p) => (p.stock ? (p.stock <= 5 ? 1 : 2) : 0))],
       ["Brendi", ps.map((p) => esc(p.brand)), ps.map((p) => p.brand)],
       ...(FACETS[cat] || []).map((f) => [f.label, ps.map((p) => (p.attrs[f.key] === undefined ? "—" : esc(f.fmt ? f.fmt(p.attrs[f.key]) : p.attrs[f.key]))), ps.map((p) => String(p.attrs[f.key]))]),
@@ -1456,7 +1456,7 @@
         item: {
           "@type": "Product", name: p.name, sku: p.id.toUpperCase(), brand: { "@type": "Brand", name: p.brand },
           description: p.desc, category: p.cat, url: S.siteUrl + "#" + p.id,
-          aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating, reviewCount: p.reviews },
+          ...(p.reviews ? { aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating, reviewCount: p.reviews } } : {}),
           offers: { "@type": "Offer", price: p.price.toFixed(2), priceCurrency: S.currency, availability: p.stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" },
         },
       })),
