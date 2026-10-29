@@ -10,6 +10,11 @@ import * as THREE from "./vendor/three.module.min.js";
 import { OrbitControls } from "./vendor/addons/OrbitControls.js";
 import { RoundedBoxGeometry } from "./vendor/addons/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "./vendor/addons/RoomEnvironment.js";
+import { Reflector } from "./vendor/addons/objects/Reflector.js";
+import { EffectComposer } from "./vendor/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "./vendor/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "./vendor/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "./vendor/addons/postprocessing/OutputPass.js";
 
 /* ------------------------------------------------------------------ helpers */
 const RB = (w, h, d, r = 0.3, s = 3) => new RoundedBoxGeometry(w, h, d, s, Math.max(0.001, Math.min(r, w / 2 - 0.001, h / 2 - 0.001, d / 2 - 0.001)));
@@ -21,7 +26,8 @@ const shade = (c, amt) => { const k = col(c); const hsl = {}; k.getHSL(hsl); k.s
 const M = {
   metal: (c, rough = 0.35, metal = 0.8) => new THREE.MeshStandardMaterial({ color: c, roughness: rough, metalness: metal }),
   plastic: (c, rough = 0.55) => new THREE.MeshStandardMaterial({ color: c, roughness: rough, metalness: 0.05 }),
-  glow: (c, i = 2.2) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: i, roughness: 0.4 }),
+  // emissive is pushed well above 1 so only real lights cross the bloom threshold
+  glow: (c, i = 2.2) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: i * 1.8, roughness: 0.4 }),
   pcb: (c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.6, metalness: 0.15 }),
 };
 
@@ -99,8 +105,15 @@ function motherboard(spec = {}) {
   add(g, RB(MB_W, MB_H, 0.18, 0.1, 1), M.pcb(pcbCol), 0, 0, 0.09);
   // fine silk-screen detail
   const silk = canvasTex(512, 640, (c, w, h) => {
-    c.strokeStyle = light ? "rgba(0,0,0,.08)" : "rgba(255,255,255,.06)"; c.lineWidth = 2;
-    for (let i = 0; i < 40; i++) { c.beginPath(); c.moveTo(Math.random() * w, Math.random() * h); c.lineTo(Math.random() * w, Math.random() * h); c.stroke(); }
+    // tidy circuit traces: short orthogonal runs, like real PCB routing
+    c.strokeStyle = light ? "rgba(0,0,0,.07)" : "rgba(255,255,255,.05)"; c.lineWidth = 2;
+    let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < 70; i++) {
+      let x = Math.round(rnd() * w / 16) * 16, y = Math.round(rnd() * h / 16) * 16;
+      c.beginPath(); c.moveTo(x, y);
+      for (let k = 0; k < 3; k++) { if (k % 2) y += (rnd() - 0.5) * 120; else x += (rnd() - 0.5) * 120; c.lineTo(x, y); }
+      c.stroke();
+    }
     c.fillStyle = light ? "rgba(0,0,0,.25)" : "rgba(255,255,255,.22)"; c.font = "bold 30px Arial"; c.fillText(spec.label || "", 40, h - 60);
   });
   add(g, new THREE.PlaneGeometry(MB_W, MB_H), new THREE.MeshStandardMaterial({ map: silk, transparent: true, roughness: 0.6 }), 0, 0, 0.19);
@@ -250,8 +263,9 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   const { W, H, D } = CASE;
   const g = new THREE.Group();
   const light = isLight(color);
-  const shell = M.metal(color, light ? 0.45 : 0.5, light ? 0.2 : 0.45);
-  const inner = M.metal(shade(color, light ? -0.06 : 0.04), 0.7, 0.2);
+  // satin aluminium for dark cases, powder‑coated steel for light ones
+  const shell = light ? M.metal(shade(color, -0.1), 0.45, 0.1) : M.metal(shade(color, -0.02), 0.32, 0.65);
+  const inner = light ? M.metal(shade(color, -0.16), 0.6, 0.1) : M.metal("#121317", 0.55, 0.35);
   const t = 0.5;
   add(g, RB(D, H, t, 0.2), inner, 0, H / 2, -W / 2 + t / 2);               // back
   add(g, RB(D, t, W, 0.25), shell, 0, H - t / 2, 0);                      // top
@@ -268,7 +282,7 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   // front panel
   const front = spec.front || "mesh";
   if (front === "glass") {
-    add(g, RB(0.4, H - 1, W - 0.6, 0.1), glassMat(), D / 2 - 0.2, H / 2, 0);
+    add(g, RB(0.4, H - 1, W - 0.6, 0.1), glassMat(light), D / 2 - 0.2, H / 2, 0);
     add(g, RB(1, H, 1, 0.2), shell, D / 2 - 0.5, H / 2, -W / 2 + 0.5);
     add(g, RB(1, H, 1, 0.2), shell, D / 2 - 0.5, H / 2, W / 2 - 0.5);
   } else if (front === "wood") {
@@ -286,7 +300,7 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
     add(g, new THREE.PlaneGeometry(W - 3, H - 3), new THREE.MeshStandardMaterial({ map: pat, roughness: 0.75, metalness: 0.2 }), D / 2 + 0.02, H / 2, 0).rotation.y = Math.PI / 2;
   }
   // glass side panel + frame
-  add(g, RB(D - 0.6, H - 0.6, 0.35, 0.15, 1), glassMat(), 0, H / 2, W / 2 - 0.2);
+  add(g, RB(D - 0.6, H - 0.6, 0.35, 0.15, 1), glassMat(light), 0, H / 2, W / 2 - 0.2);
   for (const [w, h, x, y] of [[D, 0.9, 0, H - 0.45], [D, 0.9, 0, 0.45], [0.9, H, -D / 2 + 0.45, H / 2], [0.9, H, D / 2 - 0.45, H / 2]]) add(g, RB(w, h, 0.5, 0.15, 1), shell, x, y, W / 2 - 0.25);
 
   // PSU shroud
@@ -311,8 +325,9 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   return g;
 }
 
-function glassMat() {
-  return new THREE.MeshPhysicalMaterial({ color: "#a9b4c4", transparent: true, opacity: 0.14, roughness: 0.04, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, depthWrite: false });
+// Smoked tempered glass: dark tint, sharp reflections.
+function glassMat(light = false) {
+  return new THREE.MeshPhysicalMaterial({ color: light ? "#dbe2ec" : "#202733", transparent: true, opacity: light ? 0.12 : 0.2, roughness: 0.02, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.4, depthWrite: false });
 }
 
 /* ------------------------------------------------------------------ full PC */
@@ -363,7 +378,7 @@ export function assemble(b) {
     root.add(gpu);
   }
   if (rgb) {
-    const glowLight = new THREE.PointLight(rgb, 60, 60, 1.6);
+    const glowLight = new THREE.PointLight(rgb, isLight(b.caseColor || "#16171a") ? 18 : 55, 60, 1.6);
     glowLight.position.set(0, 26, 4);
     root.add(glowLight);
   }
@@ -395,26 +410,52 @@ export function buildPart(kind, spec = {}, rgb = null) {
 }
 
 /* ------------------------------------------------------------------ viewer */
+// Dark product studio: graded backdrop, glossy reflective floor, key + rim lights,
+// and bloom so RGB lighting glows like it does in a real build.
 export function createViewer(container) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const small = (container.clientWidth || innerWidth) < 760;
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
+  const backdrop = canvasTex(1024, 1024, (c, w, h) => {
+    const g = c.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.5, w * 0.75);
+    g.addColorStop(0, "#2a2e37"); g.addColorStop(0.45, "#15171c"); g.addColorStop(1, "#060709");
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+  });
+  scene.background = backdrop;
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
-  const key = new THREE.DirectionalLight(0xffffff, 1.6);
-  key.position.set(40, 80, 60);
-  scene.add(key, new THREE.HemisphereLight(0xffffff, 0x8a93a3, 0.6));
 
-  // soft floor shadow
-  const shadowTex = canvasTex(256, 256, (c, w, h) => { const g = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); g.addColorStop(0, "rgba(0,0,0,.45)"); g.addColorStop(0.6, "rgba(0,0,0,.12)"); g.addColorStop(1, "rgba(0,0,0,0)"); c.fillStyle = g; c.fillRect(0, 0, w, h); });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 50), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
-  floor.rotation.x = -Math.PI / 2; floor.position.y = -1.2;
-  scene.add(floor);
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(50, 90, 80);
+  const rim = new THREE.DirectionalLight(0x9db8ff, 2.6); rim.position.set(-70, 60, -60);
+  const fill = new THREE.HemisphereLight(0xdfe6ff, 0x0b0c10, 0.35);
+  scene.add(key, rim, fill);
+
+  // glossy floor: a real reflection, faded into the backdrop at the edges
+  const mirror = new Reflector(new THREE.CircleGeometry(160, 64), {
+    textureWidth: Math.round((container.clientWidth || 800) * 0.6),
+    textureHeight: Math.round((container.clientHeight || 600) * 0.6),
+    color: 0x6b7280,
+  });
+  mirror.rotation.x = -Math.PI / 2; mirror.position.y = -1.15;
+  scene.add(mirror);
+  const veilTex = canvasTex(512, 512, (c, w, h) => {
+    const g = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    g.addColorStop(0, "rgba(9,10,13,.62)"); g.addColorStop(0.35, "rgba(9,10,13,.8)"); g.addColorStop(0.75, "rgba(7,8,10,.98)"); g.addColorStop(1, "rgba(6,7,9,1)");
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+  });
+  const veil = new THREE.Mesh(new THREE.CircleGeometry(160, 64), new THREE.MeshBasicMaterial({ map: veilTex, transparent: true, depthWrite: false }));
+  veil.rotation.x = -Math.PI / 2; veil.position.y = -1.1;
+  scene.add(veil);
+  const contactTex = canvasTex(256, 256, (c, w, h) => { const g = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); g.addColorStop(0, "rgba(0,0,0,.75)"); g.addColorStop(0.7, "rgba(0,0,0,.25)"); g.addColorStop(1, "rgba(0,0,0,0)"); c.fillStyle = g; c.fillRect(0, 0, w, h); });
+  const contact = new THREE.Mesh(new THREE.PlaneGeometry(64, 40), new THREE.MeshBasicMaterial({ map: contactTex, transparent: true, depthWrite: false }));
+  contact.rotation.x = -Math.PI / 2; contact.position.y = -1.05;
+  scene.add(contact);
 
   const camera = new THREE.PerspectiveCamera(30, 1, 1, 2000);
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -424,10 +465,19 @@ export function createViewer(container) {
   controls.minDistance = 60;
   controls.maxDistance = 170;
   controls.minPolarAngle = 0.25;
-  controls.maxPolarAngle = Math.PI / 2 + 0.05;
+  controls.maxPolarAngle = Math.PI / 2 - 0.04;
   controls.autoRotateSpeed = 0.8;
-  const home = () => { camera.position.set(58, 52, 104); controls.target.set(0, 22, 0); controls.update(); };
+  const home = () => { camera.position.set(58, 46, 108); controls.target.set(0, 21, 0); controls.update(); };
   home();
+
+  let composer = null, bloom = null;
+  try {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 2.2);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+  } catch (e) { composer = null; }
 
   let pc = null;
   function disposeTree(o) {
@@ -445,6 +495,7 @@ export function createViewer(container) {
   function resize() {
     const w = container.clientWidth || 1, h = container.clientHeight || 1;
     renderer.setSize(w, h, false);
+    if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
     camera.fov = w < 520 ? 38 : 30;
     camera.updateProjectionMatrix();
@@ -460,7 +511,7 @@ export function createViewer(container) {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (!reduce) spinners.forEach((r) => { r.rotation.z += dt * 9; });
     controls.update();
-    renderer.render(scene, camera);
+    if (composer) composer.render(); else renderer.render(scene, camera);
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
@@ -469,9 +520,9 @@ export function createViewer(container) {
     setBuild,
     setAutoRotate(v) { controls.autoRotate = !!v && !reduce; },
     resetView: home,
-    snapshot: () => renderer.domElement.toDataURL("image/png"),
+    snapshot: () => renderer.domElement.toDataURL("image/jpeg", 0.85),
     pause() { running = false; },
     resume() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(loop); } },
-    dispose() { running = false; ro.disconnect(); controls.dispose(); if (pc) disposeTree(pc); renderer.dispose(); renderer.domElement.remove(); },
+    dispose() { running = false; ro.disconnect(); controls.dispose(); if (pc) disposeTree(pc); composer?.dispose?.(); renderer.dispose(); renderer.domElement.remove(); },
   };
 }

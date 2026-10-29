@@ -2,12 +2,12 @@
 
 A fast, dependency‑free storefront for IT equipment: laptops, desktops, monitors, tablets, networking, storage, peripherals, components, printers, servers and UPS.
 
-The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The design follows big electronics retailers (Best Buy, Gjirafa50, Foleja): navy store header with a category search bar, category sidebar beside a banner carousel, deal and product shelves of white cards with orange "add to cart" buttons, a brand grid and a dark footer.
+The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The layout follows big electronics retailers (Best Buy, Gjirafa50, Foleja): store header with a category search bar, category sidebar beside a banner carousel, deal and product shelves, a brand grid and a footer. The finish is quiet and premium: neutral greys and near-black, one blue accent (`#0a6cdf`), the Manrope typeface, borderless cards with soft shadows, monochrome brand logos and a dark studio for the PC builder.
 
 ## Features
 
 **Shopping**
-- Marketplace home page: hero slider, promo tiles, shop by category, deals of the day with a countdown, top brands
+- Marketplace home page: hero slider, promo tiles, shop by category, weekly deals, top brands
 - Mega menu ("Categories") with quick links such as *Laptops → Gaming* or *Monitors → 27"*
 - Instant search suggestions with highlighted matches, category shortcuts and keyboard navigation (press `/` to focus)
 - Product page with buy box, instalment price, delivery date estimate, specification table and similar products
@@ -33,7 +33,7 @@ Responsive down to small phones, keyboard accessible, respects reduced motion.
 
 A 3D configurator at `#builder` (menu button **Ndërto PC**, home banner, or `index.html#builder`).
 
-- **Live 3D model** (three.js, `js/pc3d.js`): the case with glass side panel, motherboard, RAM, graphics card, air or liquid CPU cooler, fans and PSU shroud. Drag to rotate, scroll or pinch to zoom, optional auto-rotate. Four case styles (mesh, glass, wood, perforated), case colour, and an RGB lighting colour that lights fans, RAM, pump and GPU.
+- **Live 3D model** (three.js, `js/pc3d.js`), shown in a dark studio with a reflective floor, soft bloom on the RGB lighting and ACES tone mapping: the case with glass side panel, motherboard, RAM, graphics card, air or liquid CPU cooler, fans and PSU shroud. Drag to rotate, scroll or pinch to zoom, optional auto-rotate. Four case styles (mesh, glass, wood, perforated), case colour, and an RGB lighting colour that lights fans, RAM, pump and GPU.
 - **Parts**: CPU, motherboard, RAM, GPU, cooler, SSD, PSU, case, from the real catalogue (`window.BUILD_SPECS` in `js/products.js` holds the technical data: socket, RAM type, GPU length, cooler height, radiator sizes, wattage).
 - **Compatibility checks**: CPU/motherboard socket, RAM type, GPU length vs case, cooler height or radiator size vs case, PSU wattage (estimated draw × 1.2 minimum, × 1.4 recommended). When a choice clashes, the other part is swapped automatically for the closest-priced one that fits; PSUs that are too weak are blocked.
 - **Presets**: Gaming 1080p, Gaming 1440p, 4K dhe krijues.

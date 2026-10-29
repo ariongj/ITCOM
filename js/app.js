@@ -382,9 +382,9 @@
 
   /* ================================================================ ballina */
   const SLIDES = [
-    { id: "lp-mba13m4", label: "E re", title: "MacBook Air 13\" me çipin M4", text: "16 GB memorie, deri në 18 orë bateri. Tani në stok, me dërgesë falas.", bg: "linear-gradient(110deg, #0a2a6b 0%, #1450c8 100%)" },
-    { id: "mn-g5", label: "Ofertë", title: "Monitorë gaming deri në −17%", text: "Samsung Odyssey G5 27\" QHD 165 Hz, vetëm këtë javë.", bg: "linear-gradient(110deg, #3b0a14 0%, #c8102e 100%)" },
-    { id: "lp-e14g6", label: "Për zyrë", title: "Laptopë biznesi nga 529 €", text: "ThinkPad, EliteBook dhe Latitude me Windows 11 Pro dhe garanci 24 muaj.", bg: "linear-gradient(110deg, #10213f 0%, #2d4f8a 100%)" },
+    { id: "lp-mba13m4", label: "E re", title: "MacBook Air 13\" me çipin M4", text: "16 GB memorie, deri në 18 orë bateri. Tani në stok, me dërgesë falas.", bg: "radial-gradient(90% 120% at 75% 50%, #1d2230 0%, #0b0c0f 70%)" },
+    { id: "mn-g5", label: "Në zbritje", title: "Samsung Odyssey G5 27\" QHD", text: "165 Hz, 1 ms dhe ngjyra të gjalla për lojëra dhe punë.", bg: "radial-gradient(90% 120% at 75% 50%, #262029 0%, #0b0c0f 70%)" },
+    { id: "lp-e14g6", label: "Për zyrë", title: "Laptopë biznesi nga 529 €", text: "ThinkPad, EliteBook dhe Latitude me Windows 11 Pro dhe garanci 24 muaj.", bg: "radial-gradient(90% 120% at 75% 50%, #1e2428 0%, #0b0c0f 70%)" },
   ];
   let slide = 0, slideTimer;
   const SLIDE_MS = 6000;
@@ -398,14 +398,13 @@
           <span class="slide__label">${esc(s.label)}</span>
           <h2>${esc(s.title)}</h2>
           <p>${esc(s.text)}</p>
-          <div class="slide__price"><b>${fmt(p.price)}</b>${p.old ? `<s>${fmt(p.old)}</s>` : ""}<small>${inst(p)}</small></div>
+          <div class="slide__price"><b>${fmt(p.price)}</b>${p.old ? `<s>${fmt(p.old)}</s><span class="slide__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}<small>${inst(p)}</small></div>
           <div class="slide__cta">
-            <button type="button" class="btn btn--cta btn--lg" data-add="${p.id}">${svg(ICON.cart)} Shto në shportë</button>
+            <button type="button" class="btn btn--cta btn--lg" data-add="${p.id}">Shto në shportë</button>
             <button type="button" class="btn btn--ghost btn--lg" data-open="${p.id}">Shiko detajet</button>
           </div>
         </div>
         <div class="slide__art" data-open="${p.id}">
-          ${d ? `<span class="slide__sticker"><span><b>−${d}%</b><small>zbritje</small></span></span>` : ""}
           <img src="${esc(imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${i ? 'loading="lazy"' : ""} />
         </div>
       </div>`;
@@ -498,6 +497,7 @@
   }
 
   function tickCountdown() {
+    if (!$("#cdH")) return;
     const now = new Date();
     const end = new Date(now); end.setHours(24, 0, 0, 0);
     let s = Math.max(0, Math.floor((end - now) / 1000));
