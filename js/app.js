@@ -6,7 +6,7 @@
   const CATS = window.CATEGORIES;
   const FACETS = window.FACETS;
   const PRODUCTS = window.PRODUCTS;
-  const byId = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
+  const byId = Object.fromEntries([...PRODUCTS, ...(window.SERVICES || [])].map((p) => [p.id, p]));
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -414,10 +414,14 @@
     goSlide(0);
 
     const PROMOS = [
-      { small: "Rrjeti", title: "Wi‑Fi 7 për shtëpi dhe zyrë", link: "Shiko produktet", art: "nw-u7pro", key: "wifi7", bg: "#eaf1ff" },
+      { small: "Rrjeti me kabllo", title: "Switch dhe PoE për zyrën", link: "Shiko switch‑et", photo: "network-switch", alt: "Switch rrjeti me kabllo Ethernet të lidhura", key: "switches" },
       { small: "Për lojëra", title: "Laptopë gaming me RTX", link: "Shiko laptopët", art: "lp-legion5", key: "gaming", bg: "#fff2e6" },
     ];
-    $("#promos").innerHTML = PROMOS.map((pr) => `
+    $("#promos").innerHTML = PROMOS.map((pr) => pr.photo ? `
+      <button type="button" class="promo promo--photo" data-promo="${pr.key}">
+        <picture class="promo__photo"><source type="image/webp" srcset="assets/photos/${pr.photo}-800.webp" /><img src="assets/photos/${pr.photo}-1600.jpg" alt="${esc(pr.alt)}" width="800" height="533" loading="lazy" decoding="async" /></picture>
+        <span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${esc(pr.title)}</span><span class="promo__link">${esc(pr.link)}</span>
+      </button>` : `
       <button type="button" class="promo" data-promo="${pr.key}" style="--pbg:${pr.bg}">
         <span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${esc(pr.title)}</span><span class="promo__link">${esc(pr.link)}</span>
         <span class="promo__art"><img src="${esc(imgSrc(byId[pr.art]))}" alt="" data-pid="${pr.art}" loading="lazy" /></span>
@@ -702,7 +706,8 @@
   modal.addEventListener("close", () => setHash(""));
   function route() {
     const h = location.hash.slice(1);
-    if (byId[h]) openProduct(h);
+    if (h === "builder") window.ITCOM.openBuilder?.();
+    else if (byId[h]) openProduct(h);
     else if (h.startsWith("info-") && INFO[h.slice(5)]) openInfo(h.slice(5));
   }
   window.addEventListener("hashchange", route);
@@ -994,7 +999,8 @@
   function openCheckout() {
     if (!cart.length) return;
     closeCart();
-    const draft = saved.get("checkout", {});
+    const me = Account.user();
+    const draft = Object.assign(me ? { name: me.name, email: me.email } : {}, saved.get("checkout", {}));
     const f = (id, label, type = "text", extra = "", cls = "") => `
       <label class="field ${cls}" for="co-${id}">${label}
         <input id="co-${id}" name="${id}" type="${type}" value="${esc(draft[id] || "")}" ${extra} />
@@ -1127,9 +1133,121 @@
   }
   function bump(sel) { const el = $(sel); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
 
+  /* ================================================================ llogaria */
+  // Llogaritë ruhen në këtë shfletues (dyqan demo, pa server). Fjalëkalimi ruhet vetëm si hash SHA‑256.
+  const Account = (() => {
+    let users = saved.get("users", {});
+    let session = saved.get("session", null);
+    let after = null;
+    const persist = () => { saved.set("users", users); saved.set("session", session); renderAccountBtn(); };
+    async function hash(email, pw) {
+      const data = `${email.toLowerCase()}|${pw}`;
+      try {
+        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(data));
+        return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+      } catch { let h = 0; for (const ch of data) h = (h * 31 + ch.charCodeAt(0)) | 0; return "x" + h; }
+    }
+    const user = () => (session && users[session]) || null;
+    return {
+      user,
+      builds: () => user()?.builds || [],
+      async register(name, email, pw) {
+        email = email.trim().toLowerCase();
+        if (name.trim().length < 2) return "Shkruani emrin tuaj.";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Shkruani një email të vlefshëm, p.sh. emri@shembull.com.";
+        if (pw.length < 6) return "Fjalëkalimi duhet të ketë të paktën 6 karaktere.";
+        if (users[email]) return "Ky email ka tashmë llogari. Hyni me të.";
+        users[email] = { name: name.trim(), email, hash: await hash(email, pw), builds: [], created: Date.now() };
+        session = email; persist(); return null;
+      },
+      async login(email, pw) {
+        email = email.trim().toLowerCase();
+        const u = users[email];
+        if (!u || u.hash !== (await hash(email, pw))) return "Email‑i ose fjalëkalimi nuk është i saktë.";
+        session = email; persist(); return null;
+      },
+      logout() { session = null; persist(); },
+      saveBuild(b) { const u = user(); if (!u) return false; u.builds = [b, ...(u.builds || [])].slice(0, 20); persist(); return true; },
+      deleteBuild(id) { const u = user(); if (!u) return; u.builds = (u.builds || []).filter((b) => b.id !== id); persist(); },
+      require(msg, cb) { if (user()) cb(); else { after = cb; openAccount(msg); } },
+      takeAfter() { const f = after; after = null; return f; },
+    };
+  })();
+
+  function renderAccountBtn() {
+    const u = Account.user();
+    const lbl = $("#accountLabel");
+    if (lbl) lbl.innerHTML = u ? `<small>Përshëndetje,</small><b>${esc(u.name.split(" ")[0])}</b>` : `<small>Llogaria</small><b>Hyr</b>`;
+  }
+
+  function openAccount(msg = "") {
+    const u = Account.user();
+    if (u) {
+      const builds = Account.builds();
+      openModal(`
+        <div class="acct">
+          <div class="acct__head"><span class="acct__avatar">${esc(u.name.charAt(0).toUpperCase())}</span><div><h2>${esc(u.name)}</h2><span class="muted">${esc(u.email)}</span></div><button type="button" class="btn btn--ghost" id="acctLogout">Dil</button></div>
+          <div class="acct__section"><h3>Konfigurimet e mia të PC‑së</h3><button type="button" class="btn btn--cta" data-builder>${svg('<path d="M12 5v14M5 12h14"/>')}Ndërto PC të re</button></div>
+          ${builds.length ? `<div class="acct__builds">${builds.map((b) => `
+            <article class="bcard">
+              <div class="bcard__img">${b.thumb ? `<img src="${b.thumb}" alt="" />` : svg('<rect x="6" y="2" width="12" height="20" rx="2"/>', "icon icon--xl")}</div>
+              <div class="bcard__body"><b>${esc(b.name)}</b><small>${new Date(b.date).toLocaleDateString(S.locale)} · ${Object.keys(b.parts).length} pjesë</small>
+                <ul>${Object.values(b.parts).slice(0, 4).map((id) => byId[id] ? `<li>${esc(byId[id].name)}</li>` : "").join("")}</ul>
+                <span class="price">${fmt(b.total)}</span></div>
+              <div class="bcard__actions">
+                <button type="button" class="btn btn--primary" data-build-open="${b.id}">Hap në ndërtues</button>
+                <button type="button" class="btn btn--cta" data-build-cart="${b.id}">${svg(ICON.cart)}Shto në shportë</button>
+                <button type="button" class="link-btn" data-build-del="${b.id}">Fshi</button>
+              </div>
+            </article>`).join("")}</div>`
+            : `<div class="empty">${svg('<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 6h6M9 9h6"/>', "icon icon--xl")}<h3>Ende nuk keni konfigurime të ruajtura</h3><p class="muted">Ndërtoni PC‑në tuaj në 3D dhe ruajeni këtu për më vonë.</p></div>`}
+          <p class="acct__note muted">Kjo është një llogari demo: të dhënat ruhen vetëm në këtë shfletues.</p>
+        </div>`, "modal--account");
+      $("#acctLogout").onclick = () => { Account.logout(); closeModal(); toast("Dolët nga llogaria."); };
+      return;
+    }
+    const form = (mode) => `
+      <form class="auth__form" data-mode="${mode}" novalidate>
+        ${mode === "register" ? `<label class="field" for="auName">Emri dhe mbiemri<input id="auName" type="text" autocomplete="name" /></label>` : ""}
+        <label class="field" for="auEmail">Email‑i<input id="auEmail" type="email" autocomplete="email" /></label>
+        <label class="field" for="auPw">Fjalëkalimi<input id="auPw" type="password" autocomplete="${mode === "register" ? "new-password" : "current-password"}" /></label>
+        <p class="auth__err" id="auErr" role="alert"></p>
+        <button class="btn btn--cta btn--block btn--lg" type="submit">${mode === "register" ? "Krijo llogarinë" : "Hyr"}</button>
+      </form>`;
+    const show = (mode) => {
+      openModal(`
+        <div class="auth">
+          <h2>${mode === "register" ? "Krijo llogari" : "Hyr në llogari"}</h2>
+          ${msg ? `<p class="auth__msg">${esc(msg)}</p>` : ""}
+          <div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="${mode === "login"}" data-auth="login">Hyr</button><button type="button" role="tab" aria-selected="${mode === "register"}" data-auth="register">Krijo llogari</button></div>
+          ${form(mode)}
+          <p class="muted acct__note">Me llogari ruani konfigurimet e PC‑së dhe plotësoni porosinë më shpejt. Llogaria demo ruhet vetëm në këtë shfletues.</p>
+        </div>`, "modal--info");
+      $$("[data-auth]", modal).forEach((b) => b.addEventListener("click", () => show(b.dataset.auth)));
+      const f = $(".auth__form", modal);
+      f.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const err = mode === "register" ? await Account.register($("#auName").value, $("#auEmail").value, $("#auPw").value) : await Account.login($("#auEmail").value, $("#auPw").value);
+        if (err) { $("#auErr").textContent = err; return; }
+        closeModal();
+        toast(`Mirë se erdhët, <b>${esc(Account.user().name.split(" ")[0])}</b>!`);
+        Account.takeAfter()?.();
+      });
+      (mode === "register" ? $("#auName") : $("#auEmail")).focus();
+    };
+    show("login");
+  }
+
+  // API për ndërtuesin e PC‑së (js/builder.js)
+  window.ITCOM = Object.assign(window.ITCOM || {}, {
+    $, $$, fmt, fmt0, esc, svg, ICON, byId, media, imgSrc, brandMark, saved, toast,
+    openModal, closeModal, openCart, addToCart, openAccount,
+    account: Account,
+  });
+
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-all-brands],[data-bestsellers]");
+    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-all-brands],[data-bestsellers],[data-builder],[data-account],[data-build-open],[data-build-cart],[data-build-del]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
     if (!t) return;
@@ -1147,6 +1265,7 @@
     else if ("deals" in d) { resetFilters(); state.onSale = true; state.sort = "discount"; render(); goCatalog(); }
     else if (d.promo) {
       if (d.promo === "wifi7") { resetFilters("Rrjeti"); state.f.wifi = new Set(["Wi‑Fi 7"]); }
+      else if (d.promo === "switches") { resetFilters("Rrjeti"); state.f.type = new Set(["Switch"]); }
       else if (d.promo === "gaming") { resetFilters("Laptopë"); state.f.type = new Set(["Gaming"]); }
       else { resetFilters("Ruajtja e të dhënave"); state.onSale = true; state.sort = "discount"; }
       render(); goCatalog();
@@ -1159,6 +1278,11 @@
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
     else if (d.info) openInfo(d.info);
+    else if ("builder" in d) window.ITCOM.openBuilder?.();
+    else if ("account" in d) openAccount();
+    else if (d.buildOpen) { const b = Account.builds().find((x) => x.id === d.buildOpen); if (b) window.ITCOM.openBuilder?.(b); }
+    else if (d.buildCart) { const b = Account.builds().find((x) => x.id === d.buildCart); if (b) { let n = 0; for (const id of [...Object.values(b.parts), ...(b.assembly ? ["srv-assembly"] : [])]) if (addToCart(id, 1, true)) n++; closeModal(); toast(`U shtuan ${n} artikuj nga “${esc(b.name)}”`, { label: "Shiko shportën", fn: openCart }); } }
+    else if (d.buildDel) { Account.deleteBuild(d.buildDel); openAccount(); }
     else if (d.slideDir) { goSlide(slide + Number(d.slideDir)); autoSlide(); }
     else if ("bestsellers" in d) { resetFilters(); state.sort = "reviews"; render(); goCatalog(); }
     else if ("allBrands" in d) { resetFilters(); expandedFacets.add("brand"); closedFacets.delete("brand"); render(); goCatalog(); }
@@ -1246,6 +1370,7 @@
   $("#applyFilters").addEventListener("click", () => { closeFilters(); goCatalog(); });
   $("#cartBtn").addEventListener("click", openCart);
   $("#wishlistBtn").addEventListener("click", openWishlist);
+  $("#accountBtn").addEventListener("click", () => openAccount());
   $("#compareBtn").addEventListener("click", () => openCompare());
   $("#cmpOpen").addEventListener("click", () => openCompare());
   $("#cmpClear").addEventListener("click", () => { compare = []; saveCompare(); });
@@ -1313,6 +1438,7 @@
   render();
   renderCart();
   renderWishCount();
+  renderAccountBtn();
   renderTray();
   tickCountdown();
   setInterval(tickCountdown, 1000);

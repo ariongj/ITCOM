@@ -62,6 +62,10 @@
         </div>
 
         <nav class="header__actions" aria-label="Shkurtesat">
+          <button class="hbtn" id="accountBtn" aria-label="Llogaria ime">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            <span class="hbtn__label" id="accountLabel"><small>Llogaria</small><b>Hyr</b></span>
+          </button>
           <button class="hbtn" id="compareBtn" aria-label="Krahaso produktet">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 12l4 4-4 4M21 16H7"/></svg>
             <span class="hbtn__label">Krahaso</span>
@@ -88,6 +92,10 @@
           <span>Të gjitha kategoritë</span>
         </button>
         <ul id="catNav"></ul>
+        <button class="navbar__builder" data-builder>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 6h6M9 9h6"/><circle cx="12" cy="16" r="2"/></svg>
+          Ndërto PC
+        </button>
         <button class="navbar__deals" data-deals>
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
           Ofertat
@@ -123,6 +131,24 @@
         <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><div><b>Kthim 14 ditë</b><span>Pa pyetje</span></div></li>
         <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 4.5 3h15L21 9M3 9v12h18V9M3 9h18M9 21v-6h6v6"/></svg><div><b>Marrje në dyqan</b><span>Falas, gati për 2 orë</span></div></li>
       </ul>
+    </section>
+
+    <section class="container" aria-labelledby="pcbTitle">
+      <div class="pcb-banner">
+        <picture class="pcb-banner__photo">
+          <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 1400px" />
+          <img src="assets/photos/gaming-1600.jpg" alt="Kompjuter gaming me monitor dhe ndriçim RGB" width="1600" height="1065" loading="lazy" decoding="async" />
+        </picture>
+        <div class="pcb-banner__copy">
+          <span class="pcb-banner__tag">E re · Konfiguruesi 3D</span>
+          <h2 id="pcbTitle">Ndërto PC‑në tënde dhe shikoje në 3D</h2>
+          <p>Zgjidh procesorin, kartelën grafike, ftohësin, kasën dhe ngjyrën e ndriçimit RGB. Kontrollojmë përputhshmërinë dhe fuqinë automatikisht, dhe ta montojmë ne.</p>
+          <ul class="pcb-banner__points">
+            <li>Pamje 3D që rrotullohet</li><li>Kontroll i përputhshmërisë</li><li>Ruaje te llogaria jote</li>
+          </ul>
+          <button class="btn btn--cta btn--lg" data-builder>Fillo ndërtimin</button>
+        </div>
+      </div>
     </section>
 
     <section class="container shelf shelf--deals" id="deals" aria-labelledby="dealsTitle">
@@ -225,16 +251,20 @@
 
     <section class="container b2b" aria-labelledby="b2bTitle">
       <div class="b2b__card">
-        <div>
+        <picture class="b2b__photo">
+          <source type="image/webp" srcset="assets/photos/workspace-800.webp 800w, assets/photos/workspace-1600.webp 1600w" sizes="(max-width: 1024px) 100vw, 560px" />
+          <img src="assets/photos/workspace-1600.jpg" alt="Hapësirë pune me laptop dhe tavolinë ergonomike" width="1600" height="1067" loading="lazy" decoding="async" />
+        </picture>
+        <div class="b2b__copy">
           <span class="b2b__eyebrow">ITCOM Business</span>
           <h2 id="b2bTitle">Blerje për kompani dhe institucione</h2>
           <p>Çmime për sasi, faturë me TVSH, pagesë me transfertë dhe instalim në vend. Merrni ofertë brenda një dite pune.</p>
-        </div>
         <form class="b2b__form" id="b2bForm" novalidate>
           <label class="sr-only" for="b2bEmail">Email-i i punës</label>
           <input id="b2bEmail" type="email" placeholder="ju@kompania.com" required />
           <button class="btn btn--cta" type="submit">Kërkoni ofertë</button>
         </form>
+        </div>
       </div>
     </section>
   </main>
@@ -270,10 +300,48 @@
       </div>
     </div>
     <div class="container footer__bottom">
-      <span>© <span id="year"></span> ITCOM. Të gjitha të drejtat e rezervuara.</span>
+      <span>© <span id="year"></span> ITCOM. Të gjitha të drejtat e rezervuara. <span class="credits">Foto banerësh: ELLA DON, User_Pascal, ergonofis / Unsplash.</span></span>
       <span class="pay"><span>VISA</span><span>Mastercard</span><span>Transfertë</span><span>Pagesë në dorëzim</span><span>Këste</span></span>
     </div>
   </footer>
+
+  <!-- Ndërtuesi i PC-së -->
+  <section class="builder" id="builder" hidden aria-label="Ndërtuesi i PC-së">
+    <header class="builder__bar">
+      <button class="builder__back" id="bClose"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Dyqani</span></button>
+      <div class="builder__title"><b>Ndërto PC‑në tënde</b><span>Konfiguruesi 3D i ITCOM</span></div>
+      <div class="builder__presets"><span>Fillo nga:</span><div id="bPresets"></div></div>
+    </header>
+    <div class="builder__main">
+      <div class="builder__stage">
+        <div class="builder__canvas" id="bCanvas"></div>
+        <div class="builder__loading" id="bLoading" hidden>Duke ngarkuar modelin 3D…</div>
+        <div class="builder__tools">
+          <button class="icon-btn" id="bSpin" aria-pressed="false" aria-label="Rrotullim automatik"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+          <button class="icon-btn" id="bReset" aria-label="Kthe pamjen fillestare"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/><circle cx="12" cy="12" r="4"/></svg></button>
+        </div>
+        <p class="builder__hint">Tërhiqeni për ta rrotulluar · rrotëza ose dy gishta për zmadhim</p>
+        <div class="builder__look">
+          <div><span class="builder__lookt">Ngjyra e kasës</span><div class="swatches" id="bColors"></div></div>
+          <div><span class="builder__lookt">Ndriçimi RGB</span><div class="swatches" id="bRgb"></div></div>
+          <span class="builder__lookv" id="bLookLabel"></span>
+        </div>
+      </div>
+      <aside class="builder__panel" aria-label="Pjesët">
+        <div class="builder__steps" id="bSteps"></div>
+      </aside>
+    </div>
+    <footer class="builder__summary">
+      <ul class="bchecks" id="bChecks"></ul>
+      <div class="bpower" id="bPower"></div>
+      <div class="basm" id="bAssembly"></div>
+      <div class="btotal" id="bTotal"></div>
+      <div class="bactions">
+        <button class="btn btn--ghost btn--lg" id="bSave"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>Ruaj</button>
+        <button class="btn btn--cta btn--lg" id="bAdd"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>Shto në shportë</button>
+      </div>
+    </footer>
+  </section>
 
   <!-- Krahasimi -->
   <div class="cmp-tray" id="cmpTray" hidden>
@@ -321,5 +389,6 @@
   <script src="js/brands.js"></script>
   <script src="js/art.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/builder.js"></script>
 </body>
 </html>

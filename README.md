@@ -25,9 +25,26 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Sort (recommended, price, biggest discount, rating, most reviewed, name), 12/24/48 per page, grid or list view, pagination
 - On phones, filters open in a drawer with a "Show N results" button
 
-Light and dark themes, responsive down to small phones, keyboard accessible, respects reduced motion.
+Responsive down to small phones, keyboard accessible, respects reduced motion.
 
 > Checkout is a front‑end demo: no order is sent and no payment is taken. Connect it to a backend or a platform (Shopify, WooCommerce, a payment provider) to take real orders.
+
+## PC builder (Ndërto PC)
+
+A 3D configurator at `#builder` (menu button **Ndërto PC**, home banner, or `index.html#builder`).
+
+- **Live 3D model** (three.js, `js/pc3d.js`): the case with glass side panel, motherboard, RAM, graphics card, air or liquid CPU cooler, fans and PSU shroud. Drag to rotate, scroll or pinch to zoom, optional auto-rotate. Four case styles (mesh, glass, wood, perforated), case colour, and an RGB lighting colour that lights fans, RAM, pump and GPU.
+- **Parts**: CPU, motherboard, RAM, GPU, cooler, SSD, PSU, case, from the real catalogue (`window.BUILD_SPECS` in `js/products.js` holds the technical data: socket, RAM type, GPU length, cooler height, radiator sizes, wattage).
+- **Compatibility checks**: CPU/motherboard socket, RAM type, GPU length vs case, cooler height or radiator size vs case, PSU wattage (estimated draw × 1.2 minimum, × 1.4 recommended). When a choice clashes, the other part is swapped automatically for the closest-priced one that fits; PSUs that are too weak are blocked.
+- **Presets**: Gaming 1080p, Gaming 1440p, 4K dhe krijues.
+- **Totals**: price, instalments, power meter, optional assembly service (`srv-assembly` in `window.SERVICES`, 39 €), one click to add the whole PC to the cart.
+- **Accounts**: sign up / sign in from the header, save builds (with a snapshot of the 3D view), reopen them or add them to the cart later. Checkout is pre-filled from the account. **Demo only**: accounts live in the browser's `localStorage`, passwords are stored as SHA-256 hashes, there is no server.
+
+The 3D code loads only when the builder opens. three.js r160 is vendored in `js/vendor/` (MIT).
+
+## Photos
+
+Banner photos in `assets/photos/` are real photographs from Unsplash (Unsplash License): ELLA DON (gaming, PC builder banner), User_Pascal (network switch, networking banner), ergonofis (workspace, ITCOM Business). Sources and licence notes are in `assets/photos/asset-manifest.json` and `CREDITS.md`. They are used only for banners, never as product photos.
 
 ## Live site
 

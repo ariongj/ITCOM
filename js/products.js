@@ -448,6 +448,105 @@ window.PRODUCTS = [
     specs: ["2 × 16 GB", "DDR5‑6000 CL36", "Intel XMP 3.0", "Ftohës alumini", "Garanci e përjetshme"],
     desc: "Memorie DDR5 me pamje të pastër dhe përputhshmëri të gjerë për ndërtime të reja." },
 
+  { id: "cp-14700k", name: "Intel Core i7‑14700K", brand: "Intel", cat: "Komponentë", price: 399, stock: 9, rating: 4.8, reviews: 176,
+    art: { s: "cpu", c: "#c7c9cd", l: "intel" },
+    attrs: { type: "Procesor", socket: "LGA1700" },
+    specs: ["20 bërthama (8P + 12E) / 28 fije", "Deri në 5,6 GHz", "I zhbllokuar", "125 W bazë / 253 W turbo", "UHD Graphics 770"],
+    desc: "Procesor i fuqishëm për lojëra, transmetim dhe punë kreative në platformën LGA1700." },
+  { id: "cp-4080s", name: "ASUS TUF Gaming GeForce RTX 4080 SUPER 16 GB", brand: "ASUS", cat: "Komponentë", price: 1199, stock: 4, rating: 4.8, reviews: 98,
+    art: { s: "gpu", c: "#2a2c30", l: "3" },
+    attrs: { type: "Kartelë grafike", socket: "PCIe 4.0" },
+    specs: ["16 GB GDDR6X", "DLSS 3.5, ray tracing", "320 W", "Tre ventilatorë axial‑tech", "Gjatësia 348 mm"],
+    desc: "Performancë 4K me ray tracing dhe ftohje e qetë me tre ventilatorë." },
+  { id: "cp-tz5rgb32", name: "G.Skill Trident Z5 RGB 32 GB DDR5‑6000", brand: "G.Skill", cat: "Komponentë", price: 139, stock: 22, rating: 4.8, reviews: 266,
+    art: { s: "ram", c: "#cfd2d8", l: "TRIDENT Z5" },
+    attrs: { type: "Memorie RAM", socket: "DDR5" },
+    specs: ["2 × 16 GB", "DDR5‑6000 CL30", "Ndriçim RGB", "Intel XMP 3.0", "Ftohës alumini"],
+    desc: "Memorie DDR5 e shpejtë me shirit RGB që përputhet me ndriçimin e PC‑së suaj." },
+
+  /* Kasat */
+  { id: "cs-o11evo", name: "Lian Li O11 Dynamic EVO", brand: "Lian Li", cat: "Komponentë", price: 179, stock: 7, rating: 4.8, reviews: 214, badge: "Më i shituri",
+    art: { s: "tower", c: "#1c1d21" },
+    attrs: { type: "Kasë", socket: "ATX" },
+    specs: ["Mid‑tower ATX, dy dhoma", "Xham i kalitur përpara dhe anash", "GPU deri në 422 mm", "Radiator deri në 360 mm", "E zezë ose e bardhë"],
+    desc: "Kasa ikonike me xham panoramik, e krijuar për ndërtime me ftohje me lëng dhe RGB." },
+  { id: "cs-h5flow", name: "NZXT H5 Flow", brand: "NZXT", cat: "Komponentë", price: 109, stock: 15, rating: 4.6, reviews: 188,
+    art: { s: "tower", c: "#1c1d21" },
+    attrs: { type: "Kasë", socket: "ATX" },
+    specs: ["Mid‑tower ATX kompakte", "Panel i përparmë i perforuar", "GPU deri në 365 mm", "Radiator deri në 280 mm", "E zezë ose e bardhë"],
+    desc: "Kasë kompakte me qarkullim të mirë ajri dhe menaxhim të thjeshtë të kabllove." },
+  { id: "cs-north", name: "Fractal Design North", brand: "Fractal Design", cat: "Komponentë", price: 159, stock: 6, rating: 4.8, reviews: 143,
+    art: { s: "tower", c: "#2c2e33" },
+    attrs: { type: "Kasë", socket: "ATX" },
+    specs: ["Mid‑tower ATX", "Panel i përparmë me dru arre", "GPU deri në 355 mm", "Radiator deri në 360 mm", "Ngjyrë qymyri ose e bardhë"],
+    desc: "Dizajn skandinav me dru të vërtetë dhe xham anësor, për një PC që duket si mobilje." },
+  { id: "cs-4000d", name: "Corsair 4000D Airflow", brand: "Corsair", cat: "Komponentë", price: 115, stock: 19, rating: 4.7, reviews: 402,
+    art: { s: "tower", c: "#1c1d21" },
+    attrs: { type: "Kasë", socket: "ATX" },
+    specs: ["Mid‑tower ATX", "Panel i përparmë me rrjetë", "GPU deri në 360 mm", "Radiator deri në 360 mm", "E zezë ose e bardhë"],
+    desc: "Klasikja e qarkullimit të ajrit: e lehtë për t'u montuar dhe e freskët nën ngarkesë." },
+
+  /* Pllakat amë */
+  { id: "mb-b650tomahawk", name: "MSI MAG B650 TOMAHAWK WIFI", brand: "MSI", cat: "Komponentë", price: 239, stock: 9, rating: 4.7, reviews: 201,
+    art: { s: "ram", c: "#2a2c30", l: "TOMAHAWK" },
+    attrs: { type: "Pllakë amë", socket: "AM5" },
+    specs: ["Soket AM5, ATX", "DDR5, 4 sllote", "PCIe 4.0 x16, 3 × M.2", "Wi‑Fi 6E, 2.5 GbE", "VRM 14+2+1"],
+    desc: "Pllakë e fortë AM5 me ftohje të mirë të VRM‑ve dhe gjithçka që i duhet një PC‑je lojërash." },
+  { id: "mb-tufb650", name: "ASUS TUF GAMING B650‑PLUS WIFI", brand: "ASUS", cat: "Komponentë", price: 199, stock: 11, rating: 4.6, reviews: 167,
+    art: { s: "ram", c: "#3a3d33", l: "TUF" },
+    attrs: { type: "Pllakë amë", socket: "AM5" },
+    specs: ["Soket AM5, ATX", "DDR5, 4 sllote", "PCIe 4.0 x16, 2 × M.2", "Wi‑Fi 6, 2.5 GbE", "Komponentë TUF"],
+    desc: "Pllakë AM5 e qëndrueshme me raport të shkëlqyer çmim‑vlerë." },
+  { id: "mb-z790a", name: "MSI PRO Z790‑A WIFI", brand: "MSI", cat: "Komponentë", price: 229, stock: 8, rating: 4.6, reviews: 154,
+    art: { s: "ram", c: "#c9ccd2", l: "PRO Z790" },
+    attrs: { type: "Pllakë amë", socket: "LGA1700" },
+    specs: ["Soket LGA1700, ATX", "DDR5, 4 sllote", "PCIe 5.0 x16, 4 × M.2", "Wi‑Fi 6E, 2.5 GbE", "Mbështet mbingarkimin"],
+    desc: "Pllakë Z790 me pamje të pastër argjendi, për procesorët Intel të gjeneratave 12–14." },
+  { id: "mb-b760a", name: "ASUS ROG STRIX B760‑A GAMING WIFI", brand: "ASUS", cat: "Komponentë", price: 219, stock: 6, rating: 4.7, reviews: 98,
+    art: { s: "ram", c: "#dfe2e7", l: "ROG STRIX" },
+    attrs: { type: "Pllakë amë", socket: "LGA1700" },
+    specs: ["Soket LGA1700, ATX", "DDR5, 4 sllote", "PCIe 5.0 x16, 3 × M.2", "Wi‑Fi 6E, 2.5 GbE", "Dizajn i bardhë"],
+    desc: "Pllakë e bardhë ROG Strix, ideale për ndërtime të bardha me RGB." },
+
+  /* Ftohësit */
+  { id: "cl-nhd15", name: "Noctua NH‑D15", brand: "Noctua", cat: "Komponentë", price: 119, stock: 10, rating: 4.9, reviews: 512,
+    art: { s: "tower", c: "#b8bcc4" },
+    attrs: { type: "Ftohës", socket: "AM5 / LGA1700" },
+    specs: ["Ftohës ajri me dy kulla", "2 × NF‑A15 140 mm", "Lartësia 165 mm", "Shumë i qetë", "Garanci 6 vjet"],
+    desc: "Legjenda e ftohjes me ajër: fuqi e ftohësve me lëng, pa pompë dhe pa zhurmë." },
+  { id: "cl-ak620d", name: "DeepCool AK620 Digital", brand: "DeepCool", cat: "Komponentë", price: 79, stock: 18, rating: 4.7, reviews: 236,
+    art: { s: "tower", c: "#1c1d21" },
+    attrs: { type: "Ftohës", socket: "AM5 / LGA1700" },
+    specs: ["Ftohës ajri me dy kulla", "Ekran dixhital i temperaturës", "Ndriçim ARGB", "Lartësia 162 mm", "2 × 120 mm FDB"],
+    desc: "Ftohës i fuqishëm me ekran që tregon temperaturën e procesorit në kohë reale." },
+  { id: "cl-lf3-360", name: "Arctic Liquid Freezer III 360 A‑RGB", brand: "Arctic", cat: "Komponentë", price: 119, stock: 12, rating: 4.8, reviews: 341, badge: "Zgjedhje e ekspertëve",
+    art: { s: "tower", c: "#1c1d21" },
+    attrs: { type: "Ftohës", socket: "AM5 / LGA1700" },
+    specs: ["Ftohje me lëng 360 mm", "3 × P12 PWM A‑RGB", "Ventilator VRM i integruar", "Garanci 6 vjet", "Ndriçim A‑RGB"],
+    desc: "Një nga ftohësit me lëng me performancën më të mirë, me çmim shumë të arsyeshëm." },
+  { id: "cl-kraken240", name: "NZXT Kraken 240 RGB", brand: "NZXT", cat: "Komponentë", price: 159, stock: 7, rating: 4.6, reviews: 122,
+    art: { s: "tower", c: "#1c1d21" },
+    attrs: { type: "Ftohës", socket: "AM5 / LGA1700" },
+    specs: ["Ftohje me lëng 240 mm", "Ekran LCD 1,54\" në pompë", "2 × F120 RGB Core", "Kontroll me NZXT CAM", "Ndriçim RGB"],
+    desc: "Ftohës kompakt me lëng me ekran LCD në pompë dhe ndriçim RGB." },
+
+  /* Furnizimet me rrymë */
+  { id: "ps-rm750e", name: "Corsair RM750e", brand: "Corsair", cat: "Komponentë", price: 109, stock: 20, rating: 4.7, reviews: 388,
+    art: { s: "ups", c: "#1f2023" },
+    attrs: { type: "Furnizim me rrymë", socket: "ATX 3.0" },
+    specs: ["750 W", "80 PLUS Gold", "Plotësisht modular", "ATX 3.0, PCIe 5.0", "Garanci 7 vjet"],
+    desc: "Furnizim i qetë dhe efikas për shumicën e PC‑ve të lojërave." },
+  { id: "ps-pp12m850", name: "be quiet! Pure Power 12 M 850W", brand: "be quiet!", cat: "Komponentë", price: 129, stock: 13, rating: 4.7, reviews: 211,
+    art: { s: "ups", c: "#1f2023" },
+    attrs: { type: "Furnizim me rrymë", socket: "ATX 3.0" },
+    specs: ["850 W", "80 PLUS Gold", "Modular", "ATX 3.0, 12VHPWR", "Shumë i qetë"],
+    desc: "Rezervë e mjaftueshme fuqie për kartela grafike të nivelit të lartë." },
+  { id: "ps-focusgx1000", name: "Seasonic FOCUS GX‑1000", brand: "Seasonic", cat: "Komponentë", price: 189, stock: 5, rating: 4.8, reviews: 156,
+    art: { s: "ups", c: "#1f2023" },
+    attrs: { type: "Furnizim me rrymë", socket: "ATX 3.0" },
+    specs: ["1000 W", "80 PLUS Gold", "Plotësisht modular", "ATX 3.0", "Garanci 10 vjet"],
+    desc: "Furnizim premium për stacione pune dhe kartelat grafike më të fuqishme." },
+
   /* ------------------------------------------------------------ Printerë */
   { id: "pt-4102fdw", name: "HP LaserJet Pro MFP 4102fdw", brand: "HP", cat: "Printerë", price: 449, stock: 7, rating: 4.4, reviews: 64,
     art: { s: "printer", c: "#e9eaed", l: "mfp" },
@@ -491,4 +590,54 @@ window.PRODUCTS = [
     attrs: { type: "UPS", form: "Tower" },
     specs: ["1500 VA / 1000 W", "Valë sinusoidale e pastër", "8 × IEC C13", "SmartConnect në cloud", "Bateri që ndërrohen pa fikje"],
     desc: "UPS profesional për serverë dhe rack‑e rrjeti." },
+];
+
+/* ------------------------------------------------------------------------
+ * Ndërtuesi i PC‑së: të dhënat teknike për përputhshmërinë.
+ * slot: cpu | mb | ram | gpu | cooler | case | ssd | psu
+ * len/height/rad në mm, tdp/watt në W.
+ * ---------------------------------------------------------------------- */
+window.BUILD_SPECS = {
+  "cp-7600": { slot: "cpu", socket: "AM5", tdp: 88 },
+  "cp-7800x3d": { slot: "cpu", socket: "AM5", tdp: 120 },
+  "cp-14600k": { slot: "cpu", socket: "LGA1700", tdp: 181 },
+  "cp-14700k": { slot: "cpu", socket: "LGA1700", tdp: 253 },
+
+  "mb-b650tomahawk": { slot: "mb", socket: "AM5", ram: "DDR5", color: "#26282c", accent: "#5b5f68" },
+  "mb-tufb650": { slot: "mb", socket: "AM5", ram: "DDR5", color: "#2b2d27", accent: "#8a7d4a" },
+  "mb-z790a": { slot: "mb", socket: "LGA1700", ram: "DDR5", color: "#1f2125", accent: "#c3c7ce" },
+  "mb-b760a": { slot: "mb", socket: "LGA1700", ram: "DDR5", color: "#e7e9ed", accent: "#f5f6f8" },
+
+  "cp-furyb32": { slot: "ram", type: "DDR5", color: "#1d1e22", rgb: false },
+  "cp-veng32": { slot: "ram", type: "DDR5", color: "#2a2c30", rgb: false },
+  "cp-tz5rgb32": { slot: "ram", type: "DDR5", color: "#c9ccd2", rgb: true },
+
+  "cp-4060dual": { slot: "gpu", len: 227, tdp: 115, fans: 2, color: "#2b2e34", slots: 2 },
+  "cp-4070s": { slot: "gpu", len: 242, tdp: 220, fans: 2, color: "#202226", slots: 2 },
+  "cp-rx7800xt": { slot: "gpu", len: 280, tdp: 263, fans: 2, color: "#1c1d21", slots: 2.5 },
+  "cp-4080s": { slot: "gpu", len: 348, tdp: 320, fans: 3, color: "#2a2c30", slots: 3 },
+
+  "cl-nhd15": { slot: "cooler", kind: "air", height: 165, rgb: false, color: "#b8bcc4", fan: "#8b5a3c", towers: 2 },
+  "cl-ak620d": { slot: "cooler", kind: "air", height: 162, rgb: true, color: "#1c1d21", fan: "#16171a", towers: 2, display: true },
+  "cl-lf3-360": { slot: "cooler", kind: "aio", rad: 360, rgb: true, color: "#16171a" },
+  "cl-kraken240": { slot: "cooler", kind: "aio", rad: 240, rgb: true, color: "#16171a", lcd: true },
+
+  "cs-o11evo": { slot: "case", gpuMax: 422, coolerMax: 167, rads: [240, 280, 360], front: "glass", colors: ["#16171a", "#e9eaee"] },
+  "cs-h5flow": { slot: "case", gpuMax: 365, coolerMax: 165, rads: [240, 280], front: "perf", colors: ["#16171a", "#e9eaee"] },
+  "cs-north": { slot: "case", gpuMax: 355, coolerMax: 170, rads: [240, 280, 360], front: "wood", colors: ["#2c2e33", "#e4e2dc"] },
+  "cs-4000d": { slot: "case", gpuMax: 360, coolerMax: 170, rads: [240, 280, 360], front: "mesh", colors: ["#16171a", "#e9eaee"] },
+
+  "st-990pro2": { slot: "ssd" },
+  "st-sn850x1": { slot: "ssd" },
+
+  "ps-rm750e": { slot: "psu", watt: 750 },
+  "ps-pp12m850": { slot: "psu", watt: 850 },
+  "ps-focusgx1000": { slot: "psu", watt: 1000 },
+};
+
+/* Shërbime që shfaqen vetëm në shportë (jo në katalog). */
+window.SERVICES = [
+  { id: "srv-assembly", name: "Montim dhe testim profesional i PC‑së", brand: "ITCOM", cat: "Shërbime", price: 39, stock: 99, rating: 5, reviews: 0,
+    art: { s: "tower", c: "#1c1d21" }, attrs: {}, specs: ["Montim nga teknikët tanë", "Menaxhim i kabllove", "Instalim i BIOS‑it", "Test stabiliteti 24 orë"],
+    desc: "Teknikët tanë e montojnë, e testojnë dhe ua dërgojnë PC‑në gati për t'u ndezur." },
 ];
