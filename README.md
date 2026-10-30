@@ -1,14 +1,14 @@
 # ITCOM — IT Equipment Store
 
-A fast, dependency‑free storefront for IT equipment: laptops, desktops, monitors, tablets, networking, storage, peripherals, components, printers, servers and UPS.
+A fast, dependency‑free storefront for IT equipment: 50 laptops, processors and graphics cards, every one shown with an official manufacturer photo, plus a 3D PC builder.
 
 The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The layout follows big electronics retailers (Best Buy, Gjirafa50, Foleja): store header with a category search bar, category sidebar beside a banner carousel, deal and product shelves, a brand grid and a footer. The finish is quiet and premium: neutral greys and near-black, one blue accent (`#0a6cdf`), the Manrope typeface, borderless cards with soft shadows, monochrome brand logos and a dark studio for the PC builder.
 
 ## Features
 
 **Shopping**
-- Marketplace home page: hero slider, promo tiles, shop by category, weekly deals, top brands
-- Mega menu ("Categories") with quick links such as *Laptops → Gaming* or *Monitors → 27"*
+- Marketplace home page: hero slider, promo tiles, category and brand sidebar, shop by category, deals (shown once there are at least 4 discounted products), top brands
+- Mega menu ("Categories") with quick links such as *Laptops → 2‑in‑1* or *Graphics cards → AMD Radeon*
 - Instant search suggestions with highlighted matches, category shortcuts and keyboard navigation (press `/` to focus)
 - Product page with buy box, instalment price, delivery date estimate, specification table and similar products
 - Compare up to 4 products from the same category side by side, with "only show differences"
@@ -16,7 +16,7 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Checkout with validation, delivery options (standard, express, store pickup) and payment choice
 
 **Advanced filtering (Gjirafa50‑style)**
-- Filters change with the category: e.g. Laptops get Processor, RAM, Storage, Screen size, Graphics and OS; Monitors get Size, Resolution, Refresh rate, Panel and USB‑C
+- Filters change with the category: Laptops get Type, Processor, RAM, Storage, Screen size, Graphics and OS; Processors get Series, Socket and Cores; Graphics cards get Chip, Series and Memory
 - Live counts next to every option, recalculated against all other active filters; options with no results are greyed out
 - Price range with min/max inputs, a dual slider and quick presets
 - Brand filter with search, "show all" for long lists, collapsible groups (remembered)
@@ -85,7 +85,7 @@ To host on **GitHub Pages**: Settings → Pages → Deploy from branch → choos
 
 All products live in `js/products.js`. Each product has a price, optional old price (shows as a discount), stock, rating, specs and an `attrs` object that feeds the filters. Filters per category are defined in `FACETS` in the same file.
 
-**Product images**: 15 products use official manufacturer photos from `assets/products/photo/` (sources in `assets/products/photo/SOURCES.md`); the rest are 3D studio renders in `assets/products/<id>.webp` (800 × 600, transparent background). Products with `reviews: 0` show “Ende pa vlerësime” instead of stars. To use a real photo instead, replace that file or set `img` on the product:
+**Product images**: every product in the shop has an official manufacturer photo in `assets/products/photo/` (sources and edits in `assets/products/photo/SOURCES.md`; dark promotional NVIDIA shots are in `photo/dark/`). Laptop photos show the model; RAM/SSD depend on the configuration. Products with `reviews: 0` show “Ende pa vlerësime” instead of stars. Parts that only exist in the PC builder (motherboards, RAM, coolers, SSDs, power supplies, cases) are in `window.BUILDER_PARTS` and keep their 3D renders in `assets/products/<id>.webp`; they are not listed in the shop.
 
 ```js
 { id: "lp-x1c12", name: "Lenovo ThinkPad X1 Carbon Gen 12", img: "assets/products/lp-x1c12.jpg", ... }

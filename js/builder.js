@@ -20,11 +20,11 @@
   const COLOR_NAMES = { "#16171a": "E zezë", "#e9eaee": "E bardhë", "#2c2e33": "Qymyr", "#e4e2dc": "E bardhë shkumës" };
   const PRESETS = [
     { key: "g1080", name: "Gaming 1080p", note: "Lojëra të shpejta me buxhet të arsyeshëm", rgb: "#2f6bff", color: 0,
-      parts: { cpu: "cp-7600", mb: "mb-tufb650", ram: "cp-veng32", gpu: "cp-4060dual", cooler: "cl-ak620d", ssd: "st-sn850x1", psu: "ps-rm750e", case: "cs-h5flow" } },
+      parts: { cpu: "cp-9600x", mb: "mb-tufb650", ram: "cp-veng32", gpu: "cp-4060dual", cooler: "cl-ak620d", ssd: "st-sn850x1", psu: "ps-rm750e", case: "cs-h5flow" } },
     { key: "g1440", name: "Gaming 1440p", note: "Ekuilibri më i mirë mes çmimit dhe performancës", rgb: "#00d5ff", color: 0,
       parts: { cpu: "cp-7800x3d", mb: "mb-b650tomahawk", ram: "cp-furyb32", gpu: "cp-4070s", cooler: "cl-lf3-360", ssd: "st-990pro2", psu: "ps-rm750e", case: "cs-4000d" } },
     { key: "g4k", name: "4K dhe krijues", note: "Për lojëra 4K, video dhe 3D", rgb: "#b04dff", color: 1,
-      parts: { cpu: "cp-14700k", mb: "mb-b760a", ram: "cp-tz5rgb32", gpu: "cp-4080s", cooler: "cl-lf3-360", ssd: "st-990pro2", psu: "ps-focusgx1000", case: "cs-o11evo" } },
+      parts: { cpu: "cp-9800x3d", mb: "mb-b650tomahawk", ram: "cp-tz5rgb32", gpu: "cp-5080fe", cooler: "cl-lf3-360", ssd: "st-990pro2", psu: "ps-focusgx1000", case: "cs-o11evo" } },
   ];
 
   // Where pc3d.js lives: next to this file, or in js/ when this script is bundled inline.
@@ -32,7 +32,9 @@
   const spec = (id) => (id ? SPECS[id] : null);
   const options = (slot) => Object.keys(SPECS).filter((id) => SPECS[id].slot === slot && byId[id]);
   const draft = A.saved.get("builder", null);
-  let st = draft && draft.parts ? draft : { parts: { ...PRESETS[1].parts }, color: 0, rgb: PRESETS[1].rgb, assembly: true, open: "cpu" };
+  // Parts saved earlier may no longer be sold: fall back to the default build for those slots.
+  const validParts = (parts) => Object.fromEntries(Object.entries(PRESETS[1].parts).map(([k, v]) => [k, parts?.[k] && SPECS[parts[k]] && byId[parts[k]] ? parts[k] : v]));
+  let st = draft && draft.parts ? { ...draft, parts: validParts(draft.parts) } : { parts: { ...PRESETS[1].parts }, color: 0, rgb: PRESETS[1].rgb, assembly: true, open: "cpu" };
   const persist = () => A.saved.set("builder", st);
 
   /* ------------------------------------------------------------ rules */
@@ -195,7 +197,7 @@
 
   /* ------------------------------------------------------------ open / close */
   function open(saved) {
-    if (saved && saved.parts) st = { ...st, parts: { ...saved.parts }, color: saved.color || 0, rgb: saved.rgb ?? st.rgb, assembly: saved.assembly ?? st.assembly };
+    if (saved && saved.parts) st = { ...st, parts: validParts(saved.parts), color: saved.color || 0, rgb: saved.rgb ?? st.rgb, assembly: saved.assembly ?? st.assembly };
     A.closeModal();
     root.hidden = false;
     document.body.classList.add("builder-open");

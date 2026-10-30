@@ -6,7 +6,7 @@
   const CATS = window.CATEGORIES;
   const FACETS = window.FACETS;
   const PRODUCTS = window.PRODUCTS;
-  const byId = Object.fromEntries([...PRODUCTS, ...(window.SERVICES || [])].map((p) => [p.id, p]));
+  const byId = Object.fromEntries([...PRODUCTS, ...(window.BUILDER_PARTS || []), ...(window.SERVICES || [])].map((p) => [p.id, p]));
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -34,6 +34,7 @@
     wifi: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M2 9a15 15 0 0 1 20 0"/><circle cx="12" cy="19.5" r="1"/>',
     storage: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
     keyboard: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+    gpu: '<rect x="2" y="6" width="20" height="11" rx="1.5"/><circle cx="9" cy="11.5" r="3"/><circle cx="16" cy="11.5" r="3"/><path d="M5 17v2h8"/>',
     chip: '<rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
     printer: '<path d="M6 9V2h12v7"/><rect x="2" y="9" width="20" height="9" rx="2"/><path d="M6 14h12v8H6z"/>',
     server: '<rect x="3" y="3" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="18" height="7" rx="1.5"/><path d="M7 6.5h.01M7 17.5h.01"/>',
@@ -383,8 +384,8 @@
   /* ================================================================ ballina */
   const SLIDES = [
     { id: "lp-mba13m4", label: "E re", title: "MacBook Air 13\" me çipin M4", text: "16 GB memorie, deri në 18 orë bateri. Tani në stok, me dërgesë falas.", bg: "radial-gradient(90% 120% at 75% 50%, #1d2230 0%, #0b0c0f 70%)" },
-    { id: "mn-g5", label: "Në zbritje", title: "Samsung Odyssey G5 27\" QHD", text: "165 Hz, 1 ms dhe ngjyra të gjalla për lojëra dhe punë.", bg: "radial-gradient(90% 120% at 75% 50%, #262029 0%, #0b0c0f 70%)" },
-    { id: "lp-e14g6", label: "Për zyrë", title: "Laptopë biznesi nga 529 €", text: "ThinkPad, EliteBook dhe Latitude me Windows 11 Pro dhe garanci 24 muaj.", bg: "radial-gradient(90% 120% at 75% 50%, #1e2428 0%, #0b0c0f 70%)" },
+    { id: "cp-5090fe", label: "E re", title: "GeForce RTX 5090 Founders Edition", text: "32 GB GDDR7 dhe DLSS 4 për lojëra 4K dhe punë me AI.", bg: "radial-gradient(90% 120% at 75% 50%, #172012 0%, #0b0c0f 70%)" },
+    { id: "lp-proartp16", label: "Për krijues", title: "ASUS ProArt P16", text: "Ekran 4K OLED 16\" dhe grafikë NVIDIA RTX për video, foto dhe 3D.", bg: "radial-gradient(90% 120% at 75% 50%, #1e2428 0%, #0b0c0f 70%)" },
   ];
   let slide = 0, slideTimer;
   const SLIDE_MS = 6000;
@@ -413,8 +414,8 @@
     goSlide(0);
 
     const PROMOS = [
-      { small: "Rrjeti me kabllo", title: "Switch dhe PoE për zyrën", link: "Shiko switch‑et", photo: "network-switch", alt: "Switch rrjeti me kabllo Ethernet të lidhura", key: "switches" },
-      { small: "Për lojëra", title: "Laptopë gaming me RTX", link: "Shiko laptopët", art: "lp-legion5", key: "gaming", bg: "#fff2e6" },
+      { small: "Kartela grafike", title: "Radeon RX 9000 me FSR 4", link: "Shiko kartelat", art: "cp-rx9070xt", key: "gpus", bg: "#f1f2f5" },
+      { small: "Laptopë 2‑në‑1", title: "Laptop dhe tablet në një", link: "Shiko modelet", art: "lp-yoga9i", key: "2in1", bg: "#eef1f6" },
     ];
     $("#promos").innerHTML = PROMOS.map((pr) => pr.photo ? `
       <button type="button" class="promo promo--photo" data-promo="${pr.key}">
@@ -442,18 +443,22 @@
   function renderHome() {
     const count = (c) => PRODUCTS.filter((p) => p.cat === c).length;
     $("#sideCats").innerHTML = CATS.map((c) => `<li><button type="button" data-cat="${esc(c.id)}">${svg(catIcon(c.id))}<span>${esc(c.id)}</span><small>${count(c.id)}</small></button></li>`).join("");
+    const brandCount = {};
+    PRODUCTS.forEach((p) => { brandCount[p.brand] = (brandCount[p.brand] || 0) + 1; });
+    $("#sideBrands").innerHTML = Object.entries(brandCount).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([b, n]) =>
+      `<li><button type="button" data-brand="${esc(b)}">${logoSvg(b, "icon") || svg(ICON.grid)}<span>${esc(b)}</span><small>${n}</small></button></li>`).join("");
     $("#searchCat").innerHTML = `<option value="All">Të gjitha</option>` + CATS.map((c) => `<option value="${esc(c.id)}">${esc(c.id)}</option>`).join("");
 
     const deals = PRODUCTS.filter((p) => p.old && p.stock).sort(SORTS.discount).slice(0, 10);
     $("#dealsRail").innerHTML = deals.map(card).join("");
+    $("#deals").hidden = deals.length < 4; // a shelf with one or two offers looks empty
 
     // Raftet me produkte, si në dyqanet e mëdha
     const SHELVES = [
       { title: "Më të shiturat", list: PRODUCTS.filter((p) => p.stock).sort(SORTS.reviews).slice(0, 10), all: "reviews" },
       { title: "Laptopë", list: PRODUCTS.filter((p) => p.cat === "Laptopë").sort(SORTS.featured).slice(0, 10), cat: "Laptopë" },
-      { title: "Monitorë", list: PRODUCTS.filter((p) => p.cat === "Monitorë").sort(SORTS.featured).slice(0, 10), cat: "Monitorë" },
-      { title: "Rrjeti dhe Wi‑Fi", list: PRODUCTS.filter((p) => p.cat === "Rrjeti").sort(SORTS.featured).slice(0, 10), cat: "Rrjeti" },
-      { title: "Aksesorë", list: PRODUCTS.filter((p) => p.cat === "Aksesorë").sort(SORTS.featured).slice(0, 10), cat: "Aksesorë" },
+      { title: "Procesorë", list: PRODUCTS.filter((p) => p.cat === "Procesorë").sort(SORTS.featured).slice(0, 10), cat: "Procesorë" },
+      { title: "Kartela grafike", list: PRODUCTS.filter((p) => p.cat === "Kartela grafike").sort(SORTS.featured).slice(0, 10), cat: "Kartela grafike" },
     ];
     $("#shelves").innerHTML = SHELVES.map((sh, i) => `
       <section class="container shelf" aria-labelledby="shelf${i}">
@@ -468,7 +473,7 @@
         <div class="rail" id="shelfRail${i}">${sh.list.map(card).join("")}</div>
       </section>`).join("");
 
-    const HERO_IMG = { "Laptopë": "lp-x1c12", "Monitorë": "mn-u2724d", "Kompjuterë": "dt-macmini", "Tabletë": "tb-ipadair", "Rrjeti": "nw-u7pro", "Ruajtja e të dhënave": "st-990pro2", "Aksesorë": "pr-xm5", "Komponentë": "cp-4070s", "Printerë": "pt-l2350dw", "Serverë & UPS": "ups-br1500" };
+    const HERO_IMG = { "Laptopë": "lp-zbs14", "Procesorë": "cp-9800x3d", "Kartela grafike": "cp-rx9070xt" };
     $("#catTiles").innerHTML = CATS.map((c) => {
       const art = byId[HERO_IMG[c.id]] || PRODUCTS.find((p) => p.cat === c.id);
       return `<button type="button" class="cat-card" data-cat="${esc(c.id)}">${media(art)}<b>${esc(c.id)}</b><small>${plural(count(c.id), "produkt", "produkte")}</small></button>`;
@@ -793,7 +798,7 @@
     about: {
       title: "Rreth ITCOM",
       html: () => `
-        <p class="lead">ITCOM ofron pajisje IT për biznese dhe shtëpi: laptopë, kompjuterë, monitorë, rrjet, ruajtje të dhënash dhe aksesorë nga markat më të njohura.</p>
+        <p class="lead">ITCOM ofron pajisje IT për biznese dhe shtëpi: laptopë, procesorë dhe kartela grafike nga markat më të njohura, si dhe konfigurime PC të ndërtuara sipas porosisë.</p>
         <p>Zgjedhim produktet me kujdes, i përshkruajmë me specifika të sakta dhe ju ndihmojmë të gjeni pajisjen e duhur, qoftë për një student apo për një zyrë të tërë.</p>`,
     },
     business: {
@@ -1264,10 +1269,8 @@
     else if (d.brand) { resetFilters(); state.brands.add(d.brand); render(); goCatalog(); }
     else if ("deals" in d) { resetFilters(); state.onSale = true; state.sort = "discount"; render(); goCatalog(); }
     else if (d.promo) {
-      if (d.promo === "wifi7") { resetFilters("Rrjeti"); state.f.wifi = new Set(["Wi‑Fi 7"]); }
-      else if (d.promo === "switches") { resetFilters("Rrjeti"); state.f.type = new Set(["Switch"]); }
-      else if (d.promo === "gaming") { resetFilters("Laptopë"); state.f.type = new Set(["Gaming"]); }
-      else { resetFilters("Ruajtja e të dhënave"); state.onSale = true; state.sort = "discount"; }
+      if (d.promo === "gpus") resetFilters("Kartela grafike");
+      else if (d.promo === "2in1") { resetFilters("Laptopë"); state.f.type = new Set(["2‑në‑1"]); }
       render(); goCatalog();
     }
     else if (d.chip) { d.chip === "all" ? (resetFilters(), render()) : removeFilter(d.chip); }
