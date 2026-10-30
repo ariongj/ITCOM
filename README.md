@@ -50,20 +50,46 @@ A 3D configurator at `#builder` (menu button **Ndërto PC**, home banner, or `in
 
 The 3D code loads only when the builder opens. three.js r160 is vendored in `js/vendor/` (MIT).
 
-## CMS (/admin)
+## CMS and CRM (/admin)
 
-The shop has the same CMS as the Selca and Miftari Vision builds: **https://ariongj.github.io/ITCOM/admin/** (footer link "Hyrje për stafin"). Demo login is pre-filled: `admin@itcom.example` / `itcom2026`.
+The shop has its own CMS: **https://ariongj.github.io/ITCOM/admin/** (footer link "Hyrje për stafin"). Demo login is pre-filled: `admin@itcom.example` / `itcom2026`. Albanian and English admin, roles and permissions per staff member, audit log.
 
-- **Modules**: overview dashboard, orders (detail, status workflow, invoices, draft orders, returns), products (editor with photos, prices and sale prices, stock, specs, SEO), categories, inventory and purchase orders, customers and segments, inbox (business quote requests), info pages, media, home-page banners (Online Store → Slajdet), analytics, integrations and settings (contact data, WhatsApp, VAT, free-delivery threshold, delivery fee). Albanian, English and Serbian admin.
-- **Connected to the shop** (`js/cms-bridge.js`): when the CMS has data in the browser, the shop uses it: products, prices, sale prices, stock, photos, categories, store settings, the info pages (`returns`, `warranty`, `about`, `business`, `careers`, `privacy`) and the home banners. Orders placed at checkout and "Kërkoni ofertë" requests go into the CMS (instantly if it is open in another tab; otherwise they wait in an outbox and are imported when the CMS is opened).
-- **Demo only, like Selca/Optika**: everything is stored in the browser's `localStorage`, so changes are visible in that browser only, not to other visitors, and there is no real login. Before going live it needs a backend (database + accounts) or a publish step that writes the catalogue back to the site.
-- **Source** is in `cms/` (Vite + React + TypeScript, based on the Optika app). The catalogue seed is generated from `js/products.js`. To rebuild after changing the shop catalogue or the CMS code:
+| Area | Screens |
+| --- | --- |
+| Sales | Overview dashboard · orders (detail, status workflow, invoices) · draft orders · returns |
+| Catalogue | Products (photos, prices, sale prices, stock, specs, SEO) · **collections** (hand-picked or by rules) · categories · inventory · purchase orders |
+| CRM | Customers (history, spend, notes) · segments · **inbox** (questions, business requests, follow-ups, assignee) · **B2B quotes** (versions, send, accept, convert to order) · **appointments** (calendar, services and hours: PC assembly, diagnostics, cleaning, business consultations) |
+| Marketing | **Campaigns** (landing page, announcement bar, banners, linked discount) · **discounts** (codes and automatic: products, order, free delivery, buy X get Y; minimums, dates, usage limits, combinations) |
+| Content | Info pages · **blog** ("Këshilla", three buying guides) · **menus** (header links and footer columns) · media |
+| Channels | Online Store (slides and banners, **publishing**) · markets · integrations · settings |
+
+Seeded with ITCOM data: four collections, three guides, menus, four services with this week's appointments, two B2B quotes answering the business requests in the inbox. **Discounts and campaigns are seeded as drafts** (`MIRESEVINI5`, `STUDENT`, `PCMONTIM`, free delivery over 150 €): the shop never shows a sale until staff switch it on.
+
+**In the shop** (`js/cms-bridge.js`): products, prices, stock, photos, categories, settings, info pages, slides, collections (`#/koleksioni/<slug>` and a home section), campaigns (`#/oferta/<slug>`, announcement bar, home and catalogue banners), the discount-code box and automatic discounts in cart and checkout, the blog (`#/blog`), menus, and the service booking page (`#/servisi`). Orders, questions, business requests and bookings go into the CMS.
+
+### Publishing: from the CMS to every visitor
+
+The CMS works in the browser (`localStorage`). **Online Store → Publikimi → Publiko tani** writes the public part to the live site: it commits `js/cms-data.js` (and any photo uploaded in the CMS, under `assets/uploads/`) to the `gh-pages` branch through the GitHub API, and GitHub Pages serves it within minutes. The shop loads that file for every visitor; staff browsers with CMS data see their own unpublished changes first (`?preview=1` also shows drafts).
+
+- Needs a **fine-grained token** (github.com → Settings → Developer settings → Fine-grained tokens → only `ariongj/ITCOM` → *Contents: Read and write*). The token stays in that browser (`localStorage["itcom-publish"]`), never in the CMS data or the site.
+- Never published: orders, customers, messages, bookings, quotes, staff, costs, stock movements, purchase orders, the audit log and anything in draft. Active discount **codes are readable** in the published file; the screen lists them before publishing.
+- Without a token: **Shkarko cms-data.js** and upload it to the repository by hand. A second staff device can **load the live version** into its browser.
+- Set "Also update branch" to the source branch, so the next code deploy keeps the content. Code deploys to `gh-pages` must first merge any CMS commits from it.
+
+### Order channel: receive every order
+
+Without a backend, an order placed by a visitor stays in that visitor's browser. The **order channel** fixes that for free: a Google Apps Script (`docs/order-channel.gs`, also in CMS → Publikimi) saves every order, message and booking in a Google Sheet, can email you, and the CMS imports them with **Merr porositë** (duplicates are skipped). Set it up in five minutes as described in the script, paste the Web app URL in Publikimi, publish, and the shop starts sending. Until then, checkout and booking pages tell visitors that requests are stored only in their browser.
+
+### Build
+
+**Source** is in `cms/` (Vite + React + TypeScript). The catalogue seed is generated from `js/products.js`.
 
 ```bash
 cd cms && npm ci && npm run site   # → admin/index.html, cms-assets/, fonts/
+node scripts/build-pages.mjs       # product pages + sitemap (after changing index.html or products)
 ```
 
-Deep links such as `/ITCOM/admin/narudzbe` work through `404.html`, which reopens the CMS on that screen.
+Deep links such as `/ITCOM/admin/narudzbe` work through `404.html`, which reopens the CMS on that screen. Bump `DB_VERSION` in `cms/src/data/seed.ts` when the seed changes (browsers then reload the demo data).
 
 ## Photos
 
@@ -126,7 +152,8 @@ Photos on a white or transparent background look best. If an image is missing, t
 | Filters shown per category | `js/products.js` (`FACETS`) |
 | Currency, VAT, delivery fees, instalments, phone | `window.STORE` in `js/products.js` |
 | Hero slides and promo tiles | CMS → Online Store → Slides, or `SLIDES` / `renderHero()` in `js/app.js` |
-| Static product pages + sitemap | `node scripts/build-pages.mjs` (after product changes) |
+| Static product pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes) |
+| Collections, discounts, campaigns, blog, menus, services | CMS, then **Publikimi → Publiko tani** |
 | Colours, fonts, radii (light and dark) | tokens at the top of `css/styles.css` |
 | Logo / favicon | `assets/favicon.svg` |
 

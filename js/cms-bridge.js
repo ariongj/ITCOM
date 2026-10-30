@@ -1,11 +1,14 @@
 /* Lidhja e dyqanit me CMS-in (/admin).
  *
- * CMS-i ruan të dhënat në localStorage të shfletuesit ("itcom-cms-db"), si te Selca dhe Miftari Vision. Kur ato
- * ekzistojnë, dyqani i merr prej andej: produktet, çmimet, stokun, fotot, kategoritë, konfigurimet e dyqanit,
- * faqet informuese dhe banerët e ballinës. Porositë dhe kërkesat për ofertë nga dyqani shkojnë në CMS; nëse
- * CMS-i nuk është hapur ende në këtë shfletues, presin te "itcom-shop-outbox" dhe importohen kur hapet.
+ * Burimi i të dhënave, sipas radhës:
+ *   1. CMS-i në këtë shfletues (localStorage "itcom-cms-db") — stafi sheh menjëherë ndryshimet e veta;
+ *   2. versioni i publikuar (js/cms-data.js, window.ITCOM_PUBLISHED) — çdo vizitor, pasi stafi shtyp "Publiko";
+ *   3. katalogu i js/products.js.
+ * Prej andej merren produktet, çmimet, stoku, fotot, kategoritë, konfigurimet, faqet, banerët, koleksionet,
+ * zbritjet, fushatat, blogu, menutë dhe shërbimet. Porositë, pyetjet dhe terminet shkojnë në CMS (ose presin te
+ * "itcom-shop-outbox" derisa CMS-i të hapet) dhe, kur është caktuar, edhe te kanali i porosive (webhook).
  *
- * Ngarkohet pas products.js dhe para app.js. Pa të dhëna nga CMS-i, dyqani punon me katalogun e js/products.js.
+ * Ngarkohet pas products.js dhe cms-data.js, para app.js.
  */
 (function () {
   "use strict";
@@ -56,11 +59,19 @@
     return out.join("\n");
   }
 
-  var CMS = { active: false, pages: {}, slides: null, slugToId: {}, md: md };
+  var CMS = {
+    active: false, source: null, preview: false, pages: {}, slides: null, slugToId: {}, md: md,
+    collections: [], discounts: [], offers: [], announcements: [], banners: [], posts: [], services: [], menus: null, endpoint: "",
+  };
   window.CMS = CMS;
 
   /* ---------------------------------------------------------------- CMS → dyqani */
   var parsed = readDb();
+  CMS.source = parsed ? "local" : null;
+  var pub = window.ITCOM_PUBLISHED;
+  if (!parsed && pub && pub.state && Array.isArray(pub.state.products)) { parsed = pub; CMS.source = "published"; }
+  // ?preview=1 nga CMS-i: stafi sheh edhe draftet (vetëm me të dhënat e veta, jo te vizitorët).
+  CMS.preview = CMS.source === "local" && /[?&]preview=1(&|$)/.test(location.search);
   if (parsed) {
     var db = parsed.state;
     var staticById = {};
@@ -153,6 +164,156 @@
         };
       });
     if (slides.length) CMS.slides = slides;
+
+    /* ---- Moduli i marketingut dhe përmbajtjes ---- */
+    var live = function (x) {
+      if (!x) return false;
+      if (CMS.preview && x.status !== "archived") return true;
+      return (x.status === "active" || x.published === true) &&
+        (!x.startsAt || Date.parse(x.startsAt) <= now) && (!x.endsAt || Date.parse(x.endsAt) > now);
+    };
+    var slugify = function (t) { return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); };
+    var shopIds = {};
+    shop.forEach(function (p) { shopIds[p.id] = true; });
+    var rawById = {};
+    (db.products || []).forEach(function (p) { rawById[p.id] = p; });
+
+    // Koleksionet: të zgjedhura me dorë ose sipas rregullave (kategoria, çmimi, zbritja, marka …)
+    var fieldOf = function (p, f) {
+      var sale = p.salePrice != null && p.salePrice < p.price;
+      switch (f) {
+        case "category": return p.categoryId;
+        case "price": return sale ? p.salePrice : p.price;
+        case "compareAt": return sale ? p.price : 0;
+        case "stock": return p.stock;
+        case "status": return p.status;
+        case "title": return sq(p.name);
+        case "vendor": return p.vendor || "";
+        case "onSale": return sale ? "true" : "false";
+        case "tag": return (p.tags || []).join("|");
+        case "badge": return (p.badges || []).join("|");
+        default: return "";
+      }
+    };
+    var ruleOk = function (p, r) {
+      var v = fieldOf(p, r.field), want = r.value;
+      if (r.field === "tag" || r.field === "badge") { var has = String(v).split("|").indexOf(want) >= 0; return r.op === "neq" ? !has : has; }
+      if (r.op === "gt") return Number(v) > Number(want);
+      if (r.op === "lt") return Number(v) < Number(want);
+      if (r.op === "contains") return String(v).toLowerCase().indexOf(String(want).toLowerCase()) >= 0;
+      if (r.op === "neq") return String(v) !== String(want);
+      return String(v) === String(want);
+    };
+    function members(c) {
+      var ids;
+      if (c.kind === "manual") ids = (c.productIds || []).slice();
+      else ids = (db.products || []).filter(function (p) {
+        var rules = c.rules || [];
+        if (!rules.length) return false;
+        return c.match === "any" ? rules.some(function (r) { return ruleOk(p, r); }) : rules.every(function (r) { return ruleOk(p, r); });
+      }).map(function (p) { return p.id; });
+      ids = ids.filter(function (id) { return shopIds[id]; });
+      var price = function (id) { var p = rawById[id]; return p.salePrice != null && p.salePrice < p.price ? p.salePrice : p.price; };
+      if (c.sort === "price-asc") ids.sort(function (a, b) { return price(a) - price(b); });
+      else if (c.sort === "price-desc") ids.sort(function (a, b) { return price(b) - price(a); });
+      else if (c.sort === "bestselling") ids.sort(function (a, b) { return (rawById[b].sold || 0) - (rawById[a].sold || 0); });
+      else if (c.sort === "newest") ids.sort(function (a, b) { return String(rawById[b].createdAt).localeCompare(String(rawById[a].createdAt)); });
+      return ids;
+    }
+    var colById = {};
+    (db.collections || []).forEach(function (c) {
+      var item = { id: c.id, slug: c.slug, title: sq(c.title), description: sq(c.description), image: c.image ? localSrc(c.image) : "", productIds: members(c), published: !!c.published };
+      colById[c.id] = item;
+      if (c.published || CMS.preview) CMS.collections.push(item);
+    });
+    var targetIds = function (t) {
+      if (!t || t.scope === "all") return null;
+      if (t.scope === "products") return (t.ids || []).slice();
+      var out = [];
+      (t.ids || []).forEach(function (cid) { var c = colById[cid]; if (c) out = out.concat(c.productIds); });
+      return out;
+    };
+
+    // Zbritjet aktive (vetëm për të gjithë klientët: dyqani nuk i njeh segmentet e klientëve)
+    (db.discounts || []).forEach(function (d) {
+      var ok = CMS.preview ? d.status !== "paused" : live(d);
+      if (!ok || (d.audience && d.audience.type !== "all")) return;
+      if (d.usageLimit && (d.uses || 0) >= d.usageLimit) return;
+      CMS.discounts.push({
+        id: d.id, title: sq(d.publicTitle) || d.title, kind: d.kind, method: d.method, code: d.code ? String(d.code).toUpperCase() : "",
+        valueType: d.valueType, value: Number(d.value) || 0, eligible: targetIds(d.appliesTo), perItem: !!d.perItem,
+        minimum: d.minimum || { type: "none", value: 0 }, combines: d.combines || { products: false, order: false, shipping: false },
+        maxRate: d.shipping && d.shipping.maxRate,
+        bxgy: d.bxgy ? {
+          buy: targetIds({ scope: d.bxgy.buyScope, ids: d.bxgy.buyIds }), buyQty: d.bxgy.buyQty || 1,
+          get: targetIds({ scope: d.bxgy.getScope, ids: d.bxgy.getIds }), getQty: d.bxgy.getQty || 1,
+          free: d.bxgy.getType === "free", pct: d.bxgy.getValue || 0, max: d.bxgy.maxUses || 0,
+        } : null,
+      });
+    });
+    var discById = {};
+    CMS.discounts.forEach(function (d) { discById[d.id] = d; });
+
+    // Fushatat (qendra e ofertave): faqe e vetë, shiriti i njoftimeve, baner në katalog, blloku në ballinë
+    (db.offers || []).forEach(function (o) {
+      if (!live(o)) return;
+      var d = o.discountId && (db.discounts || []).find(function (x) { return x.id === o.discountId; });
+      var ids = o.productIds && o.productIds.length ? o.productIds.filter(function (id) { return shopIds[id]; }) : o.collectionId && colById[o.collectionId] ? colById[o.collectionId].productIds : [];
+      CMS.offers.push({
+        id: o.id, slug: o.slug, name: sq(o.name), badge: sq(o.badge), image: o.image ? localSrc(o.image) : "",
+        title: sq(o.landing && o.landing.title) || sq(o.name), text: sq(o.landing && o.landing.text) || sq(o.description),
+        placements: o.placements || [], productIds: ids, code: d && d.method === "code" && discById[d.id] ? discById[d.id].code : "",
+        endsAt: o.endsAt || "",
+      });
+    });
+    CMS.offers.forEach(function (o) {
+      if (o.placements.indexOf("announcement") >= 0) CMS.announcements.push({ text: o.badge ? o.badge + " · " + o.name : o.name, href: "#/oferta/" + o.slug });
+    });
+    (db.placements || []).forEach(function (pl) {
+      if (!live(pl)) return;
+      var item = { title: sq(pl.title), text: sq(pl.subtitle), eyebrow: sq(pl.eyebrow), image: pl.image ? localSrc(pl.image) : "", href: (pl.cta && pl.cta.href) || "", cta: sq(pl.cta && pl.cta.label), order: pl.order || 0, position: pl.position };
+      if (pl.kind === "announcement") CMS.announcements.push({ text: item.title || item.text, href: item.href });
+      else if (pl.kind === "banner") CMS.banners.push(item);
+    });
+    CMS.offers.forEach(function (o) {
+      if (o.placements.indexOf("banner") >= 0) CMS.banners.push({ title: o.title, text: o.text, eyebrow: o.badge, image: o.image, href: "#/oferta/" + o.slug, cta: "Shiko ofertën", order: 99, position: "catalog" });
+      if (o.placements.indexOf("home-block") >= 0) CMS.banners.push({ title: o.title, text: o.text, eyebrow: o.badge, image: o.image, href: "#/oferta/" + o.slug, cta: "Shiko ofertën", order: 99, position: "home-banner" });
+    });
+    CMS.banners.sort(function (a, b) { return a.order - b.order; });
+
+    // Blogu (Këshilla)
+    CMS.posts = (db.posts || []).filter(function (p) { return (p.published && Date.parse(p.publishedAt) <= now) || CMS.preview; })
+      .sort(function (a, b) { return String(b.publishedAt).localeCompare(String(a.publishedAt)); })
+      .map(function (p) {
+        return { slug: p.slug, title: sq(p.title), excerpt: sq(p.excerpt), html: md(sq(p.body)), cover: p.cover ? localSrc(p.cover) : "", tag: sq(p.tag), author: p.author || "ITCOM", minutes: p.readMinutes || 3, date: p.publishedAt, draft: !p.published };
+      });
+
+    // Shërbimet që klientët mund t'i rezervojnë
+    CMS.services = (db.services || []).map(function (sv) {
+      return { id: sv.id, name: sq(sv.name), description: sq(sv.description), duration: sv.durationMin || 30, price: sv.price, onsite: sv.location === "onsite" };
+    });
+    CMS.hours = sq(s.hours);
+    CMS.endpoint = String(s.orderEndpoint || "");
+
+    // Menutë: lidhjet e kokës dhe kolonat e fundit të faqes
+    var pageSlug = {};
+    (db.pages || []).forEach(function (pg) { pageSlug[pg.id] = pg.slug; });
+    var link = function (it) {
+      var t = String(it.target || "");
+      switch (it.type) {
+        case "page": return "#info-" + (pageSlug[t] || t);
+        case "category": return catName[t] ? "#/kategoria/" + slugify(catName[t]) : "#/produktet";
+        case "collection": return colById[t] ? "#/koleksioni/" + colById[t].slug : "#/produktet";
+        case "product": return "p/" + t + "/";
+        case "offer": { var o = (db.offers || []).find(function (x) { return x.id === t || x.slug === t; }); return o ? "#/oferta/" + o.slug : "#/ofertat"; }
+        default: return t.replace(/^\/(?=#)/, "");
+      }
+    };
+    var mapItems = function (items) { return (items || []).map(function (it) { return { label: sq(it.label), href: link(it), children: mapItems(it.children) }; }); };
+    (db.menus || []).forEach(function (m) {
+      CMS.menus = CMS.menus || {};
+      CMS.menus[m.handle] = mapItems(m.items);
+    });
     CMS.active = true;
   }
 
@@ -170,17 +331,26 @@
           p.sold = (p.sold || 0) + l.qty;
           st.movements = [{ id: "mv-web-" + record.id + "-" + p.id, productId: p.id, delta: -l.qty, reason: "sale", at: record.createdAt, by: "web", ref: record.number }].concat(st.movements || []);
         });
+        (record.discounts || []).forEach(function (a) {
+          var d = (st.discounts || []).find(function (x) { return x.id === a.id; });
+          if (d) d.uses = (d.uses || 0) + 1;
+        });
+      } else if (kind === "booking") {
+        st.bookings = [record.booking].concat(st.bookings || []);
+        st.inquiries = [record.inquiry].concat(st.inquiries || []);
       } else {
         st.inquiries = [record].concat(st.inquiries || []);
       }
-      if (writeDb(current)) return true;
+      if (writeDb(current)) { sendOut(kind, record); return true; }
     }
     try {
       var box = JSON.parse(localStorage.getItem(OUTBOX_KEY) || "{}");
-      box[kind === "order" ? "orders" : "inquiries"] = (box[kind === "order" ? "orders" : "inquiries"] || []).concat([record]);
+      var key = kind === "order" ? "orders" : kind === "booking" ? "bookings" : "inquiries";
+      box[key] = (box[key] || []).concat([record]);
       localStorage.setItem(OUTBOX_KEY, JSON.stringify(box));
+      sendOut(kind, record);
       return true;
-    } catch (e) { return false; }
+    } catch (e) { sendOut(kind, record); return CMS.hasChannel(); }
   }
 
   function nextNumber() {
@@ -224,10 +394,12 @@
       items: items,
       delivery: { method: o.delivery === "pickup" ? "pickup" : "delivery", fee: o.totals.shipping },
       payment: { method: o.pay === "bank" ? "bank" : o.pay === "inst" ? "card" : "cod", status: "pending" },
-      coupon: null,
+      coupon: o.totals.code ? { code: o.totals.code, discount: round2(o.totals.discount || 0) } : null,
       subtotal: round2(o.totals.subtotal),
       installationTotal: 0,
-      discount: 0,
+      discount: round2(o.totals.discount || 0),
+      discounts: (o.totals.applied || []).map(function (a) { return { id: a.id, title: a.title, kind: a.kind, code: a.code, amount: round2(a.amount) }; }),
+      shippingBeforeDiscount: round2(o.totals.shippingBefore != null ? o.totals.shippingBefore : o.totals.shipping),
       shipping: round2(o.totals.shipping),
       total: round2(o.totals.total),
       vat: round2(o.totals.vat),
@@ -258,6 +430,122 @@
       source: "web-form",
       tags: q.tags || ["b2b"],
     });
+  };
+
+  /* ---------------------------------------------------------------- zbritjet në shportë */
+  var CLASS = { products: "products", bxgy: "products", order: "order", shipping: "shipping" };
+  var inSet = function (ids, id) { return !ids || ids.indexOf(id) >= 0; };
+
+  /** Llogarit zbritjet për shportën. lines: [{ id, price, qty }], opts: { code, shipping }.
+   *  Kthen { applied: [{ id, title, code, kind, amount }], products, order, shipping, codeError, codeOk }. */
+  CMS.priceCart = function (lines, opts) {
+    opts = opts || {};
+    var code = String(opts.code || "").trim().toUpperCase();
+    var ship = Number(opts.shipping) || 0;
+    var res = { applied: [], products: 0, order: 0, shipping: 0, codeError: "", codeOk: false };
+    if (!lines.length || !CMS.discounts.length) { if (code) res.codeError = "Ky kod nuk është i vlefshëm."; return res; }
+    var subtotal = lines.reduce(function (n, l) { return n + l.price * l.qty; }, 0);
+
+    function amountOf(d, productOff) {
+      var el = lines.filter(function (l) { return inSet(d.eligible, l.id); });
+      var base = el.reduce(function (n, l) { return n + l.price * l.qty; }, 0);
+      var qty = el.reduce(function (n, l) { return n + l.qty; }, 0);
+      var min = d.minimum || {};
+      if (min.type === "amount" && (d.kind === "order" || d.kind === "shipping" ? subtotal : base) < min.value) return { amount: 0, why: "Kodi vlen për porosi mbi " + min.value + " €." };
+      if (min.type === "qty" && qty < min.value) return { amount: 0, why: "Kodi vlen kur shporta ka të paktën " + min.value + " artikuj." };
+      var pct = d.valueType === "percent";
+      if (d.kind === "products") {
+        if (!el.length) return { amount: 0, why: "Kodi nuk vlen për produktet në shportë." };
+        if (pct) return { amount: base * d.value / 100 };
+        if (d.perItem) return { amount: el.reduce(function (n, l) { return n + Math.min(d.value, l.price) * l.qty; }, 0) };
+        return { amount: Math.min(d.value, base) };
+      }
+      if (d.kind === "order") {
+        var b = Math.max(0, (d.eligible ? base : subtotal) - productOff);
+        return { amount: pct ? b * d.value / 100 : Math.min(d.value, b) };
+      }
+      if (d.kind === "shipping") {
+        if (!ship) return { amount: 0, why: "Dërgesa juaj është tashmë falas." };
+        if (d.maxRate && ship > d.maxRate) return { amount: 0, why: "Kodi nuk vlen për këtë mënyrë dërgese." };
+        return { amount: pct ? ship * d.value / 100 : Math.min(d.value, ship) };
+      }
+      if (d.kind === "bxgy" && d.bxgy) {
+        var x = d.bxgy;
+        var bought = lines.filter(function (l) { return inSet(x.buy, l.id); }).reduce(function (n, l) { return n + l.qty; }, 0);
+        var times = Math.floor(bought / x.buyQty);
+        if (x.max) times = Math.min(times, x.max);
+        var units = [];
+        lines.filter(function (l) { return inSet(x.get, l.id); }).forEach(function (l) { for (var i = 0; i < l.qty; i++) units.push(l.price); });
+        units.sort(function (a, b) { return a - b; });
+        var free = units.slice(0, times * x.getQty);
+        if (!free.length) return { amount: 0, why: "Shtoni produktet e ofertës në shportë." };
+        return { amount: free.reduce(function (n, v) { return n + v * (x.free ? 1 : x.pct / 100); }, 0) };
+      }
+      return { amount: 0 };
+    }
+
+    var codeRule = null;
+    if (code) {
+      codeRule = CMS.discounts.find(function (d) { return d.method === "code" && d.code === code; }) || null;
+      if (!codeRule) res.codeError = "Ky kod nuk është i vlefshëm ose ka skaduar.";
+    }
+    var autos = CMS.discounts.filter(function (d) { return d.method === "auto"; });
+    var fits = function (a, b) { return a.combines[CLASS[b.kind]] && b.combines[CLASS[a.kind]]; };
+    // Rregulli me kod ka përparësi (klienti e zgjodhi); automatiket shtohen kur lejohen ta kombinojnë.
+    var picked = codeRule ? [codeRule] : [];
+    var rank = autos.map(function (d) { return { d: d, a: amountOf(d, 0).amount }; }).filter(function (x) { return x.a > 0; }).sort(function (a, b) { return b.a - a.a; });
+    rank.forEach(function (x) {
+      if (picked.every(function (p) { return CLASS[p.kind] !== CLASS[x.d.kind] ? fits(p, x.d) : fits(p, x.d) && p.combines[CLASS[p.kind]]; })) picked.push(x.d);
+    });
+    // Rendi: produktet → porosia → dërgesa
+    var order = { products: 0, order: 1, shipping: 2 };
+    picked.sort(function (a, b) { return order[CLASS[a.kind]] - order[CLASS[b.kind]]; });
+    var productOff = 0;
+    picked.forEach(function (d) {
+      var r = amountOf(d, productOff);
+      var amt = Math.round(r.amount * 100) / 100;
+      if (d === codeRule && !amt) { res.codeError = r.why || "Kodi nuk vlen për këtë shportë."; return; }
+      if (!amt) return;
+      if (d === codeRule) res.codeOk = true;
+      var cls = CLASS[d.kind];
+      if (cls === "products") { productOff += amt; res.products += amt; }
+      else if (cls === "order") res.order += amt;
+      else res.shipping += Math.min(amt, ship - res.shipping);
+      res.applied.push({ id: d.id, title: d.title, code: d.method === "code" ? d.code : undefined, kind: d.kind, amount: cls === "shipping" ? Math.min(amt, ship) : amt });
+    });
+    res.products = Math.round(res.products * 100) / 100;
+    res.order = Math.min(Math.round(res.order * 100) / 100, Math.max(0, subtotal - res.products));
+    res.shipping = Math.round(res.shipping * 100) / 100;
+    return res;
+  };
+
+  /* ---------------------------------------------------------------- kanali i porosive (webhook) */
+  // Kur CMS-i ka një adresë te Integrimet → Kanali i porosive, çdo porosi, pyetje dhe termin dërgohet edhe atje
+  // (p.sh. një Google Apps Script që i ruan në Sheets dhe ia kthen CMS-it). Pa të, mbeten vetëm në këtë shfletues.
+  function sendOut(kind, record) {
+    if (!CMS.endpoint || !/^https:\/\//.test(CMS.endpoint)) return;
+    try {
+      fetch(CMS.endpoint, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ kind: kind, record: record, site: location.origin + location.pathname.replace(/p\/[^/]+\/?$/, "") }) });
+    } catch (e) { /* ignore */ }
+  }
+  CMS.hasChannel = function () { return /^https:\/\//.test(CMS.endpoint); };
+
+  /** Rezervim termini nga faqja e servisit: termin në pritje + mesazh në inbox. */
+  CMS.saveBooking = function (b) {
+    var at = new Date().toISOString();
+    var id = Date.now().toString(36);
+    var inquiry = {
+      id: "inq_web_" + id, createdAt: at, type: "measurement", name: b.name, phone: b.phone, email: b.email || undefined, city: b.city || undefined,
+      service: b.serviceName, preferredDate: b.start, message: b.note || "Rezervim termini nga faqja e servisit.", status: "scheduled", scheduledAt: b.start,
+      seen: false, source: "web-form", tags: ["termin"],
+    };
+    var booking = {
+      id: "bk_web_" + id, serviceId: b.serviceId, staffId: b.staffId || "", customerName: b.name, phone: b.phone, email: b.email || undefined, city: b.city || undefined,
+      start: b.start, durationMin: b.duration, status: "pending", inquiryId: inquiry.id, note: b.note || undefined, location: b.onsite ? "onsite" : "loc-main",
+      address: b.onsite ? b.address || undefined : undefined, createdAt: at,
+    };
+    var ok = push("booking", { booking: booking, inquiry: inquiry });
+    return ok ? booking.id : null;
   };
 
   // When the CMS changes data in another tab, reload so the shop shows it.

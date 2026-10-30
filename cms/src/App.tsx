@@ -33,20 +33,35 @@ const ProductEdit = lazyRetry(() => import('@/admin/pages/ProductEdit'));
 const Categories = lazyRetry(() => import('@/admin/pages/Categories'));
 const Inventory = lazyRetry(() => import('@/admin/pages/Inventory'));
 const PurchaseOrders = lazyRetry(() => import('@/admin/pages/PurchaseOrders'));
+const Collections = lazyRetry(() => import('@/admin/pages/Collections'));
+const CollectionEdit = lazyRetry(() => import('@/admin/pages/CollectionEdit'));
 // Customers, growth, discounts
 const Customers = lazyRetry(() => import('@/admin/pages/Customers'));
 const Segments = lazyRetry(() => import('@/admin/pages/Segments'));
+const Offers = lazyRetry(() => import('@/admin/pages/Offers'));
+const OfferEdit = lazyRetry(() => import('@/admin/pages/OfferEdit'));
+const Discounts = lazyRetry(() => import('@/admin/pages/Discounts'));
+const DiscountEdit = lazyRetry(() => import('@/admin/pages/DiscountEdit'));
+const Coupons = lazyRetry(() => import('@/admin/pages/Coupons'));
 // Content
 const Pages = lazyRetry(() => import('@/admin/pages/Pages'));
 const PageEdit = lazyRetry(() => import('@/admin/pages/PageEdit'));
 const Media = lazyRetry(() => import('@/admin/pages/Media'));
+const Posts = lazyRetry(() => import('@/admin/pages/Posts'));
+const PostEdit = lazyRetry(() => import('@/admin/pages/PostEdit'));
+const Menus = lazyRetry(() => import('@/admin/pages/Menus'));
 // Markets, analytics, contacts, appointments
 const Analytics = lazyRetry(() => import('@/admin/pages/Analytics'));
 const Inquiries = lazyRetry(() => import('@/admin/pages/Inquiries'));
+const Quotes = lazyRetry(() => import('@/admin/pages/Quotes'));
+const Appointments = lazyRetry(() => import('@/admin/pages/Appointments'));
+const AppointmentServices = lazyRetry(() => import('@/admin/pages/AppointmentServices'));
+const Markets = lazyRetry(() => import('@/admin/pages/Markets'));
 // Sales channels, settings
 const Slides = lazyRetry(() => import('@/admin/pages/Slides'));
 const SlideEdit = lazyRetry(() => import('@/admin/pages/SlideEdit'));
 const Integrations = lazyRetry(() => import('@/admin/pages/Integrations'));
+const Publish = lazyRetry(() => import('@/admin/pages/Publish'));
 const SettingsPage = lazyRetry(() => import('@/admin/pages/SettingsPage'));
 
 function Loader() {
@@ -133,24 +148,42 @@ const adminRoutes: RouteObject[] = [
   screen('proizvodi', 'products', <Products />),
   screen('proizvodi/novi', 'products', <ProductEdit />),
   screen('proizvodi/:id', 'products', <ProductEdit />),
+  screen('kolekcije', 'collections', <Collections />),
+  screen('kolekcije/:id', 'collections', <CollectionEdit />), // 'novi' = new collection
   screen('kategorije', 'products', <Categories />),
   screen('inventar', 'inventory', <Inventory />),
   screen('nabavke', 'purchasing', <PurchaseOrders />),
   // Klientët
   screen('kupci', 'customers', <Customers />),
   screen('segmenti', 'segments', <Segments />),
+  // Marketingu
+  screen('ponude', 'offers', <Offers />),
+  screen('ponude/:id', 'offers', <OfferEdit />),
+  screen('popusti', 'discounts', <Discounts />),
+  screen('popusti/:id', 'discounts', <DiscountEdit />),
+  screen('kuponi', 'discounts', <Coupons />),
   // Përmbajtja
   screen('stranice', 'content', <Pages />),
   screen('stranice/:id', 'content', <PageEdit />),
   screen('mediji', 'content', <Media />),
+  screen('savjeti', 'content', <Posts />),
+  screen('savjeti/:id', 'content', <PostEdit />),
+  screen('meniji', 'content', <Menus />),
   // Analitika
   screen('analitika', 'analytics', <Analytics />),
   // Kontaktet
   screen('kontakti', 'contacts', <Inquiries />),
+  screen('kontakti/ponude', 'quotes', <Quotes />),
+  // Terminet (servis, montim, konsulta)
+  screen('termini', 'appointments', <Appointments />),
+  screen('termini/usluge', 'appointments', <AppointmentServices />),
   // Kanale shitjeje
   { path: 'prodavnica', element: <Navigate to="/admin/prodavnica/slajdovi" replace /> },
   screen('prodavnica/slajdovi', 'onlineStore', <Slides />),
   screen('prodavnica/slajdovi/:id', 'onlineStore', <SlideEdit />),
+  { path: 'prodavnica/editor', element: <Navigate to="/admin/prodavnica/slajdovi" replace /> },
+  screen('prodavnica/publikimi', 'onlineStore', <Publish />),
+  screen('trzista', 'markets', <Markets />),
   screen('integracije', 'integrations', <Integrations />),
   // Konfigurimet
   screen('konfiguracija', 'settings', <SettingsPage />),

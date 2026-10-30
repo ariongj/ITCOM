@@ -1,4 +1,4 @@
-import type { Inquiry, InventoryMovement, Order } from '@/lib/types';
+import type { Booking, Inquiry, InventoryMovement, Order } from '@/lib/types';
 import { useDb } from './db';
 
 /**
@@ -9,24 +9,47 @@ import { useDb } from './db';
 const KEY = 'itcom-shop-outbox';
 
 export function importShopOutbox() {
-  let box: { orders?: Order[]; inquiries?: Inquiry[] } | null = null;
+  let box: ShopRecords | null = null;
   try {
     box = JSON.parse(localStorage.getItem(KEY) || 'null');
   } catch {
     box = null;
   }
-  if (!box || (!box.orders?.length && !box.inquiries?.length)) return;
+  if (!box || (!box.orders?.length && !box.inquiries?.length && !box.bookings?.length)) return;
   try {
     localStorage.removeItem(KEY);
   } catch {
     /* ignore */
   }
+  importShopRecords(box);
+}
+
+/** Records sent by the shop: { orders, inquiries, bookings: [{ booking, inquiry }] } (outbox or the order channel). */
+export interface ShopRecords {
+  orders?: Order[];
+  inquiries?: Inquiry[];
+  bookings?: { booking: Booking; inquiry: Inquiry }[];
+}
+
+/** Merge shop records into the CMS, skipping ids that are already there. Returns how many were new. */
+export function importShopRecords(input: ShopRecords): number {
+  let added = 0;
   useDb.setState((s) => {
+    const seen = new Set([...s.orders.map((o) => o.id), ...s.inquiries.map((q) => q.id), ...s.bookings.map((b) => b.id)]);
+    // New ids only, once each (the channel can deliver the same record twice).
+    const fresh = (id: string | undefined) => !!id && !seen.has(id) && !!seen.add(id);
+    const box: ShopRecords = {
+      orders: (input.orders ?? []).filter((o) => fresh(o?.id)),
+      inquiries: (input.inquiries ?? []).filter((q) => fresh(q?.id)),
+      bookings: (input.bookings ?? []).filter((b) => fresh(b?.booking?.id)),
+    };
+    added = box.orders!.length + box.inquiries!.length + box.bookings!.length;
+    if (!added) return {};
     const prefix = s.settings.orderPrefix || 'IT-';
-    let next = Math.max(1000, ...s.orders.map((o) => parseInt(o.number.replace(/\D/g, ''), 10) || 0), ...(box!.orders ?? []).map((o) => parseInt(o.number.replace(/\D/g, ''), 10) || 0)) + 1;
+    let next = Math.max(1000, ...s.orders.map((o) => parseInt(o.number.replace(/\D/g, ''), 10) || 0), ...(box.orders ?? []).map((o) => parseInt(o.number.replace(/\D/g, ''), 10) || 0)) + 1;
     const products = s.products.map((p) => ({ ...p }));
     const movements: InventoryMovement[] = [];
-    const orders = (box!.orders ?? [])
+    const orders = (box.orders ?? [])
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       .map((o) => {
         // keep the number the customer was shown, unless it is already taken
@@ -42,11 +65,16 @@ export function importShopOutbox() {
         return order;
       })
       .reverse();
+    const usage = new Map<string, number>();
+    for (const o of orders) for (const a of o.discounts ?? []) usage.set(a.id, (usage.get(a.id) ?? 0) + 1);
     return {
       orders: [...orders, ...s.orders],
-      inquiries: [...(box!.inquiries ?? []), ...s.inquiries],
+      inquiries: [...(box.bookings ?? []).map((b) => b.inquiry), ...(box.inquiries ?? []), ...s.inquiries],
+      bookings: [...(box.bookings ?? []).map((b) => b.booking), ...s.bookings],
+      discounts: usage.size ? s.discounts.map((d) => (usage.has(d.id) ? { ...d, uses: d.uses + usage.get(d.id)! } : d)) : s.discounts,
       products,
       movements: [...movements, ...s.movements],
     };
   });
+  return added;
 }

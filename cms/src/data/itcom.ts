@@ -66,7 +66,7 @@ export const ITCOM_SETTINGS: Settings = {
   adminEmail: 'admin@itcom.example',
   orderPrefix: 'IT-',
   locations: [{ id: 'loc-main', name: 'ITCOM', address: 'Adresa e dyqanit', city: 'Prishtinë', pickup: true, isDefault: true }],
-  notifications: DEFAULT_SETTINGS.notifications.filter((n) => !n.event.startsWith('booking')),
+  notifications: DEFAULT_SETTINGS.notifications,
   integrations: [
     { id: 'int-whatsapp', kind: 'email', name: 'Porosi me WhatsApp', status: 'disconnected', note: 'Shtoni numrin e WhatsApp te Konfigurimet → Dyqani: porositë dërgohen direkt në telefonin tuaj.' },
     { id: 'int-payment', kind: 'payment', name: 'Pagesa me kartelë (e-commerce i bankës)', status: 'test', note: 'Mënyra test — kartelat nuk ngarkohen. Çelësat e prodhimit pas kontratës me bankën.' },

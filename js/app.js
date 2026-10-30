@@ -118,7 +118,10 @@
 
   /* ================================================================ gjendja */
   const catMax = (cat) => Math.ceil(Math.max(...PRODUCTS.filter((p) => cat === "All" || p.cat === cat).map((p) => p.price)) / 50) * 50;
-  const blankFilters = (cat = "All") => ({ q: "", cat, brands: new Set(), f: {}, min: 0, max: catMax(cat), inStock: false, onSale: false });
+  const blankFilters = (cat = "All") => ({ q: "", cat, brands: new Set(), f: {}, min: 0, max: catMax(cat), inStock: false, onSale: false, col: null });
+  // Koleksionet nga CMS-i (Produktet → Koleksionet): grupe produktesh me adresën e vet (#/koleksioni/<slug>).
+  const COLLECTIONS = window.CMS?.collections || [];
+  const colBySlug = (slug) => COLLECTIONS.find((c) => c.slug === slug);
   const state = Object.assign(blankFilters(), { sort: "featured", per: 24, page: 1 });
   const closedFacets = new Set(saved.get("closedFacets", []));
   const expandedFacets = new Set();
@@ -132,6 +135,7 @@
   /* ================================================================ filtrimi */
   function matches(p, skip = "") {
     if (skip !== "cat" && state.cat !== "All" && p.cat !== state.cat) return false;
+    if (state.col && !state.col.productIds.includes(p.id)) return false;
     if (skip !== "brand" && state.brands.size && !state.brands.has(p.brand)) return false;
     if (skip !== "price" && (p.price < state.min || p.price > state.max)) return false;
     if (skip !== "inStock" && state.inStock && !p.stock) return false;
@@ -158,6 +162,7 @@
 
   function activeFilters() {
     const out = [];
+    if (state.col) out.push(["col", "Koleksioni", state.col.title]);
     if (state.q) out.push(["q", "Kërkimi", `“${state.q}”`]);
     if (state.cat !== "All") out.push(["cat", "Kategoria", state.cat]);
     state.brands.forEach((b) => out.push(["brand:" + b, "Brendi", b]));
@@ -174,6 +179,7 @@
   function removeFilter(key) {
     if (key === "q") { state.q = ""; $("#search").value = ""; }
     else if (key === "cat") return setCat("All");
+    else if (key === "col") { state.col = null; state.page = 1; return goCatalog(); }
     else if (key.startsWith("brand:")) state.brands.delete(key.slice(6));
     else if (key.startsWith("f:")) { const [, k, ...v] = key.split(":"); state.f[k]?.delete(v.join(":")); }
     else if (key === "price") { state.min = 0; state.max = catMax(state.cat); }
@@ -339,7 +345,12 @@
       grid.innerHTML = slice.map((p) => card(p)).join("");
       $("#empty").hidden = list.length > 0;
 
-      const title = state.q ? `Rezultatet për “${state.q}”` : state.onSale && state.cat === "All" ? "Ofertat" : state.cat === "All" ? "Të gjitha produktet" : state.cat;
+      const title = state.col ? state.col.title : state.q ? `Rezultatet për “${state.q}”` : state.onSale && state.cat === "All" ? "Ofertat" : state.cat === "All" ? "Të gjitha produktet" : state.cat;
+      $("#resultsDesc").hidden = !state.col?.description;
+      $("#resultsDesc").textContent = state.col?.description || "";
+      const cb = (window.CMS?.banners || []).find((b) => b.position === "catalog");
+      $("#catBanner").hidden = !cb || !!state.col;
+      $("#catBanner").innerHTML = cb ? bannerHTML(cb, "banner--catalog") : "";
       $("#resultsTitle").textContent = title;
       const from = list.length ? (state.page - 1) * state.per + 1 : 0;
       const countText = list.length > state.per ? `${from}–${from + slice.length - 1} nga ${list.length} produkte` : plural(list.length, "produkt", "produkte");
@@ -347,7 +358,8 @@
       if (view === "catalog") document.title = `${title} · ITCOM`;
 
       const crumbs = [`<a href="#/">Ballina</a>`];
-      if (state.cat !== "All") crumbs.push(`<a href="#/produktet">Produktet</a>`, `<span aria-current="page">${esc(state.cat)}</span>`);
+      if (state.col) crumbs.push(`<a href="#/produktet">Produktet</a>`, `<span aria-current="page">${esc(state.col.title)}</span>`);
+      else if (state.cat !== "All") crumbs.push(`<a href="#/produktet">Produktet</a>`, `<span aria-current="page">${esc(state.cat)}</span>`);
       else crumbs.push(`<span aria-current="page">${state.q ? "Kërkimi" : state.onSale ? "Ofertat" : "Produktet"}</span>`);
       $("#crumbs").innerHTML = crumbs.join('<span aria-hidden="true">/</span>');
 
@@ -393,7 +405,7 @@
   }
 
   // Hap katalogun për gjendjen aktuale të filtrave (kategoria është pjesë e URL-së).
-  const goCatalog = () => go(state.q ? `#/kerko/${encodeURIComponent(state.q)}` : state.cat !== "All" ? `#/kategoria/${catSlug(state.cat)}` : state.onSale ? "#/ofertat" : "#/produktet");
+  const goCatalog = () => go(state.col ? `#/koleksioni/${state.col.slug}` : state.q ? `#/kerko/${encodeURIComponent(state.q)}` : state.cat !== "All" ? `#/kategoria/${catSlug(state.cat)}` : state.onSale ? "#/ofertat" : "#/produktet");
 
   /* ================================================================ ballina */
   // Hero: një artikull në plan të parë. Nga CMS-i (Online Store → Slajdet) kur ka; ndryshe këto.
@@ -596,6 +608,8 @@
     toast(`U hoq: ${esc(byId[id].name)}`, { label: "Anulo", fn: () => { cart.splice(idx, 0, removed); saveCart(); renderCart(); refreshCards(); } });
   }
 
+  // Kodi i zbritjes që klienti ka shkruar (ruhet në shfletues derisa ta heqë ose ta përdorë).
+  let promo = saved.get("promo", "");
   function totals(delivery = "standard") {
     const items = cart.reduce((n, l) => n + l.qty, 0);
     const subtotal = cart.reduce((s, l) => s + byId[l.id].price * l.qty, 0);
@@ -603,13 +617,24 @@
     let shipping = subtotal >= S.freeShippingFrom ? 0 : S.shippingFee;
     if (delivery === "express") shipping += S.expressFee;
     if (delivery === "pickup") shipping = 0;
-    const total = subtotal + shipping;
-    return { items, subtotal, savings, shipping, total, vat: total - total / (1 + S.vatRate) };
+    // Zbritjet e CMS-it (automatike dhe me kod): mbi produktet, mbi porosinë dhe mbi dërgesën.
+    const pr = window.CMS?.priceCart ? CMS.priceCart(cart.map((l) => ({ id: l.id, price: byId[l.id].price, qty: l.qty })), { code: promo, shipping }) : null;
+    const discount = pr ? pr.products + pr.order : 0;
+    const shippingBefore = shipping;
+    shipping = Math.max(0, shipping - (pr ? pr.shipping : 0));
+    const total = Math.max(0, subtotal - discount) + shipping;
+    return {
+      items, subtotal, savings, shipping, shippingBefore, total, vat: total - total / (1 + S.vatRate),
+      discount, applied: pr ? pr.applied : [], code: pr?.codeOk ? promo : "", codeError: promo && pr ? pr.codeError : "",
+    };
   }
+  const discountRows = (t) => t.applied.map((a) => `<dt>${esc(a.title)}${a.code ? ` <span class="code-tag">${esc(a.code)}</span>` : ""}</dt><dd class="save">−${fmt(a.amount)}</dd>`).join("");
+  const hasDiscounts = () => !!window.CMS?.discounts?.length;
 
   const totalsHTML = (t) => `
     <dt>Nëntotali (${plural(t.items, "artikull", "artikuj")})</dt><dd>${fmt(t.subtotal)}</dd>
     ${t.savings > 0 ? `<dt>Kurseni</dt><dd class="save">−${fmt(t.savings)}</dd>` : ""}
+    ${discountRows(t)}
     <dt>Dërgesa</dt><dd>${t.shipping === 0 ? "Falas" : fmt(t.shipping)}</dd>
     <dt>Përfshirë TVSH ${Math.round(S.vatRate * 100)}%</dt><dd>${fmt(t.vat)}</dd>
     <dt class="grand">Totali</dt><dd class="grand">${fmt(t.total)}</dd>`;
@@ -699,7 +724,7 @@
   // #builder dhe #info-<faqja> hapen sipër pamjes aktuale.
   let view = "";
   let infoBack = "";
-  const VIEWS = { home: "#viewHome", catalog: "#viewCatalog", product: "#viewProduct", cart: "#viewCart", checkout: "#viewCheckout", done: "#viewDone" };
+  const VIEWS = { home: "#viewHome", catalog: "#viewCatalog", product: "#viewProduct", cart: "#viewCart", checkout: "#viewCheckout", done: "#viewDone", page: "#viewPage" };
   const META_DESC = $('meta[name="description"]')?.getAttribute("content") || "";
   function showView(name, title, desc) {
     const changed = view !== name;
@@ -742,17 +767,26 @@
     }
     if (parts[0] === "kategoria" && catFromSlug(parts[1])) {
       const cat = catFromSlug(parts[1]);
-      if (state.cat !== cat || state.q || state.onSale) resetFilters(cat);
+      if (state.cat !== cat || state.q || state.onSale || state.col) resetFilters(cat);
       showView("catalog"); render(); scrollTop(); return;
     }
-    if (parts[0] === "produktet") { if (state.cat !== "All" || state.q || state.onSale) resetFilters(); showView("catalog"); render(); scrollTop(); return; }
-    if (parts[0] === "ofertat") { if (!state.onSale || state.cat !== "All" || state.q) { resetFilters(); state.onSale = true; state.sort = "discount"; } showView("catalog"); render(); scrollTop(); return; }
+    if (parts[0] === "produktet") { if (state.cat !== "All" || state.q || state.onSale || state.col) resetFilters(); showView("catalog"); render(); scrollTop(); return; }
+    if (parts[0] === "ofertat") { if (!state.onSale || state.cat !== "All" || state.q || state.col) { resetFilters(); state.onSale = true; state.sort = "discount"; } showView("catalog"); render(); scrollTop(); return; }
     if (parts[0] === "kerko") {
       const q = parts.slice(1).join("/");
       if (state.q !== q) { resetFilters(state.q ? state.cat : "All"); state.q = q; $("#search").value = q; }
       showView("catalog"); $("#grid").innerHTML = skeleton(8);
       requestAnimationFrame(() => render()); scrollTop(); return;
     }
+    if (parts[0] === "koleksioni") {
+      const c = colBySlug(parts[1]);
+      if (!c) { notFound("Koleksioni nuk u gjet", "#/produktet", "Shiko produktet"); scrollTop(); return; }
+      if (state.col !== c) { resetFilters(); state.col = c; }
+      showView("catalog"); render(); scrollTop(); return;
+    }
+    if (parts[0] === "oferta") { renderOffer(parts[1]); scrollTop(); return; }
+    if (parts[0] === "blog") { if (parts[1]) renderPost(parts[1]); else renderBlog(); scrollTop(); return; }
+    if (parts[0] === "servisi") { renderServices(parts[1] || ""); scrollTop(); return; }
     if (parts[0] === "shporta") { renderCartPage(); scrollTop(); return; }
     if (parts[0] === "porosia") { if (!cart.length) { history.replaceState(null, "", BASE + "#/shporta"); renderCartPage(); } else renderCheckout(); scrollTop(); return; }
     if (parts[0] === "konfirmimi") { renderDone(parts[1]); scrollTop(); return; }
@@ -1207,15 +1241,45 @@
     <aside class="sum" aria-label="Përmbledhja">
       <h2>Përmbledhja</h2>
       <ul class="sum__lines">${cart.map((l) => `<li><span>${l.qty} × ${esc(byId[l.id].name)}</span><span class="num">${fmt(byId[l.id].price * l.qty)}</span></li>`).join("")}</ul>
-      <dl class="sum__totals">
-        <dt>Nëntotali</dt><dd>${fmt(t.subtotal)}</dd>
-        ${t.savings > 0 ? `<dt>Kurseni</dt><dd class="save">−${fmt(t.savings)}</dd>` : ""}
-        <dt>Dërgesa</dt><dd id="sumShip">${t.shipping === 0 ? "0,00 €" : fmt(t.shipping)}</dd>
-        <dt class="grand">Totali</dt><dd class="grand" id="sumTotal">${fmt(t.total)}</dd>
-      </dl>
-      <p class="sum__vat">Përfshirë TVSH ${Math.round(S.vatRate * 100)}% (${fmt(t.vat)}).</p>
+      <div id="promoSlot">${promoHTML(t)}</div>
+      <dl class="sum__totals" id="sumRows">${sumRows(t)}</dl>
+      <p class="sum__vat" id="sumVat">Përfshirë TVSH ${Math.round(S.vatRate * 100)}% (${fmt(t.vat)}).</p>
       ${cta}
     </aside>`;
+  const sumRows = (t) => `
+        <dt>Nëntotali</dt><dd>${fmt(t.subtotal)}</dd>
+        ${t.savings > 0 ? `<dt>Kurseni</dt><dd class="save">−${fmt(t.savings)}</dd>` : ""}
+        ${discountRows(t)}
+        <dt>Dërgesa</dt><dd id="sumShip">${t.shipping === 0 ? (t.shippingBefore > 0 ? "Falas" : "0,00 €") : fmt(t.shipping)}</dd>
+        <dt class="grand">Totali</dt><dd class="grand" id="sumTotal">${fmt(t.total)}</dd>`;
+  // Kutia e kodit të zbritjes: shfaqet vetëm kur CMS-i ka të paktën një zbritje me kod.
+  const promoHTML = (t) => !window.CMS?.discounts?.some((d) => d.method === "code") ? "" : `
+      <div class="promo-box">
+        ${t.code
+          ? `<p class="promo-box__ok">${svg(ICON.check)}<span>Kodi <b>${esc(t.code)}</b> u aplikua</span><button type="button" class="link-btn" data-promo-remove>Hiq</button></p>`
+          : `<label for="promoCode">Kodi i zbritjes</label>
+             <div class="promo-box__row"><input id="promoCode" value="${esc(promo)}" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="promoMsg" ${t.codeError ? 'aria-invalid="true"' : ""} /><button type="button" class="btn btn--ghost" id="promoApply">Apliko</button></div>`}
+        <p class="promo-box__msg" id="promoMsg" aria-live="polite">${t.codeError ? esc(t.codeError) : ""}</p>
+      </div>`;
+  // Rifreskon përmbledhjen pa e rindërtuar formularin e porosisë (fushat dhe zgjedhjet mbeten).
+  function refreshSummary() {
+    if (view === "cart") { renderCartPage(); return; }
+    if (view !== "checkout") return;
+    const form = $("#checkoutForm");
+    const t = totals(form?.delivery?.value || "standard");
+    $("#promoSlot").innerHTML = promoHTML(t);
+    $("#sumRows").innerHTML = sumRows(t);
+    $("#sumVat").textContent = `Përfshirë TVSH ${Math.round(S.vatRate * 100)}% (${fmt(t.vat)}).`;
+  }
+  function applyPromo(code) {
+    promo = String(code || "").trim().toUpperCase();
+    saved.set("promo", promo);
+    renderCart();
+    refreshSummary();
+    const t = totals();
+    if (promo) announce(t.code ? `Kodi ${promo} u aplikua` : t.codeError);
+    (t.code ? $("[data-promo-remove]") : $("#promoCode"))?.focus();
+  }
 
   function renderCartPage() {
     showView("cart", "Shporta · ITCOM");
@@ -1309,15 +1373,14 @@
         ${summaryHTML(t0, `<button class="btn btn--cta btn--block btn--lg" type="submit" value="site">Dërgo porosinë</button>
           ${S.whatsapp ? `<button class="btn btn--wa btn--block btn--lg" type="submit" value="wa">Porosit me WhatsApp</button>` : ""}
           <p class="sum__note">Pas porosisë ju telefonojmë për konfirmim. Asnjë pagesë nuk merret online.</p>
+          ${demoNote()}
           <a class="link-back" href="#/shporta">← Kthehu te shporta</a>`)}
       </form>`;
 
     const form = $("#checkoutForm");
     const delivery = () => form.delivery.value;
     const update = () => {
-      const t = totals(delivery());
-      $("#sumShip").textContent = t.shipping === 0 ? "0,00 €" : fmt(t.shipping);
-      $("#sumTotal").textContent = fmt(t.total);
+      $("#sumRows").innerHTML = sumRows(totals(delivery()));
       const base = totals("standard").shipping;
       $("#dStd").textContent = base === 0 ? "Falas" : fmt(base);
       $("#dExp").textContent = fmt(base + S.expressFee);
@@ -1356,6 +1419,7 @@
       if (firstBad) { firstBad.focus(); announce("Plotësoni fushat e shënuara"); return; }
       const t = totals(delivery());
       const fields = Object.fromEntries(["name", "company", "phone", "email", "address", "city", "zip"].map((k) => [k, form.elements[k]?.value.trim() || ""]));
+      if (promo && !t.code) { $("#promoCode")?.focus(); announce("Kodi i zbritjes nuk vlen. Hiqeni ose ndryshojeni."); return; }
       if (e.submitter?.value === "wa" && S.whatsapp) {
         // Porosia dërgohet si mesazh WhatsApp te dyqani; shporta mbetet derisa klienti ta konfirmojë.
         const payLabel = { cod: "Pagesë në dorëzim", inst: "Me këste mujore", bank: "Transfertë bankare" }[form.pay.value];
@@ -1363,6 +1427,7 @@
         const lines = [
           "Përshëndetje ITCOM, dua të porosis:",
           ...cart.map((l) => `• ${l.qty} × ${byId[l.id].name} (${byId[l.id].id.toUpperCase()}) – ${fmt(byId[l.id].price * l.qty)}`),
+          ...(t.applied.length ? [`Zbritje: ${t.applied.map((a) => `${a.title}${a.code ? ` (${a.code})` : ""} −${fmt(a.amount)}`).join(", ")}`] : []),
           `Totali: ${fmt(t.total)} (${delLabel}, ${payLabel})`,
           "",
           `Emri: ${fields.name}${fields.company ? ` (${fields.company})` : ""}`,
@@ -1378,10 +1443,223 @@
         || "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
       try { sessionStorage.setItem("itcom:last-order", JSON.stringify({ number, total: t.total, email: fields.email, items: cart.map((l) => `${l.qty} × ${byId[l.id].name}`), delivery: delivery() })); } catch { /* ignore */ }
       cart = [];
+      promo = "";
+      saved.set("promo", "");
       saveCart();
       renderCart();
       refreshCards();
       go(`#/konfirmimi/${encodeURIComponent(number)}`);
+    });
+  }
+
+
+  // P01: pa kanal porosish (CMS → Publikimi) dhe pa WhatsApp, kërkesa ruhet vetëm në këtë shfletues — e themi qartë.
+  const demoNote = () => (window.CMS?.hasChannel?.() || S.whatsapp || window.CMS?.source === "local" ? "" :
+    `<p class="demo-note">Dyqan demonstrativ: kjo kërkesë ruhet vetëm në këtë shfletues derisa ITCOM të lidhë kanalin e porosive. Për një blerje të vërtetë, na kontaktoni.</p>`);
+
+  /* ================================================================ nga CMS-i: menutë, njoftimet, koleksionet, fushatat, blogu, servisi */
+  const MONTHS = ["janar", "shkurt", "mars", "prill", "maj", "qershor", "korrik", "gusht", "shtator", "tetor", "nëntor", "dhjetor"];
+  const fmtDay = (iso) => { const d = new Date(iso); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
+  // Një lidhje menuje: #builder hap konfiguruesin, #info-… faqet informuese, #business formularin për biznes.
+  const menuLink = (it, cls = "") => {
+    const h = it.href || "";
+    if (h === "#builder") return `<a class="${cls}" href="#builder" data-builder>${esc(it.label)}</a>`;
+    if (h === "#business") return `<button type="button" class="${cls}" data-business>${esc(it.label)}</button>`;
+    if (h.startsWith("#info-")) return `<button type="button" class="${cls}" data-info="${esc(h.slice(6))}">${esc(it.label)}</button>`;
+    if (!h) return `<span class="${cls}">${esc(it.label)}</span>`;
+    return `<a class="${cls}" href="${esc(h)}">${esc(it.label)}</a>`;
+  };
+  function renderMenus() {
+    const m = window.CMS?.menus;
+    if (m?.main?.length) $("#navLinks").innerHTML = m.main.map((it) => menuLink(it, "navbar__link")).join("");
+    // Në telefon lidhjet e kokës fshihen: i shtojmë edhe te paneli "Kategoritë".
+    const main = m?.main?.length ? m.main : [{ label: "Ndërto PC", href: "#builder" }, { label: "Ofertat", href: "#/ofertat" }];
+    $("#mega").insertAdjacentHTML("beforeend", `<div class="container mega__links">${main.map((it) => menuLink(it)).join("")}</div>`);
+    if (m?.footer?.length) {
+      const cols = $$(".footer__grid > div").slice(1);
+      cols.forEach((c) => c.remove());
+      $(".footer__grid").insertAdjacentHTML("beforeend", m.footer.slice(0, 4).map((col) =>
+        `<div><h2>${esc(col.label)}</h2><ul>${col.children.map((it) => `<li>${menuLink(it)}</li>`).join("")}</ul></div>`).join(""));
+    }
+  }
+  function renderAnnouncements() {
+    const list = window.CMS?.announcements || [];
+    const bar = $("#announceBar");
+    bar.hidden = !list.length;
+    bar.innerHTML = list.length ? `<div class="container announce-bar__inner">${list.slice(0, 3).map((a) => (a.href ? menuLink({ label: a.text, href: a.href }) : `<span>${esc(a.text)}</span>`)).join('<span aria-hidden="true">·</span>')}</div>` : "";
+  }
+  const bannerHTML = (b, cls) => `
+    <a class="banner ${cls}" href="${esc(b.href || "#/ofertat")}">
+      ${b.image ? `<span class="banner__img"><img src="${esc(b.image)}" alt="" loading="lazy" /></span>` : ""}
+      <span class="banner__copy">${b.eyebrow ? `<span class="eyebrow">${esc(b.eyebrow)}</span>` : ""}<b>${esc(b.title)}</b>${b.text ? `<span>${esc(b.text)}</span>` : ""}<span class="banner__cta">${esc(b.cta || "Shiko")}</span></span>
+    </a>`;
+  const postCard = (p) => `
+    <article class="post-card">
+      <a class="post-card__img" href="#/blog/${esc(p.slug)}" tabindex="-1" aria-hidden="true">${p.cover ? `<img src="${esc(p.cover)}" alt="" loading="lazy" />` : ""}</a>
+      <div class="post-card__body">
+        <span class="eyebrow">${esc(p.tag || "Këshilla")} · ${p.minutes} min lexim</span>
+        <h3><a href="#/blog/${esc(p.slug)}">${esc(p.title)}</a></h3>
+        <p>${esc(p.excerpt)}</p>
+      </div>
+    </article>`;
+  function renderCmsHome() {
+    const cols = COLLECTIONS.filter((c) => c.productIds.length);
+    $("#colSec").hidden = !cols.length;
+    $("#colTiles").innerHTML = cols.slice(0, 4).map((c) => {
+      const img = c.image || (byId[c.productIds[0]] ? imgSrc(byId[c.productIds[0]]) : "");
+      return `<a class="col-tile" href="#/koleksioni/${esc(c.slug)}">
+        <span class="col-tile__img">${img ? `<img src="${esc(img)}" alt="" loading="lazy" />` : ""}</span>
+        <b>${esc(c.title)}</b><small>${plural(c.productIds.length, "produkt", "produkte")}</small>
+      </a>`;
+    }).join("");
+    const hb = (window.CMS?.banners || []).find((b) => b.position === "home-banner");
+    $("#homeBanner").hidden = !hb;
+    $("#homeBanner").innerHTML = hb ? bannerHTML(hb, "banner--home") : "";
+    const posts = window.CMS?.posts || [];
+    $("#blogSec").hidden = !posts.length;
+    $("#blogPosts").innerHTML = posts.slice(0, 3).map(postCard).join("");
+  }
+
+  function notFound(title, back = "#/", label = "Kthehu te ballina") {
+    showView("page", `${title} · ITCOM`);
+    $("#viewPage").innerHTML = `<div class="state"><h1>${esc(title)}</h1><p class="muted">Faqja mund të jetë hequr ose lidhja është e vjetër.</p><a class="btn btn--primary" href="${back}">${label}</a></div>`;
+  }
+  const crumbsHTML = (items) => `<nav class="crumbs" aria-label="Navigimi">${items.map(([label, href]) => (href ? `<a href="${href}">${esc(label)}</a>` : `<span aria-current="page">${esc(label)}</span>`)).join('<span aria-hidden="true">/</span>')}</nav>`;
+
+  // Faqja e një fushate (Marketingu → Ofertat në CMS)
+  function renderOffer(slug) {
+    const o = (window.CMS?.offers || []).find((x) => x.slug === slug);
+    if (!o) return notFound("Oferta nuk u gjet", "#/ofertat", "Shiko ofertat");
+    const items = o.productIds.map((id) => byId[id]).filter(Boolean);
+    showView("page", `${o.name} · ITCOM`, o.text);
+    $("#viewPage").innerHTML = `
+      ${crumbsHTML([["Ballina", "#/"], ["Ofertat", "#/ofertat"], [o.name]])}
+      <section class="offer-hero">
+        <div class="offer-hero__copy">
+          ${o.badge ? `<span class="ptag ptag--sale">${esc(o.badge)}</span>` : ""}
+          <h1>${esc(o.title)}</h1>
+          <p>${esc(o.text)}</p>
+          ${o.code ? `<p class="offer-code">Kodi <code>${esc(o.code)}</code> <button type="button" class="link-btn" data-copy="${esc(o.code)}">Kopjo</button></p>` : ""}
+          ${o.endsAt ? `<p class="muted">Vlen deri më ${fmtDay(o.endsAt)}.</p>` : ""}
+        </div>
+        ${o.image ? `<div class="offer-hero__img"><img src="${esc(o.image)}" alt="" /></div>` : ""}
+      </section>
+      ${items.length ? `<div class="pgrid pgrid--catalog">${items.map((p) => card(p)).join("")}</div>` : ""}`;
+  }
+
+  // Blogu: lista dhe artikulli
+  function renderBlog() {
+    const posts = window.CMS?.posts || [];
+    showView("page", "Këshilla para blerjes · ITCOM", "Udhëzues praktikë nga ekipi ITCOM për laptopë, procesorë, kartela grafike dhe ndërtimin e PC‑së.");
+    $("#viewPage").innerHTML = `
+      ${crumbsHTML([["Ballina", "#/"], ["Këshilla"]])}
+      <h1 class="page-title">Këshilla para blerjes</h1>
+      <p class="muted page-sub">Udhëzues të shkurtër nga ekipi ITCOM.</p>
+      ${posts.length ? `<div class="post-grid">${posts.map(postCard).join("")}</div>` : `<div class="state"><h2>Ende pa artikuj</h2></div>`}`;
+  }
+  function renderPost(slug) {
+    const posts = window.CMS?.posts || [];
+    const p = posts.find((x) => x.slug === slug);
+    if (!p) return notFound("Artikulli nuk u gjet", "#/blog", "Të gjitha këshillat");
+    showView("page", `${p.title} · ITCOM`, p.excerpt);
+    const more = posts.filter((x) => x !== p).slice(0, 2);
+    $("#viewPage").innerHTML = `
+      ${crumbsHTML([["Ballina", "#/"], ["Këshilla", "#/blog"], [p.title]])}
+      <article class="post">
+        <header class="post__head">
+          <span class="eyebrow">${esc(p.tag || "Këshilla")} · ${p.minutes} min lexim${p.draft ? " · DRAFT" : ""}</span>
+          <h1>${esc(p.title)}</h1>
+          <p class="post__lead">${esc(p.excerpt)}</p>
+          <p class="muted">${esc(p.author)} · ${fmtDay(p.date)}</p>
+        </header>
+        ${p.cover ? `<div class="post__cover"><img src="${esc(p.cover)}" alt="" /></div>` : ""}
+        <div class="post__body prose">${p.html}</div>
+      </article>
+      ${more.length ? `<section class="home-sec"><div class="home-sec__head"><h2 class="home-sec__title">Lexo edhe</h2></div><div class="post-grid">${more.map(postCard).join("")}</div></section>` : ""}`;
+  }
+
+  // Servisi: shërbimet dhe rezervimi i terminit (CMS → Terminet)
+  function renderServices(pre = "") {
+    const list = window.CMS?.services || [];
+    showView("page", "Servisi dhe terminet · ITCOM", "Montim PC, diagnostikim, pastrim dhe konsulta për biznese. Rezervoni një termin, ekipi ju telefonon për ta konfirmuar.");
+    if (!list.length) {
+      $("#viewPage").innerHTML = `${crumbsHTML([["Ballina", "#/"], ["Servisi"]])}<h1 class="page-title">Servisi</h1><div class="state"><p>Për servis dhe montim na shkruani dhe ju kontaktojmë.</p><button type="button" class="btn btn--primary" data-info="contact">Kontakti</button></div>`;
+      return;
+    }
+    const priceText = (sv) => (sv.price === 0 ? "Falas" : sv.price ? fmt(sv.price) : "Çmimi pas diagnostikimit");
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    const times = [];
+    for (let m = 9 * 60; m <= 18 * 60; m += 30) times.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
+    $("#viewPage").innerHTML = `
+      ${crumbsHTML([["Ballina", "#/"], ["Servisi"]])}
+      <h1 class="page-title">Servisi dhe terminet</h1>
+      <p class="muted page-sub">${esc(window.CMS?.hours || "")}${window.CMS?.hours ? " · " : ""}Rezervoni online; ekipi ju telefonon për ta konfirmuar terminin.</p>
+      <div class="svc-layout">
+        <ul class="svc-cards">${list.map((sv) => `
+          <li class="svc-card">
+            <h2>${esc(sv.name)}</h2>
+            <p>${esc(sv.description)}</p>
+            <p class="svc-card__meta"><span>${sv.duration} min${sv.onsite ? " · te ju" : " · në dyqan"}</span><b>${priceText(sv)}</b></p>
+            <button type="button" class="btn btn--ghost" data-book="${esc(sv.id)}">Rezervo</button>
+          </li>`).join("")}
+        </ul>
+        <form class="card-box booking" id="bookForm" novalidate>
+          <h2>Rezervo një termin</h2>
+          <label class="field" for="bk-service">Shërbimi
+            <select id="bk-service" name="service">${list.map((sv) => `<option value="${esc(sv.id)}" ${sv.id === pre ? "selected" : ""}>${esc(sv.name)}</option>`).join("")}</select>
+          </label>
+          <div class="form-grid">
+            <label class="field" for="bk-date">Data<input id="bk-date" name="date" type="date" min="${tomorrow}" value="${tomorrow}" /><span class="err" id="bk-date-err"></span></label>
+            <label class="field" for="bk-time">Ora<select id="bk-time" name="time">${times.map((t) => `<option ${t === "10:00" ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+            <label class="field" for="bk-name">Emri dhe mbiemri<input id="bk-name" name="name" autocomplete="name" /><span class="err" id="bk-name-err"></span></label>
+            <label class="field" for="bk-phone">Telefoni<input id="bk-phone" name="phone" type="tel" autocomplete="tel" placeholder="+383 4x xxx xxx" /><span class="err" id="bk-phone-err"></span></label>
+            <label class="field full" for="bk-email">Email-i <span class="muted">(opsional)</span><input id="bk-email" name="email" type="email" autocomplete="email" /><span class="err" id="bk-email-err"></span></label>
+            <label class="field full" for="bk-address" id="bkAddressField" hidden>Adresa ku vijmë<input id="bk-address" name="address" autocomplete="street-address" /><span class="err" id="bk-address-err"></span></label>
+            <label class="field full" for="bk-note">Shënim <span class="muted">(opsional)</span><textarea id="bk-note" name="note" rows="3" placeholder="P.sh. modeli i pajisjes dhe çfarë problemi ka"></textarea></label>
+          </div>
+          <button class="btn btn--cta btn--lg" type="submit">Dërgo kërkesën</button>
+          <p class="muted sum__note">Termini është i rezervuar pasi ekipi ju telefonon për konfirmim.</p>
+          ${demoNote()}
+        </form>
+      </div>`;
+    const form = $("#bookForm");
+    const svcOf = () => list.find((x) => x.id === form.service.value);
+    const syncAddr = () => { $("#bkAddressField").hidden = !svcOf()?.onsite; };
+    syncAddr();
+    form.service.addEventListener("change", syncAddr);
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const sv = svcOf();
+      const v = (k) => form.elements[k].value.trim();
+      const day = new Date(`${v("date")}T00:00`);
+      const rules = {
+        date: () => (!v("date") || isNaN(day) ? "Zgjidhni datën" : v("date") < tomorrow ? "Zgjidhni një datë nga nesër e tutje" : day.getDay() === 0 ? "Të dielën jemi mbyllur" : true),
+        name: () => v("name").length >= 2 || "Shkruani emrin dhe mbiemrin",
+        phone: () => v("phone").replace(/\D/g, "").length >= 8 || "Shkruani një numër me të paktën 8 shifra",
+        email: () => !v("email") || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email")) || "Shkruani një email të vlefshëm",
+        address: () => !sv?.onsite || v("address").length >= 4 || "Shkruani adresën",
+      };
+      let bad = null;
+      for (const [k, check] of Object.entries(rules)) {
+        const res = check();
+        const el = form.elements[k];
+        el.closest(".field").classList.toggle("invalid", res !== true);
+        $(`#bk-${k}-err`).textContent = res === true ? "" : res;
+        if (res === true) el.removeAttribute("aria-invalid"); else { el.setAttribute("aria-invalid", "true"); el.setAttribute("aria-describedby", `bk-${k}-err`); if (!bad) bad = el; }
+      }
+      if (bad) { bad.focus(); announce("Plotësoni fushat e shënuara"); return; }
+      const start = new Date(`${v("date")}T${v("time")}:00`);
+      const id = window.CMS.saveBooking({ serviceId: sv.id, serviceName: sv.name, duration: sv.duration, onsite: sv.onsite, start: start.toISOString(), name: v("name"), phone: v("phone"), email: v("email"), address: v("address"), note: v("note") });
+      if (!id) { toast("Kërkesa nuk u dërgua. Provoni përsëri ose na telefononi."); return; }
+      form.outerHTML = `<div class="card-box booking booking--done" tabindex="-1" id="bookDone">
+        <div class="done__icon">${svg(ICON.check)}</div>
+        <h2>Kërkesa u dërgua</h2>
+        <p><b>${esc(sv.name)}</b><br>${fmtDay(start.toISOString())}, ora ${v("time")}</p>
+        <p class="muted">Ju telefonojmë në ${esc(v("phone"))} për ta konfirmuar terminin.</p>
+        <a class="btn btn--primary" href="#/">Kthehu te dyqani</a>
+      </div>`;
+      $("#bookDone").focus();
+      announce("Kërkesa për termin u dërgua");
     });
   }
 
@@ -1532,6 +1810,12 @@
 
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
+    if (e.target.closest("#promoApply")) { applyPromo($("#promoCode").value); return; }
+    const book = e.target.closest("[data-book]");
+    if (book) { const sel = $("#bk-service"); if (sel) { sel.value = book.dataset.book; sel.dispatchEvent(new Event("change")); $("#bookForm").scrollIntoView({ behavior: "smooth", block: "start" }); $("#bk-date").focus({ preventScroll: true }); } return; }
+    const copy = e.target.closest("[data-copy]");
+    if (copy) { navigator.clipboard?.writeText(copy.dataset.copy).then(() => toast(`U kopjua kodi <b>${esc(copy.dataset.copy)}</b>`), () => {}); return; }
+    if (e.target.closest("[data-promo-remove]")) { applyPromo(""); return; }
     const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-mega],[data-slide],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-builder],[data-business],[data-ask],[data-account],[data-build-open],[data-build-cart],[data-build-del]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
@@ -1553,7 +1837,7 @@
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
     else if (d.info) openInfo(d.info);
-    else if ("builder" in d) { e.preventDefault(); closeModal(); window.ITCOM.openBuilder?.(); }
+    else if ("builder" in d) { e.preventDefault(); closeModal(); toggleMega(false); window.ITCOM.openBuilder?.(); }
     else if ("business" in d) openBusiness();
     else if (d.ask) openAsk(d.ask);
     else if ("account" in d) openAccount();
@@ -1690,6 +1974,7 @@
   slider.addEventListener("click", (e) => { if (swiped) { e.stopPropagation(); e.preventDefault(); swiped = false; } }, true);
 
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.id === "promoCode") { e.preventDefault(); applyPromo(e.target.value); return; }
     const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
     if (e.key === "/" && !typing && !modal.open) { e.preventDefault(); search.focus(); }
     if (e.key === "Escape") { closeCart(); closeFilters(); toggleMega(false); hideSuggest(); }
@@ -1700,6 +1985,9 @@
   renderHero();
   autoSlide();
   renderHome();
+  renderCmsHome();
+  renderMenus();
+  renderAnnouncements();
   renderMega();
   renderCart();
   renderWishCount();

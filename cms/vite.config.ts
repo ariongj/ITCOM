@@ -100,7 +100,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' blob: data: https://api.web3forms.com",
+  "connect-src 'self' blob: data: https://api.web3forms.com https://api.github.com https://script.google.com https://script.googleusercontent.com",
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "frame-src 'self'",

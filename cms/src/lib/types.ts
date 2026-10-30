@@ -410,6 +410,8 @@ export interface Settings {
   markets: Market[];
   checkout: CheckoutSettings;
   privacy: { cookieBanner: boolean };
+  /** ITCOM: order channel (webhook). The shop also sends every order, message and booking here (HTTPS POST). */
+  orderEndpoint?: string;
 }
 
 /* ================================================================== */

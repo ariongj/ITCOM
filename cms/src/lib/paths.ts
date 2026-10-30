@@ -31,15 +31,21 @@ export function appPath(pathname: string): string {
 }
 
 /**
- * ITCOM: the shop is the static site at the base and uses hash links (#product-id, #info-page). Storefront paths that
- * the CMS builds in the Optika style are translated: /produkt/x → #x, /faqe/x → #info-x, /produktet… → the shop home.
- * Returns null for CMS paths (/admin…) and anything else.
+ * ITCOM: the shop is the static site at the base. Products have real pages (p/<id>/), other views are hash routes
+ * (#/blog/…, #/oferta/…, #/koleksioni/…, #/servisi) and info pages open as #info-<slug>. Storefront paths that the
+ * CMS builds in the Optika style are translated here. Returns null for CMS paths (/admin…) and anything else.
  */
 function itcomShopPath(path: string): string | null {
-  const [p] = path.split(/[?#]/);
+  const [p, query = ''] = path.split('?');
+  const preview = /(^|&)preview=1/.test(query) ? '?preview=1' : '';
   let m: RegExpMatchArray | null;
-  if ((m = p.match(/^\/produkt\/([^/]+)\/?$/))) return `#${m[1]}`;
+  if ((m = p.match(/^\/produkt\/([^/]+)\/?$/))) return `p/${m[1]}/`;
   if ((m = p.match(/^\/faqe\/([^/]+)\/?$/))) return `#info-${m[1]}`;
+  if ((m = p.match(/^\/oferta\/([^/]+)\/?$/))) return `${preview}#/oferta/${m[1]}`;
+  if ((m = p.match(/^\/(?:keshilla|savjeti|blog)\/([^/]+)\/?$/))) return `${preview}#/blog/${m[1]}`;
+  if (/^\/(?:keshilla|savjeti|blog)\/?$/.test(p)) return '#/blog';
+  if ((m = p.match(/^\/(?:koleksioni|kolekcija|kolekcije)\/([^/]+)\/?$/))) return `${preview}#/koleksioni/${m[1]}`;
+  if (/^\/(?:rezervo|sherbimet|servisi)\/?$/.test(p)) return '#/servisi';
   if (p === '/' || p.startsWith('/produktet') || p === '/kontakt' || p === '/rreth-nesh' || p === '/kerko') return '';
   return null;
 }

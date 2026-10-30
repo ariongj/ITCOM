@@ -1,0 +1,1 @@
+import{r as e,t,u as n}from"./jsx-runtime-xaFzjcmM.js";var r=t();function i(){let{search:t,hash:i}=n();return(0,r.jsx)(e,{to:`/admin/popusti${t}${i}`,replace:!0})}export{i as default};

@@ -2,7 +2,7 @@
 // One source of truth for the sidebar, the command palette ("Ekranet") and permission checks.
 import type { ComponentType } from 'react';
 import {
-  ChartColumn, FileText, House, MessagesSquare, Plug, Settings, ShoppingBag, Store, Tag, User,
+  CalendarDays, ChartColumn, FileText, Globe, House, Megaphone, MessagesSquare, Plug, Settings, ShoppingBag, Store, Tag, User,
 } from 'lucide-react';
 import { can, type Module } from '@/lib/permissions';
 import type { RoleId } from '@/lib/types';
@@ -41,6 +41,7 @@ export const NAV: NavItem[] = [
     id: 'products', to: '/admin/proizvodi', label: 'nav_products', icon: Tag, module: 'products', section: 'main',
     children: [
       { to: '/admin/proizvodi', label: 'nav_products', module: 'products' },
+      { to: '/admin/kolekcije', label: 'nav_collections', module: 'collections' },
       { to: '/admin/kategorije', label: 'nav_categories', module: 'products' },
       { to: '/admin/inventar', label: 'nav_inventory', module: 'inventory' },
       { to: '/admin/nabavke', label: 'nav_purchasing', module: 'purchasing' },
@@ -54,20 +55,44 @@ export const NAV: NavItem[] = [
     ],
   },
   {
+    id: 'contacts', to: '/admin/kontakti', label: 'nav_contacts', icon: MessagesSquare, module: 'contacts', section: 'main', badge: 'newInquiries',
+    children: [
+      { to: '/admin/kontakti', label: 'nav_inbox', module: 'contacts' },
+      { to: '/admin/kontakti/ponude', label: 'nav_quotes', module: 'quotes' },
+    ],
+  },
+  {
+    id: 'appointments', to: '/admin/termini', label: 'nav_appointments', icon: CalendarDays, module: 'appointments', section: 'main', badge: 'pendingBookings',
+    children: [
+      { to: '/admin/termini', label: 'nav_calendar', module: 'appointments' },
+      { to: '/admin/termini/usluge', label: 'nav_services', module: 'appointments' },
+    ],
+  },
+  {
+    id: 'growth', to: '/admin/ponude', label: 'nav_growth', icon: Megaphone, module: 'offers', section: 'main',
+    children: [
+      { to: '/admin/ponude', label: 'nav_offers', module: 'offers' },
+      { to: '/admin/popusti', label: 'nav_discounts', module: 'discounts' },
+    ],
+  },
+  {
     id: 'content', to: '/admin/stranice', label: 'nav_content', icon: FileText, module: 'content', section: 'main',
     children: [
       { to: '/admin/stranice', label: 'nav_pages', module: 'content' },
+      { to: '/admin/savjeti', label: 'nav_blog', module: 'content' },
+      { to: '/admin/meniji', label: 'nav_menus', module: 'content' },
       { to: '/admin/mediji', label: 'nav_media', module: 'content' },
     ],
   },
   { id: 'analytics', to: '/admin/analitika', label: 'nav_analytics', icon: ChartColumn, module: 'analytics', section: 'main' },
   {
-    id: 'contacts', to: '/admin/kontakti', label: 'nav_contacts', icon: MessagesSquare, module: 'contacts', section: 'main', badge: 'newInquiries',
-  },
-  {
     id: 'onlineStore', to: '/admin/prodavnica', label: 'nav_onlineStore', icon: Store, module: 'onlineStore', section: 'channels',
-    children: [{ to: '/admin/prodavnica/slajdovi', label: 'nav_slides', module: 'onlineStore' }],
+    children: [
+      { to: '/admin/prodavnica/slajdovi', label: 'nav_slides', module: 'onlineStore' },
+      { to: '/admin/prodavnica/publikimi', label: 'nav_publish', module: 'onlineStore' },
+    ],
   },
+  { id: 'markets', to: '/admin/trzista', label: 'nav_markets', icon: Globe, module: 'markets', section: 'channels' },
   { id: 'integrations', to: '/admin/integracije', label: 'nav_integrations', icon: Plug, module: 'integrations', section: 'channels' },
   { id: 'settings', to: '/admin/konfiguracija', label: 'nav_settings', icon: Settings, module: 'settings', section: 'bottom' },
 ];
