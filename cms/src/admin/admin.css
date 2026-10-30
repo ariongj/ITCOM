@@ -1,0 +1,5 @@
+/* CMS sheet: Tailwind over the whole project (src/admin included) with the same tokens, loaded by the admin entry
+   chunks on top of the storefront sheet. Being a complete, correctly ordered superset, it gives the CMS exactly the
+   cascade it had with a single sheet. */
+@import "tailwindcss";
+@import "../styles/app.css";

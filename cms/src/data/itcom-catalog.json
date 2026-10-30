@@ -1,0 +1,8656 @@
+{
+ "categories": [
+  {
+   "id": "cat-laptop",
+   "slug": "laptope",
+   "name": {
+    "me": "Laptops",
+    "sq": "Laptopë",
+    "en": "Laptops"
+   },
+   "tagline": {
+    "me": "Laptops for work, study and creating",
+    "sq": "Laptopë për punë, shkollë dhe krijim",
+    "en": "Laptops for work, study and creating"
+   },
+   "description": {
+    "me": "Laptops for work, study and creating",
+    "sq": "Laptopë për punë, shkollë dhe krijim",
+    "en": "Laptops for work, study and creating"
+   },
+   "image": "",
+   "order": 1,
+   "featured": true
+  },
+  {
+   "id": "cat-cpu",
+   "slug": "procesore",
+   "name": {
+    "me": "Processors",
+    "sq": "Procesorë",
+    "en": "Processors"
+   },
+   "tagline": {
+    "me": "AMD Ryzen and Intel Core Ultra",
+    "sq": "AMD Ryzen dhe Intel Core Ultra",
+    "en": "AMD Ryzen and Intel Core Ultra"
+   },
+   "description": {
+    "me": "AMD Ryzen and Intel Core Ultra",
+    "sq": "AMD Ryzen dhe Intel Core Ultra",
+    "en": "AMD Ryzen and Intel Core Ultra"
+   },
+   "image": "",
+   "order": 2,
+   "featured": true
+  },
+  {
+   "id": "cat-gpu",
+   "slug": "kartela-grafike",
+   "name": {
+    "me": "Graphics cards",
+    "sq": "Kartela grafike",
+    "en": "Graphics cards"
+   },
+   "tagline": {
+    "me": "NVIDIA GeForce and AMD Radeon",
+    "sq": "NVIDIA GeForce dhe AMD Radeon",
+    "en": "NVIDIA GeForce and AMD Radeon"
+   },
+   "description": {
+    "me": "NVIDIA GeForce and AMD Radeon",
+    "sq": "NVIDIA GeForce dhe AMD Radeon",
+    "en": "NVIDIA GeForce and AMD Radeon"
+   },
+   "image": "",
+   "order": 3,
+   "featured": true
+  },
+  {
+   "id": "cat-mb",
+   "slug": "pllaka-ame",
+   "name": {
+    "me": "Motherboards",
+    "sq": "Pllaka amë",
+    "en": "Motherboards"
+   },
+   "tagline": {
+    "me": "PC builder only",
+    "sq": "Vetëm në ndërtuesin e PC‑së",
+    "en": "PC builder only"
+   },
+   "description": {
+    "me": "Parts sold only inside the PC builder, not in the catalogue.",
+    "sq": "Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.",
+    "en": "Parts sold only inside the PC builder, not in the catalogue."
+   },
+   "image": "",
+   "order": 10,
+   "featured": false
+  },
+  {
+   "id": "cat-ram",
+   "slug": "memorie-ram",
+   "name": {
+    "me": "Memory",
+    "sq": "Memorie RAM",
+    "en": "Memory"
+   },
+   "tagline": {
+    "me": "PC builder only",
+    "sq": "Vetëm në ndërtuesin e PC‑së",
+    "en": "PC builder only"
+   },
+   "description": {
+    "me": "Parts sold only inside the PC builder, not in the catalogue.",
+    "sq": "Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.",
+    "en": "Parts sold only inside the PC builder, not in the catalogue."
+   },
+   "image": "",
+   "order": 11,
+   "featured": false
+  },
+  {
+   "id": "cat-cooler",
+   "slug": "ftohes",
+   "name": {
+    "me": "CPU coolers",
+    "sq": "Ftohës procesori",
+    "en": "CPU coolers"
+   },
+   "tagline": {
+    "me": "PC builder only",
+    "sq": "Vetëm në ndërtuesin e PC‑së",
+    "en": "PC builder only"
+   },
+   "description": {
+    "me": "Parts sold only inside the PC builder, not in the catalogue.",
+    "sq": "Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.",
+    "en": "Parts sold only inside the PC builder, not in the catalogue."
+   },
+   "image": "",
+   "order": 12,
+   "featured": false
+  },
+  {
+   "id": "cat-ssd",
+   "slug": "disqe-ssd",
+   "name": {
+    "me": "SSDs",
+    "sq": "Disqe SSD",
+    "en": "SSDs"
+   },
+   "tagline": {
+    "me": "PC builder only",
+    "sq": "Vetëm në ndërtuesin e PC‑së",
+    "en": "PC builder only"
+   },
+   "description": {
+    "me": "Parts sold only inside the PC builder, not in the catalogue.",
+    "sq": "Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.",
+    "en": "Parts sold only inside the PC builder, not in the catalogue."
+   },
+   "image": "",
+   "order": 13,
+   "featured": false
+  },
+  {
+   "id": "cat-psu",
+   "slug": "furnizues",
+   "name": {
+    "me": "Power supplies",
+    "sq": "Furnizues rryme",
+    "en": "Power supplies"
+   },
+   "tagline": {
+    "me": "PC builder only",
+    "sq": "Vetëm në ndërtuesin e PC‑së",
+    "en": "PC builder only"
+   },
+   "description": {
+    "me": "Parts sold only inside the PC builder, not in the catalogue.",
+    "sq": "Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.",
+    "en": "Parts sold only inside the PC builder, not in the catalogue."
+   },
+   "image": "",
+   "order": 14,
+   "featured": false
+  },
+  {
+   "id": "cat-case",
+   "slug": "kasa",
+   "name": {
+    "me": "PC cases",
+    "sq": "Kasa",
+    "en": "PC cases"
+   },
+   "tagline": {
+    "me": "PC builder only",
+    "sq": "Vetëm në ndërtuesin e PC‑së",
+    "en": "PC builder only"
+   },
+   "description": {
+    "me": "Parts sold only inside the PC builder, not in the catalogue.",
+    "sq": "Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.",
+    "en": "Parts sold only inside the PC builder, not in the catalogue."
+   },
+   "image": "",
+   "order": 15,
+   "featured": false
+  }
+ ],
+ "products": [
+  {
+   "id": "lp-x1c12",
+   "slug": "lp-x1c12",
+   "sku": "LP-X1C12",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "Lenovo ThinkPad X1 Carbon Gen 12",
+    "sq": "Lenovo ThinkPad X1 Carbon Gen 12",
+    "en": "Lenovo ThinkPad X1 Carbon Gen 12"
+   },
+   "short": {
+    "me": "Ekran 14\" 2.8K OLED, 120 Hz · Intel Core Ultra 7 155U",
+    "sq": "Ekran 14\" 2.8K OLED, 120 Hz · Intel Core Ultra 7 155U",
+    "en": "Ekran 14\" 2.8K OLED, 120 Hz · Intel Core Ultra 7 155U"
+   },
+   "description": {
+    "me": "Laptopi më i mirë i Lenovo për biznes: trup prej fibre karboni, tastierë e shkëlqyer dhe siguri e nivelit korporativ, në pak më shumë se një kilogram.",
+    "sq": "Laptopi më i mirë i Lenovo për biznes: trup prej fibre karboni, tastierë e shkëlqyer dhe siguri e nivelit korporativ, në pak më shumë se një kilogram.",
+    "en": "Laptopi më i mirë i Lenovo për biznes: trup prej fibre karboni, tastierë e shkëlqyer dhe siguri e nivelit korporativ, në pak më shumë se një kilogram."
+   },
+   "price": 2399,
+   "salePrice": 2149,
+   "unit": "kom",
+   "stock": 9,
+   "images": [
+    "/assets/products/photo/lp-x1c12.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" 2.8K OLED, 120 Hz",
+      "sq": "Ekran 14\" 2.8K OLED, 120 Hz",
+      "en": "Ekran 14\" 2.8K OLED, 120 Hz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra 7 155U",
+      "sq": "Intel Core Ultra 7 155U",
+      "en": "Intel Core Ultra 7 155U"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "32 GB LPDDR5X",
+      "sq": "32 GB LPDDR5X",
+      "en": "32 GB LPDDR5X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "SSD 1 TB PCIe 4.0",
+      "sq": "SSD 1 TB PCIe 4.0",
+      "en": "SSD 1 TB PCIe 4.0"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "1,09 kg, MIL‑STD‑810H",
+      "sq": "1,09 kg, MIL‑STD‑810H",
+      "en": "1,09 kg, MIL‑STD‑810H"
+     }
+    }
+   ],
+   "badges": [
+    "bestseller",
+    "sale"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 345,
+   "cost": 1762.18,
+   "vendor": "Lenovo",
+   "tags": [],
+   "barcode": "2001000079193",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Biznes",
+     "cpu": "Intel Core Ultra 7",
+     "ram": 32,
+     "storage": 1000,
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11 Pro"
+    },
+    "rating": 4.8,
+    "reviews": 214,
+    "badge": "Më i shituri",
+    "art": {
+     "s": "laptop",
+     "c": "#232428",
+     "w": [
+      "#1d2026",
+      "#5a606b"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-mba13m4",
+   "slug": "lp-mba13m4",
+   "sku": "LP-MBA13M4",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "Apple MacBook Air 13\" M4",
+    "sq": "Apple MacBook Air 13\" M4",
+    "en": "Apple MacBook Air 13\" M4"
+   },
+   "short": {
+    "me": "Ekran 13,6\" Liquid Retina · Apple M4, CPU 10 bërthama / GPU 8 bërthama",
+    "sq": "Ekran 13,6\" Liquid Retina · Apple M4, CPU 10 bërthama / GPU 8 bërthama",
+    "en": "Ekran 13,6\" Liquid Retina · Apple M4, CPU 10 bërthama / GPU 8 bërthama"
+   },
+   "description": {
+    "me": "I hollë, pa ventilator dhe krejtësisht i heshtur, me performancë të mjaftueshme për pothuajse këdo. Mbështet dy monitorë të jashtëm.",
+    "sq": "I hollë, pa ventilator dhe krejtësisht i heshtur, me performancë të mjaftueshme për pothuajse këdo. Mbështet dy monitorë të jashtëm.",
+    "en": "I hollë, pa ventilator dhe krejtësisht i heshtur, me performancë të mjaftueshme për pothuajse këdo. Mbështet dy monitorë të jashtëm."
+   },
+   "price": 1199,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 22,
+   "images": [
+    "/assets/products/photo/lp-mba13m4.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 13,6\" Liquid Retina",
+      "sq": "Ekran 13,6\" Liquid Retina",
+      "en": "Ekran 13,6\" Liquid Retina"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Apple M4, CPU 10 bërthama / GPU 8 bërthama",
+      "sq": "Apple M4, CPU 10 bërthama / GPU 8 bërthama",
+      "en": "Apple M4, CPU 10 bërthama / GPU 8 bërthama"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB memorie e unifikuar",
+      "sq": "16 GB memorie e unifikuar",
+      "en": "16 GB memorie e unifikuar"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "SSD 256 GB",
+      "sq": "SSD 256 GB",
+      "en": "SSD 256 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 18 orë bateri",
+      "sq": "Deri në 18 orë bateri",
+      "en": "Deri në 18 orë bateri"
+     }
+    }
+   ],
+   "badges": [
+    "new"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 646,
+   "cost": 983.18,
+   "vendor": "Apple",
+   "tags": [],
+   "barcode": "2001000158386",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Apple M4",
+     "ram": 16,
+     "storage": 256,
+     "screen": 13.6,
+     "gpu": "E integruar",
+     "os": "macOS"
+    },
+    "rating": 4.9,
+    "reviews": 402,
+    "badge": "I ri",
+    "art": {
+     "s": "laptop",
+     "c": "#cfd3da",
+     "w": [
+      "#5b6f8e",
+      "#c3cfe0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-mbp14m4p",
+   "slug": "lp-mbp14m4p",
+   "sku": "LP-MBP14M4P",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "Apple MacBook Pro 14\" M4 Pro",
+    "sq": "Apple MacBook Pro 14\" M4 Pro",
+    "en": "Apple MacBook Pro 14\" M4 Pro"
+   },
+   "short": {
+    "me": "Ekran 14,2\" Liquid Retina XDR, 120 Hz · Apple M4 Pro, CPU 12 bërthama / GPU 16 bërthama",
+    "sq": "Ekran 14,2\" Liquid Retina XDR, 120 Hz · Apple M4 Pro, CPU 12 bërthama / GPU 16 bërthama",
+    "en": "Ekran 14,2\" Liquid Retina XDR, 120 Hz · Apple M4 Pro, CPU 12 bërthama / GPU 16 bërthama"
+   },
+   "description": {
+    "me": "Performancë profesionale për programim, video dhe 3D, me ekran të jashtëzakonshëm mini‑LED dhe bateri për gjithë ditën.",
+    "sq": "Performancë profesionale për programim, video dhe 3D, me ekran të jashtëzakonshëm mini‑LED dhe bateri për gjithë ditën.",
+    "en": "Performancë profesionale për programim, video dhe 3D, me ekran të jashtëzakonshëm mini‑LED dhe bateri për gjithë ditën."
+   },
+   "price": 2499,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/lp-mbp14m4p.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14,2\" Liquid Retina XDR, 120 Hz",
+      "sq": "Ekran 14,2\" Liquid Retina XDR, 120 Hz",
+      "en": "Ekran 14,2\" Liquid Retina XDR, 120 Hz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Apple M4 Pro, CPU 12 bërthama / GPU 16 bërthama",
+      "sq": "Apple M4 Pro, CPU 12 bërthama / GPU 16 bërthama",
+      "en": "Apple M4 Pro, CPU 12 bërthama / GPU 16 bërthama"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "24 GB memorie e unifikuar",
+      "sq": "24 GB memorie e unifikuar",
+      "en": "24 GB memorie e unifikuar"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "SSD 512 GB",
+      "sq": "SSD 512 GB",
+      "en": "SSD 512 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "3× Thunderbolt 5, HDMI, SDXC",
+      "sq": "3× Thunderbolt 5, HDMI, SDXC",
+      "en": "3× Thunderbolt 5, HDMI, SDXC"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 213,
+   "cost": 2049.18,
+   "vendor": "Apple",
+   "tags": [],
+   "barcode": "2001000237579",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Për profesionistë",
+     "cpu": "Apple M4 Pro",
+     "ram": 24,
+     "storage": 512,
+     "screen": 14.2,
+     "gpu": "E integruar",
+     "os": "macOS"
+    },
+    "rating": 4.9,
+    "reviews": 131,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#2c2d30",
+     "w": [
+      "#2c2f4a",
+      "#8a8fb5"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-g16",
+   "slug": "lp-g16",
+   "sku": "LP-G16",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS ROG Zephyrus G16 GU605",
+    "sq": "ASUS ROG Zephyrus G16 GU605",
+    "en": "ASUS ROG Zephyrus G16 GU605"
+   },
+   "short": {
+    "me": "Ekran 16\" 2.5K OLED, 240 Hz · Intel Core Ultra 9 185H",
+    "sq": "Ekran 16\" 2.5K OLED, 240 Hz · Intel Core Ultra 9 185H",
+    "en": "Ekran 16\" 2.5K OLED, 240 Hz · Intel Core Ultra 9 185H"
+   },
+   "description": {
+    "me": "Laptop i hollë prej alumini për lojëra dhe punë kreative, me ekran mbresëlënës OLED.",
+    "sq": "Laptop i hollë prej alumini për lojëra dhe punë kreative, me ekran mbresëlënës OLED.",
+    "en": "Laptop i hollë prej alumini për lojëra dhe punë kreative, me ekran mbresëlënës OLED."
+   },
+   "price": 2599,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 0,
+   "images": [
+    "/assets/products/photo/lp-g16.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 16\" 2.5K OLED, 240 Hz",
+      "sq": "Ekran 16\" 2.5K OLED, 240 Hz",
+      "en": "Ekran 16\" 2.5K OLED, 240 Hz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra 9 185H",
+      "sq": "Intel Core Ultra 9 185H",
+      "en": "Intel Core Ultra 9 185H"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "GeForce RTX 4070 8 GB",
+      "sq": "GeForce RTX 4070 8 GB",
+      "en": "GeForce RTX 4070 8 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "32 GB LPDDR5X",
+      "sq": "32 GB LPDDR5X",
+      "en": "32 GB LPDDR5X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "SSD 1 TB",
+      "sq": "SSD 1 TB",
+      "en": "SSD 1 TB"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 230,
+   "cost": 2131.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000316762",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Gaming",
+     "cpu": "Intel Core Ultra 9",
+     "ram": 32,
+     "storage": 1000,
+     "screen": 16,
+     "gpu": "GeForce RTX 4070",
+     "os": "Windows 11 Home"
+    },
+    "rating": 4.7,
+    "reviews": 142,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#5d6169",
+     "w": [
+      "#2c2f4a",
+      "#8a8fb5"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zb14",
+   "slug": "lp-zb14",
+   "sku": "LP-ZB14",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook 14 OLED UX3405",
+    "sq": "ASUS Zenbook 14 OLED UX3405",
+    "en": "ASUS Zenbook 14 OLED UX3405"
+   },
+   "short": {
+    "me": "Ekran 14\" 3K OLED, 120 Hz · Intel Core Ultra 7 155H",
+    "sq": "Ekran 14\" 3K OLED, 120 Hz · Intel Core Ultra 7 155H",
+    "en": "Ekran 14\" 3K OLED, 120 Hz · Intel Core Ultra 7 155H"
+   },
+   "description": {
+    "me": "I lehtë, elegant dhe me ngjyra të pasura: ultrabook OLED që ofron më shumë se sa e pret për çmimin.",
+    "sq": "I lehtë, elegant dhe me ngjyra të pasura: ultrabook OLED që ofron më shumë se sa e pret për çmimin.",
+    "en": "I lehtë, elegant dhe me ngjyra të pasura: ultrabook OLED që ofron më shumë se sa e pret për çmimin."
+   },
+   "price": 1099,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 12,
+   "images": [
+    "/assets/products/photo/lp-zb14.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" 3K OLED, 120 Hz",
+      "sq": "Ekran 14\" 3K OLED, 120 Hz",
+      "en": "Ekran 14\" 3K OLED, 120 Hz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra 7 155H",
+      "sq": "Intel Core Ultra 7 155H",
+      "en": "Intel Core Ultra 7 155H"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB LPDDR5X",
+      "sq": "16 GB LPDDR5X",
+      "en": "16 GB LPDDR5X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "SSD 1 TB",
+      "sq": "SSD 1 TB",
+      "en": "SSD 1 TB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "1,2 kg",
+      "sq": "1,2 kg",
+      "en": "1,2 kg"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 249,
+   "cost": 901.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000395958",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Intel Core Ultra 7",
+     "ram": 16,
+     "storage": 1000,
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11 Home"
+    },
+    "rating": 4.6,
+    "reviews": 154,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#2b3550",
+     "w": [
+      "#163a4a",
+      "#6aa0b0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-sl7",
+   "slug": "lp-sl7",
+   "sku": "LP-SL7",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "Microsoft Surface Laptop 7 13,8\"",
+    "sq": "Microsoft Surface Laptop 7 13,8\"",
+    "en": "Microsoft Surface Laptop 7 13,8\""
+   },
+   "short": {
+    "me": "Ekran prekës 13,8\" PixelSense, 120 Hz · Snapdragon X Elite",
+    "sq": "Ekran prekës 13,8\" PixelSense, 120 Hz · Snapdragon X Elite",
+    "en": "Ekran prekës 13,8\" PixelSense, 120 Hz · Snapdragon X Elite"
+   },
+   "description": {
+    "me": "Laptop Windows me procesor Arm, bateri të jashtëzakonshme dhe ekran prekës shumë të qartë.",
+    "sq": "Laptop Windows me procesor Arm, bateri të jashtëzakonshme dhe ekran prekës shumë të qartë.",
+    "en": "Laptop Windows me procesor Arm, bateri të jashtëzakonshme dhe ekran prekës shumë të qartë."
+   },
+   "price": 1349,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 8,
+   "images": [
+    "/assets/products/photo/lp-sl7.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran prekës 13,8\" PixelSense, 120 Hz",
+      "sq": "Ekran prekës 13,8\" PixelSense, 120 Hz",
+      "en": "Ekran prekës 13,8\" PixelSense, 120 Hz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Snapdragon X Elite",
+      "sq": "Snapdragon X Elite",
+      "en": "Snapdragon X Elite"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB LPDDR5X",
+      "sq": "16 GB LPDDR5X",
+      "en": "16 GB LPDDR5X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "SSD 512 GB",
+      "sq": "SSD 512 GB",
+      "en": "SSD 512 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 118,
+   "cost": 1106.18,
+   "vendor": "Microsoft",
+   "tags": [],
+   "barcode": "2001000475148",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Snapdragon X Elite",
+     "ram": 16,
+     "storage": 512,
+     "screen": 13.8,
+     "gpu": "E integruar",
+     "os": "Windows 11 Home"
+    },
+    "rating": 4.5,
+    "reviews": 72,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#c7c9cc",
+     "w": [
+      "#5b6f8e",
+      "#c3cfe0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-proartp14",
+   "slug": "lp-proartp14",
+   "sku": "LP-PROARTP14",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS ProArt P14 H7407",
+    "sq": "ASUS ProArt P14 H7407",
+    "en": "ASUS ProArt P14 H7407"
+   },
+   "short": {
+    "me": "Ekran 14\" · Platformë NVIDIA RTX Spark",
+    "sq": "Ekran 14\" · Platformë NVIDIA RTX Spark",
+    "en": "Ekran 14\" · Platformë NVIDIA RTX Spark"
+   },
+   "description": {
+    "me": "Laptop kompakt i serisë ProArt për krijues që punojnë në lëvizje.",
+    "sq": "Laptop kompakt i serisë ProArt për krijues që punojnë në lëvizje.",
+    "en": "Laptop kompakt i serisë ProArt për krijues që punojnë në lëvizje."
+   },
+   "price": 1899,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-proartp14.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\"",
+      "sq": "Ekran 14\"",
+      "en": "Ekran 14\""
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Platformë NVIDIA RTX Spark",
+      "sq": "Platformë NVIDIA RTX Spark",
+      "en": "Platformë NVIDIA RTX Spark"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për foto, video dhe 3D",
+      "sq": "Për foto, video dhe 3D",
+      "en": "Për foto, video dhe 3D"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Windows 11",
+      "sq": "Windows 11",
+      "en": "Windows 11"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1557.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000554331",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Për profesionistë",
+     "cpu": "NVIDIA RTX Spark",
+     "screen": 14,
+     "gpu": "NVIDIA RTX",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#1d1e22",
+     "w": [
+      "#2c2f4a",
+      "#8a8fb5"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-proartpx13",
+   "slug": "lp-proartpx13",
+   "sku": "LP-PROARTPX13",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS ProArt PX13 HN7306",
+    "sq": "ASUS ProArt PX13 HN7306",
+    "en": "ASUS ProArt PX13 HN7306"
+   },
+   "short": {
+    "me": "Ekran 13,3\" 3K OLED me prekje · AMD Ryzen AI 9 HX 370",
+    "sq": "Ekran 13,3\" 3K OLED me prekje · AMD Ryzen AI 9 HX 370",
+    "en": "Ekran 13,3\" 3K OLED me prekje · AMD Ryzen AI 9 HX 370"
+   },
+   "description": {
+    "me": "ProArt 2‑në‑1 i vogël dhe i fuqishëm, me grafikë RTX për redaktim fotosh dhe videosh.",
+    "sq": "ProArt 2‑në‑1 i vogël dhe i fuqishëm, me grafikë RTX për redaktim fotosh dhe videosh.",
+    "en": "ProArt 2‑në‑1 i vogël dhe i fuqishëm, me grafikë RTX për redaktim fotosh dhe videosh."
+   },
+   "price": 1799,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-proartpx13.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 13,3\" 3K OLED me prekje",
+      "sq": "Ekran 13,3\" 3K OLED me prekje",
+      "en": "Ekran 13,3\" 3K OLED me prekje"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "AMD Ryzen AI 9 HX 370",
+      "sq": "AMD Ryzen AI 9 HX 370",
+      "en": "AMD Ryzen AI 9 HX 370"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Grafikë NVIDIA GeForce RTX",
+      "sq": "Grafikë NVIDIA GeForce RTX",
+      "en": "Grafikë NVIDIA GeForce RTX"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Rrotullohet 360°",
+      "sq": "Rrotullohet 360°",
+      "en": "Rrotullohet 360°"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1475.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000633524",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "2‑në‑1",
+     "cpu": "AMD Ryzen AI 9",
+     "screen": 13.3,
+     "gpu": "GeForce RTX",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#1d1e22",
+     "w": [
+      "#2c2f4a",
+      "#8a8fb5"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-proartp16",
+   "slug": "lp-proartp16",
+   "sku": "LP-PROARTP16",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS ProArt P16 H7606",
+    "sq": "ASUS ProArt P16 H7606",
+    "en": "ASUS ProArt P16 H7606"
+   },
+   "short": {
+    "me": "Ekran 16\" 4K OLED me prekje · AMD Ryzen AI 9 HX 370",
+    "sq": "Ekran 16\" 4K OLED me prekje · AMD Ryzen AI 9 HX 370",
+    "en": "Ekran 16\" 4K OLED me prekje · AMD Ryzen AI 9 HX 370"
+   },
+   "description": {
+    "me": "Stacion pune i hollë për krijues, me ekran 4K OLED dhe grafikë RTX.",
+    "sq": "Stacion pune i hollë për krijues, me ekran 4K OLED dhe grafikë RTX.",
+    "en": "Stacion pune i hollë për krijues, me ekran 4K OLED dhe grafikë RTX."
+   },
+   "price": 2299,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 2,
+   "images": [
+    "/assets/products/photo/lp-proartp16.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 16\" 4K OLED me prekje",
+      "sq": "Ekran 16\" 4K OLED me prekje",
+      "en": "Ekran 16\" 4K OLED me prekje"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "AMD Ryzen AI 9 HX 370",
+      "sq": "AMD Ryzen AI 9 HX 370",
+      "en": "AMD Ryzen AI 9 HX 370"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Grafikë NVIDIA GeForce RTX",
+      "sq": "Grafikë NVIDIA GeForce RTX",
+      "en": "Grafikë NVIDIA GeForce RTX"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për video, 3D dhe AI",
+      "sq": "Për video, 3D dhe AI",
+      "en": "Për video, 3D dhe AI"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1885.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000712717",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Për profesionistë",
+     "cpu": "AMD Ryzen AI 9",
+     "screen": 16,
+     "gpu": "GeForce RTX",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#1d1e22",
+     "w": [
+      "#2c2f4a",
+      "#8a8fb5"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zbduo25",
+   "slug": "lp-zbduo25",
+   "sku": "LP-ZBDUO25",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook DUO UX8407",
+    "sq": "ASUS Zenbook DUO UX8407",
+    "en": "ASUS Zenbook DUO UX8407"
+   },
+   "short": {
+    "me": "Dy ekrane 14\" OLED · Intel Core Ultra",
+    "sq": "Dy ekrane 14\" OLED · Intel Core Ultra",
+    "en": "Dy ekrane 14\" OLED · Intel Core Ultra"
+   },
+   "description": {
+    "me": "Dy ekrane të plota në një laptop: më shumë hapësirë për punë kudo.",
+    "sq": "Dy ekrane të plota në një laptop: më shumë hapësirë për punë kudo.",
+    "en": "Dy ekrane të plota në një laptop: më shumë hapësirë për punë kudo."
+   },
+   "price": 1899,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-zbduo25.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ekrane 14\" OLED",
+      "sq": "Dy ekrane 14\" OLED",
+      "en": "Dy ekrane 14\" OLED"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra",
+      "sq": "Intel Core Ultra",
+      "en": "Intel Core Ultra"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Tastierë e shkëputshme Bluetooth",
+      "sq": "Tastierë e shkëputshme Bluetooth",
+      "en": "Tastierë e shkëputshme Bluetooth"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Windows 11",
+      "sq": "Windows 11",
+      "en": "Windows 11"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1557.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000791903",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Intel Core Ultra",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#3a3d44",
+     "w": [
+      "#163a4a",
+      "#6aa0b0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zbduo24",
+   "slug": "lp-zbduo24",
+   "sku": "LP-ZBDUO24",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook Duo UX8406",
+    "sq": "ASUS Zenbook Duo UX8406",
+    "en": "ASUS Zenbook Duo UX8406"
+   },
+   "short": {
+    "me": "Dy ekrane 14\" OLED · Intel Core Ultra",
+    "sq": "Dy ekrane 14\" OLED · Intel Core Ultra",
+    "en": "Dy ekrane 14\" OLED · Intel Core Ultra"
+   },
+   "description": {
+    "me": "Gjenerata e parë e Zenbook Duo me dy ekrane OLED, për punë me shumë dritare.",
+    "sq": "Gjenerata e parë e Zenbook Duo me dy ekrane OLED, për punë me shumë dritare.",
+    "en": "Gjenerata e parë e Zenbook Duo me dy ekrane OLED, për punë me shumë dritare."
+   },
+   "price": 1599,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 2,
+   "images": [
+    "/assets/products/photo/lp-zbduo24.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ekrane 14\" OLED",
+      "sq": "Dy ekrane 14\" OLED",
+      "en": "Dy ekrane 14\" OLED"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra",
+      "sq": "Intel Core Ultra",
+      "en": "Intel Core Ultra"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Tastierë e shkëputshme Bluetooth",
+      "sq": "Tastierë e shkëputshme Bluetooth",
+      "en": "Tastierë e shkëputshme Bluetooth"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Windows 11",
+      "sq": "Windows 11",
+      "en": "Windows 11"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1311.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000871094",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Intel Core Ultra",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#3a3d44",
+     "w": [
+      "#163a4a",
+      "#6aa0b0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zba16",
+   "slug": "lp-zba16",
+   "sku": "LP-ZBA16",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook A16 UX3607",
+    "sq": "ASUS Zenbook A16 UX3607",
+    "en": "ASUS Zenbook A16 UX3607"
+   },
+   "short": {
+    "me": "Ekran 16\" · Qualcomm Snapdragon X",
+    "sq": "Ekran 16\" · Qualcomm Snapdragon X",
+    "en": "Ekran 16\" · Qualcomm Snapdragon X"
+   },
+   "description": {
+    "me": "Ekran i madh në një trup të lehtë, me bateri që zgjat gjithë ditën.",
+    "sq": "Ekran i madh në një trup të lehtë, me bateri që zgjat gjithë ditën.",
+    "en": "Ekran i madh në një trup të lehtë, me bateri që zgjat gjithë ditën."
+   },
+   "price": 1399,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/lp-zba16.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 16\"",
+      "sq": "Ekran 16\"",
+      "en": "Ekran 16\""
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Qualcomm Snapdragon X",
+      "sq": "Qualcomm Snapdragon X",
+      "en": "Qualcomm Snapdragon X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Trup Ceraluminum™",
+      "sq": "Trup Ceraluminum™",
+      "en": "Trup Ceraluminum™"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1147.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001000950287",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Snapdragon X",
+     "screen": 16,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#c9c1b0",
+     "w": [
+      "#4a4640",
+      "#b8b0a2"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zba14",
+   "slug": "lp-zba14",
+   "sku": "LP-ZBA14",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook A14 UX3407",
+    "sq": "ASUS Zenbook A14 UX3407",
+    "en": "ASUS Zenbook A14 UX3407"
+   },
+   "short": {
+    "me": "Ekran 14\" · Qualcomm Snapdragon X",
+    "sq": "Ekran 14\" · Qualcomm Snapdragon X",
+    "en": "Ekran 14\" · Qualcomm Snapdragon X"
+   },
+   "description": {
+    "me": "Një nga laptopët më të lehtë të ASUS, për ata që e marrin laptopin kudo.",
+    "sq": "Një nga laptopët më të lehtë të ASUS, për ata që e marrin laptopin kudo.",
+    "en": "Një nga laptopët më të lehtë të ASUS, për ata që e marrin laptopin kudo."
+   },
+   "price": 1099,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 5,
+   "images": [
+    "/assets/products/photo/lp-zba14.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\"",
+      "sq": "Ekran 14\"",
+      "en": "Ekran 14\""
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Qualcomm Snapdragon X",
+      "sq": "Qualcomm Snapdragon X",
+      "en": "Qualcomm Snapdragon X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Shumë i lehtë, trup Ceraluminum™",
+      "sq": "Shumë i lehtë, trup Ceraluminum™",
+      "en": "Shumë i lehtë, trup Ceraluminum™"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 901.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001029470",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Snapdragon X",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#c9c1b0",
+     "w": [
+      "#4a4640",
+      "#b8b0a2"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zbs16",
+   "slug": "lp-zbs16",
+   "sku": "LP-ZBS16",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook S 16 UM5606",
+    "sq": "ASUS Zenbook S 16 UM5606",
+    "en": "ASUS Zenbook S 16 UM5606"
+   },
+   "short": {
+    "me": "Ekran 16\" 3K OLED · AMD Ryzen AI 9",
+    "sq": "Ekran 16\" 3K OLED · AMD Ryzen AI 9",
+    "en": "Ekran 16\" 3K OLED · AMD Ryzen AI 9"
+   },
+   "description": {
+    "me": "Ultrabook i hollë 16 inç me procesor AMD Ryzen AI dhe ekran OLED.",
+    "sq": "Ultrabook i hollë 16 inç me procesor AMD Ryzen AI dhe ekran OLED.",
+    "en": "Ultrabook i hollë 16 inç me procesor AMD Ryzen AI dhe ekran OLED."
+   },
+   "price": 1499,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-zbs16.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 16\" 3K OLED",
+      "sq": "Ekran 16\" 3K OLED",
+      "en": "Ekran 16\" 3K OLED"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "AMD Ryzen AI 9",
+      "sq": "AMD Ryzen AI 9",
+      "en": "AMD Ryzen AI 9"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Trup Ceraluminum™",
+      "sq": "Trup Ceraluminum™",
+      "en": "Trup Ceraluminum™"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1229.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001108663",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "AMD Ryzen AI 9",
+     "screen": 16,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#8b8d93",
+     "w": [
+      "#5b6f8e",
+      "#c3cfe0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zbs14",
+   "slug": "lp-zbs14",
+   "sku": "LP-ZBS14",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook S14 UX5406",
+    "sq": "ASUS Zenbook S14 UX5406",
+    "en": "ASUS Zenbook S14 UX5406"
+   },
+   "short": {
+    "me": "Ekran 14\" 3K OLED · Intel Core Ultra 7 (Seria 200V)",
+    "sq": "Ekran 14\" 3K OLED · Intel Core Ultra 7 (Seria 200V)",
+    "en": "Ekran 14\" 3K OLED · Intel Core Ultra 7 (Seria 200V)"
+   },
+   "description": {
+    "me": "Ultrabook 14 inç i hollë dhe efikas, me bateri të gjatë.",
+    "sq": "Ultrabook 14 inç i hollë dhe efikas, me bateri të gjatë.",
+    "en": "Ultrabook 14 inç i hollë dhe efikas, me bateri të gjatë."
+   },
+   "price": 1399,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/lp-zbs14.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" 3K OLED",
+      "sq": "Ekran 14\" 3K OLED",
+      "en": "Ekran 14\" 3K OLED"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra 7 (Seria 200V)",
+      "sq": "Intel Core Ultra 7 (Seria 200V)",
+      "en": "Intel Core Ultra 7 (Seria 200V)"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Trup Ceraluminum™",
+      "sq": "Trup Ceraluminum™",
+      "en": "Trup Ceraluminum™"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1147.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001187859",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Intel Core Ultra 7",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#8b8d93",
+     "w": [
+      "#5b6f8e",
+      "#c3cfe0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zb14amd",
+   "slug": "lp-zb14amd",
+   "sku": "LP-ZB14AMD",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook 14 OLED UM3406",
+    "sq": "ASUS Zenbook 14 OLED UM3406",
+    "en": "ASUS Zenbook 14 OLED UM3406"
+   },
+   "short": {
+    "me": "Ekran 14\" OLED · Procesor AMD Ryzen",
+    "sq": "Ekran 14\" OLED · Procesor AMD Ryzen",
+    "en": "Ekran 14\" OLED · Procesor AMD Ryzen"
+   },
+   "description": {
+    "me": "Zenbook me ekran OLED dhe procesor AMD, me vlerë të mirë për çmimin.",
+    "sq": "Zenbook me ekran OLED dhe procesor AMD, me vlerë të mirë për çmimin.",
+    "en": "Zenbook me ekran OLED dhe procesor AMD, me vlerë të mirë për çmimin."
+   },
+   "price": 899,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/lp-zb14amd.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" OLED",
+      "sq": "Ekran 14\" OLED",
+      "en": "Ekran 14\" OLED"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Procesor AMD Ryzen",
+      "sq": "Procesor AMD Ryzen",
+      "en": "Procesor AMD Ryzen"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Trup alumini",
+      "sq": "Trup alumini",
+      "en": "Trup alumini"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Windows 11",
+      "sq": "Windows 11",
+      "en": "Windows 11"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 737.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001267049",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "AMD Ryzen",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#3a3d44",
+     "w": [
+      "#163a4a",
+      "#6aa0b0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-zbs13",
+   "slug": "lp-zbs13",
+   "sku": "LP-ZBS13",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Zenbook S 13 OLED UX5304",
+    "sq": "ASUS Zenbook S 13 OLED UX5304",
+    "en": "ASUS Zenbook S 13 OLED UX5304"
+   },
+   "short": {
+    "me": "Ekran 13,3\" 3K OLED · Procesor Intel",
+    "sq": "Ekran 13,3\" 3K OLED · Procesor Intel",
+    "en": "Ekran 13,3\" 3K OLED · Procesor Intel"
+   },
+   "description": {
+    "me": "Ultrabook i vogël 13 inç me ekran OLED, ideal për udhëtime.",
+    "sq": "Ultrabook i vogël 13 inç me ekran OLED, ideal për udhëtime.",
+    "en": "Ultrabook i vogël 13 inç me ekran OLED, ideal për udhëtime."
+   },
+   "price": 1099,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-zbs13.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 13,3\" 3K OLED",
+      "sq": "Ekran 13,3\" 3K OLED",
+      "en": "Ekran 13,3\" 3K OLED"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Procesor Intel",
+      "sq": "Procesor Intel",
+      "en": "Procesor Intel"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Shumë i hollë dhe i lehtë",
+      "sq": "Shumë i hollë dhe i lehtë",
+      "en": "Shumë i hollë dhe i lehtë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Windows 11",
+      "sq": "Windows 11",
+      "en": "Windows 11"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 901.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001346232",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Intel Core",
+     "screen": 13.3,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#3a3d44",
+     "w": [
+      "#163a4a",
+      "#6aa0b0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-vbs16flip",
+   "slug": "lp-vbs16flip",
+   "sku": "LP-VBS16FLIP",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Vivobook S16 Flip TP5608 Snapdragon",
+    "sq": "ASUS Vivobook S16 Flip TP5608 Snapdragon",
+    "en": "ASUS Vivobook S16 Flip TP5608 Snapdragon"
+   },
+   "short": {
+    "me": "Ekran 16\" me prekje · Qualcomm Snapdragon X",
+    "sq": "Ekran 16\" me prekje · Qualcomm Snapdragon X",
+    "en": "Ekran 16\" me prekje · Qualcomm Snapdragon X"
+   },
+   "description": {
+    "me": "2‑në‑1 me ekran të madh 16 inç, si laptop ose si tablet.",
+    "sq": "2‑në‑1 me ekran të madh 16 inç, si laptop ose si tablet.",
+    "en": "2‑në‑1 me ekran të madh 16 inç, si laptop ose si tablet."
+   },
+   "price": 899,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/lp-vbs16flip.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 16\" me prekje",
+      "sq": "Ekran 16\" me prekje",
+      "en": "Ekran 16\" me prekje"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Qualcomm Snapdragon X",
+      "sq": "Qualcomm Snapdragon X",
+      "en": "Qualcomm Snapdragon X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Rrotullohet 360°",
+      "sq": "Rrotullohet 360°",
+      "en": "Rrotullohet 360°"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 737.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001425425",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "2‑në‑1",
+     "cpu": "Snapdragon X",
+     "screen": 16,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#5d6169",
+     "w": [
+      "#2b3a52",
+      "#7d93b8"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-vbs14flip",
+   "slug": "lp-vbs14flip",
+   "sku": "LP-VBS14FLIP",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Vivobook S14 Flip TP5408 Snapdragon",
+    "sq": "ASUS Vivobook S14 Flip TP5408 Snapdragon",
+    "en": "ASUS Vivobook S14 Flip TP5408 Snapdragon"
+   },
+   "short": {
+    "me": "Ekran 14\" me prekje · Qualcomm Snapdragon X",
+    "sq": "Ekran 14\" me prekje · Qualcomm Snapdragon X",
+    "en": "Ekran 14\" me prekje · Qualcomm Snapdragon X"
+   },
+   "description": {
+    "me": "2‑në‑1 kompakt për shkollë dhe punë, me bateri të gjatë.",
+    "sq": "2‑në‑1 kompakt për shkollë dhe punë, me bateri të gjatë.",
+    "en": "2‑në‑1 kompakt për shkollë dhe punë, me bateri të gjatë."
+   },
+   "price": 849,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/lp-vbs14flip.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" me prekje",
+      "sq": "Ekran 14\" me prekje",
+      "en": "Ekran 14\" me prekje"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Qualcomm Snapdragon X",
+      "sq": "Qualcomm Snapdragon X",
+      "en": "Qualcomm Snapdragon X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Rrotullohet 360°",
+      "sq": "Rrotullohet 360°",
+      "en": "Rrotullohet 360°"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 696.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001504618",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "2‑në‑1",
+     "cpu": "Snapdragon X",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#5d6169",
+     "w": [
+      "#2b3a52",
+      "#7d93b8"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-vbs16",
+   "slug": "lp-vbs16",
+   "sku": "LP-VBS16",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "ASUS Vivobook S16 S3607",
+    "sq": "ASUS Vivobook S16 S3607",
+    "en": "ASUS Vivobook S16 S3607"
+   },
+   "short": {
+    "me": "Ekran 16\" · Procesor Intel",
+    "sq": "Ekran 16\" · Procesor Intel",
+    "en": "Ekran 16\" · Procesor Intel"
+   },
+   "description": {
+    "me": "Laptop 16 inç për shtëpi dhe zyrë, me ekran të madh për punë të përditshme.",
+    "sq": "Laptop 16 inç për shtëpi dhe zyrë, me ekran të madh për punë të përditshme.",
+    "en": "Laptop 16 inç për shtëpi dhe zyrë, me ekran të madh për punë të përditshme."
+   },
+   "price": 749,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/lp-vbs16.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 16\"",
+      "sq": "Ekran 16\"",
+      "en": "Ekran 16\""
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Procesor Intel",
+      "sq": "Procesor Intel",
+      "en": "Procesor Intel"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Trup i hollë",
+      "sq": "Trup i hollë",
+      "en": "Trup i hollë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Windows 11",
+      "sq": "Windows 11",
+      "en": "Windows 11"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 614.18,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001001583804",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Shtëpi & zyrë",
+     "cpu": "Intel Core",
+     "screen": 16,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#5d6169",
+     "w": [
+      "#2b3a52",
+      "#7d93b8"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-xps13",
+   "slug": "lp-xps13",
+   "sku": "LP-XPS13",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "Dell XPS 13 9350",
+    "sq": "Dell XPS 13 9350",
+    "en": "Dell XPS 13 9350"
+   },
+   "short": {
+    "me": "Ekran 13,4\" · Intel Core Ultra (Seria 200V)",
+    "sq": "Ekran 13,4\" · Intel Core Ultra (Seria 200V)",
+    "en": "Ekran 13,4\" · Intel Core Ultra (Seria 200V)"
+   },
+   "description": {
+    "me": "XPS 13 i ri: dizajn minimal, tastierë pa kufij dhe efikasitet i lartë.",
+    "sq": "XPS 13 i ri: dizajn minimal, tastierë pa kufij dhe efikasitet i lartë.",
+    "en": "XPS 13 i ri: dizajn minimal, tastierë pa kufij dhe efikasitet i lartë."
+   },
+   "price": 1499,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-xps13.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 13,4\"",
+      "sq": "Ekran 13,4\"",
+      "en": "Ekran 13,4\""
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra (Seria 200V)",
+      "sq": "Intel Core Ultra (Seria 200V)",
+      "en": "Intel Core Ultra (Seria 200V)"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Trup alumini CNC",
+      "sq": "Trup alumini CNC",
+      "en": "Trup alumini CNC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1229.18,
+   "vendor": "Dell",
+   "tags": [],
+   "barcode": "2001001662998",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ultrabook",
+     "cpu": "Intel Core Ultra",
+     "screen": 13.4,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#3a3d44",
+     "w": [
+      "#1d2026",
+      "#5a606b"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-omniflip14",
+   "slug": "lp-omniflip14",
+   "sku": "LP-OMNIFLIP14",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "HP OmniBook Ultra Flip 14 (14‑fh0047nr)",
+    "sq": "HP OmniBook Ultra Flip 14 (14‑fh0047nr)",
+    "en": "HP OmniBook Ultra Flip 14 (14‑fh0047nr)"
+   },
+   "short": {
+    "me": "Ekran 14\" OLED me prekje · Intel Core Ultra 7 (Seria 200V)",
+    "sq": "Ekran 14\" OLED me prekje · Intel Core Ultra 7 (Seria 200V)",
+    "en": "Ekran 14\" OLED me prekje · Intel Core Ultra 7 (Seria 200V)"
+   },
+   "description": {
+    "me": "2‑në‑1 premium i HP me ekran OLED, për punë dhe kreativitet.",
+    "sq": "2‑në‑1 premium i HP me ekran OLED, për punë dhe kreativitet.",
+    "en": "2‑në‑1 premium i HP me ekran OLED, për punë dhe kreativitet."
+   },
+   "price": 1699,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 2,
+   "images": [
+    "/assets/products/photo/lp-omniflip14.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" OLED me prekje",
+      "sq": "Ekran 14\" OLED me prekje",
+      "en": "Ekran 14\" OLED me prekje"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra 7 (Seria 200V)",
+      "sq": "Intel Core Ultra 7 (Seria 200V)",
+      "en": "Intel Core Ultra 7 (Seria 200V)"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Rrotullohet 360°",
+      "sq": "Rrotullohet 360°",
+      "en": "Rrotullohet 360°"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Copilot+ PC",
+      "sq": "Copilot+ PC",
+      "en": "Copilot+ PC"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Kontrolloni RAM/SSD të modelit",
+      "sq": "Kontrolloni RAM/SSD të modelit",
+      "en": "Kontrolloni RAM/SSD të modelit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1393.18,
+   "vendor": "HP",
+   "tags": [],
+   "barcode": "2001001742188",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "2‑në‑1",
+     "cpu": "Intel Core Ultra 7",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#2c2e33",
+     "w": [
+      "#121a2b",
+      "#3e5679"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp-yoga9i",
+   "slug": "lp-yoga9i",
+   "sku": "LP-YOGA9I",
+   "categoryId": "cat-laptop",
+   "name": {
+    "me": "Lenovo Yoga 9i 2‑in‑1 Gen 9 14\"",
+    "sq": "Lenovo Yoga 9i 2‑in‑1 Gen 9 14\"",
+    "en": "Lenovo Yoga 9i 2‑in‑1 Gen 9 14\""
+   },
+   "short": {
+    "me": "Ekran 14\" OLED me prekje · Intel Core Ultra 7",
+    "sq": "Ekran 14\" OLED me prekje · Intel Core Ultra 7",
+    "en": "Ekran 14\" OLED me prekje · Intel Core Ultra 7"
+   },
+   "description": {
+    "me": "Yoga 9i me ekran OLED dhe zë të pasur, për punë dhe argëtim.",
+    "sq": "Yoga 9i me ekran OLED dhe zë të pasur, për punë dhe argëtim.",
+    "en": "Yoga 9i me ekran OLED dhe zë të pasur, për punë dhe argëtim."
+   },
+   "price": 1499,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/lp-yoga9i.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran 14\" OLED me prekje",
+      "sq": "Ekran 14\" OLED me prekje",
+      "en": "Ekran 14\" OLED me prekje"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel Core Ultra 7",
+      "sq": "Intel Core Ultra 7",
+      "en": "Intel Core Ultra 7"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Rrotullohet 360°",
+      "sq": "Rrotullohet 360°",
+      "en": "Rrotullohet 360°"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Altoparlant Bowers & Wilkins",
+      "sq": "Altoparlant Bowers & Wilkins",
+      "en": "Altoparlant Bowers & Wilkins"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "RAM dhe SSD sipas konfigurimit",
+      "sq": "RAM dhe SSD sipas konfigurimit",
+      "en": "RAM dhe SSD sipas konfigurimit"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1229.18,
+   "vendor": "Lenovo",
+   "tags": [],
+   "barcode": "2001001821371",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "2‑në‑1",
+     "cpu": "Intel Core Ultra 7",
+     "screen": 14,
+     "gpu": "E integruar",
+     "os": "Windows 11"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "laptop",
+     "c": "#6b6e75",
+     "w": [
+      "#5b6f8e",
+      "#c3cfe0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "cp-7800x3d",
+   "slug": "cp-7800x3d",
+   "sku": "CP-7800X3D",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "AMD Ryzen 7 7800X3D",
+    "sq": "AMD Ryzen 7 7800X3D",
+    "en": "AMD Ryzen 7 7800X3D"
+   },
+   "short": {
+    "me": "8 bërthama / 16 fije · Deri në 5,0 GHz",
+    "sq": "8 bërthama / 16 fije · Deri në 5,0 GHz",
+    "en": "8 bërthama / 16 fije · Deri në 5,0 GHz"
+   },
+   "description": {
+    "me": "Procesori më i mirë për lojëra, falë 3D V‑Cache së madhe.",
+    "sq": "Procesori më i mirë për lojëra, falë 3D V‑Cache së madhe.",
+    "en": "Procesori më i mirë për lojëra, falë 3D V‑Cache së madhe."
+   },
+   "price": 389,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 11,
+   "images": [
+    "/assets/products/photo/cp-7800x3d.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 bërthama / 16 fije",
+      "sq": "8 bërthama / 16 fije",
+      "en": "8 bërthama / 16 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,0 GHz",
+      "sq": "Deri në 5,0 GHz",
+      "en": "Deri në 5,0 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "96 MB L3 (3D V‑Cache)",
+      "sq": "96 MB L3 (3D V‑Cache)",
+      "en": "96 MB L3 (3D V‑Cache)"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "TDP 120 W",
+      "sq": "TDP 120 W",
+      "en": "TDP 120 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Pa ftohës në paketë",
+      "sq": "Pa ftohës në paketë",
+      "en": "Pa ftohës në paketë"
+     }
+    }
+   ],
+   "badges": [
+    "bestseller"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 800,
+   "cost": 311.2,
+   "vendor": "AMD",
+   "tags": [],
+   "barcode": "2001001900564",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "AM5",
+     "cores": 8,
+     "series": "Ryzen 7000"
+    },
+    "rating": 4.9,
+    "reviews": 498,
+    "badge": "Më i shituri",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "RYZEN 7"
+    }
+   }
+  },
+  {
+   "id": "cp-9800x3d",
+   "slug": "cp-9800x3d",
+   "sku": "CP-9800X3D",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "AMD Ryzen 7 9800X3D",
+    "sq": "AMD Ryzen 7 9800X3D",
+    "en": "AMD Ryzen 7 9800X3D"
+   },
+   "short": {
+    "me": "8 bërthama / 16 fije · Deri në 5,2 GHz",
+    "sq": "8 bërthama / 16 fije · Deri në 5,2 GHz",
+    "en": "8 bërthama / 16 fije · Deri në 5,2 GHz"
+   },
+   "description": {
+    "me": "Procesori më i shpejtë për lojëra në platformën AM5, me 3D V‑Cache nën bërthama për frekuenca më të larta.",
+    "sq": "Procesori më i shpejtë për lojëra në platformën AM5, me 3D V‑Cache nën bërthama për frekuenca më të larta.",
+    "en": "Procesori më i shpejtë për lojëra në platformën AM5, me 3D V‑Cache nën bërthama për frekuenca më të larta."
+   },
+   "price": 479,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 5,
+   "images": [
+    "/assets/products/photo/cp-9800x3d.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 bërthama / 16 fije",
+      "sq": "8 bërthama / 16 fije",
+      "en": "8 bërthama / 16 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,2 GHz",
+      "sq": "Deri në 5,2 GHz",
+      "en": "Deri në 5,2 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "96 MB L3 (3D V‑Cache e gjeneratës së dytë)",
+      "sq": "96 MB L3 (3D V‑Cache e gjeneratës së dytë)",
+      "en": "96 MB L3 (3D V‑Cache e gjeneratës së dytë)"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "TDP 120 W",
+      "sq": "TDP 120 W",
+      "en": "TDP 120 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Pa ftohës në paketë",
+      "sq": "Pa ftohës në paketë",
+      "en": "Pa ftohës në paketë"
+     }
+    }
+   ],
+   "badges": [
+    "new"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 383.2,
+   "vendor": "AMD",
+   "tags": [],
+   "barcode": "2001001979751",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "AM5",
+     "cores": 8,
+     "series": "Ryzen 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "I ri",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "RYZEN 7"
+    }
+   }
+  },
+  {
+   "id": "cp-285k",
+   "slug": "cp-285k",
+   "sku": "CP-285K",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "Intel Core Ultra 9 285K",
+    "sq": "Intel Core Ultra 9 285K",
+    "en": "Intel Core Ultra 9 285K"
+   },
+   "short": {
+    "me": "24 bërthama (8P + 16E) / 24 fije · Deri në 5,7 GHz",
+    "sq": "24 bërthama (8P + 16E) / 24 fije · Deri në 5,7 GHz",
+    "en": "24 bërthama (8P + 16E) / 24 fije · Deri në 5,7 GHz"
+   },
+   "description": {
+    "me": "Procesor i fuqishëm për punë kreative dhe lojëra, për platformën e re Intel LGA1851.",
+    "sq": "Procesor i fuqishëm për punë kreative dhe lojëra, për platformën e re Intel LGA1851.",
+    "en": "Procesor i fuqishëm për punë kreative dhe lojëra, për platformën e re Intel LGA1851."
+   },
+   "price": 569,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/cp-285k.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "24 bërthama (8P + 16E) / 24 fije",
+      "sq": "24 bërthama (8P + 16E) / 24 fije",
+      "en": "24 bërthama (8P + 16E) / 24 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,7 GHz",
+      "sq": "Deri në 5,7 GHz",
+      "en": "Deri në 5,7 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "NPU për AI",
+      "sq": "NPU për AI",
+      "en": "NPU për AI"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "125 W bazë / 250 W turbo",
+      "sq": "125 W bazë / 250 W turbo",
+      "en": "125 W bazë / 250 W turbo"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Kërkon pllakë LGA1851 (Z890)",
+      "sq": "Kërkon pllakë LGA1851 (Z890)",
+      "en": "Kërkon pllakë LGA1851 (Z890)"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 455.2,
+   "vendor": "Intel",
+   "tags": [],
+   "barcode": "2001002058943",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "LGA1851",
+     "cores": 24,
+     "series": "Core Ultra 200S"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "intel"
+    }
+   }
+  },
+  {
+   "id": "cp-9600x",
+   "slug": "cp-9600x",
+   "sku": "CP-9600X",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "AMD Ryzen 5 9600X",
+    "sq": "AMD Ryzen 5 9600X",
+    "en": "AMD Ryzen 5 9600X"
+   },
+   "short": {
+    "me": "6 bërthama / 12 fije · Deri në 5,4 GHz",
+    "sq": "6 bërthama / 12 fije · Deri në 5,4 GHz",
+    "en": "6 bërthama / 12 fije · Deri në 5,4 GHz"
+   },
+   "description": {
+    "me": "Procesor efikas 6‑bërthamësh për lojëra dhe punë në platformën AM5.",
+    "sq": "Procesor efikas 6‑bërthamësh për lojëra dhe punë në platformën AM5.",
+    "en": "Procesor efikas 6‑bërthamësh për lojëra dhe punë në platformën AM5."
+   },
+   "price": 229,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 8,
+   "images": [
+    "/assets/products/photo/cp-9600x.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "6 bërthama / 12 fije",
+      "sq": "6 bërthama / 12 fije",
+      "en": "6 bërthama / 12 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,4 GHz",
+      "sq": "Deri në 5,4 GHz",
+      "en": "Deri në 5,4 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "32 MB L3",
+      "sq": "32 MB L3",
+      "en": "32 MB L3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "TDP 65 W",
+      "sq": "TDP 65 W",
+      "en": "TDP 65 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Pa ftohës në paketë",
+      "sq": "Pa ftohës në paketë",
+      "en": "Pa ftohës në paketë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 183.2,
+   "vendor": "AMD",
+   "tags": [],
+   "barcode": "2001002138133",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "AM5",
+     "cores": 6,
+     "series": "Ryzen 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "RYZEN 5"
+    }
+   }
+  },
+  {
+   "id": "cp-9700x",
+   "slug": "cp-9700x",
+   "sku": "CP-9700X",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "AMD Ryzen 7 9700X",
+    "sq": "AMD Ryzen 7 9700X",
+    "en": "AMD Ryzen 7 9700X"
+   },
+   "short": {
+    "me": "8 bërthama / 16 fije · Deri në 5,5 GHz",
+    "sq": "8 bërthama / 16 fije · Deri në 5,5 GHz",
+    "en": "8 bërthama / 16 fije · Deri në 5,5 GHz"
+   },
+   "description": {
+    "me": "8 bërthama Zen 5 me konsum të ulët, për lojëra dhe krijim përmbajtjeje.",
+    "sq": "8 bërthama Zen 5 me konsum të ulët, për lojëra dhe krijim përmbajtjeje.",
+    "en": "8 bërthama Zen 5 me konsum të ulët, për lojëra dhe krijim përmbajtjeje."
+   },
+   "price": 329,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/cp-9700x.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 bërthama / 16 fije",
+      "sq": "8 bërthama / 16 fije",
+      "en": "8 bërthama / 16 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,5 GHz",
+      "sq": "Deri në 5,5 GHz",
+      "en": "Deri në 5,5 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "32 MB L3",
+      "sq": "32 MB L3",
+      "en": "32 MB L3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "TDP 65 W",
+      "sq": "TDP 65 W",
+      "en": "TDP 65 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Pa ftohës në paketë",
+      "sq": "Pa ftohës në paketë",
+      "en": "Pa ftohës në paketë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 263.2,
+   "vendor": "AMD",
+   "tags": [],
+   "barcode": "2001002217326",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "AM5",
+     "cores": 8,
+     "series": "Ryzen 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "RYZEN 7"
+    }
+   }
+  },
+  {
+   "id": "cp-9900x3d",
+   "slug": "cp-9900x3d",
+   "sku": "CP-9900X3D",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "AMD Ryzen 9 9900X3D",
+    "sq": "AMD Ryzen 9 9900X3D",
+    "en": "AMD Ryzen 9 9900X3D"
+   },
+   "short": {
+    "me": "12 bërthama / 24 fije · Deri në 5,5 GHz",
+    "sq": "12 bërthama / 24 fije · Deri në 5,5 GHz",
+    "en": "12 bërthama / 24 fije · Deri në 5,5 GHz"
+   },
+   "description": {
+    "me": "Lojëra dhe punë e rëndë në një procesor, falë 3D V‑Cache dhe 12 bërthamave.",
+    "sq": "Lojëra dhe punë e rëndë në një procesor, falë 3D V‑Cache dhe 12 bërthamave.",
+    "en": "Lojëra dhe punë e rëndë në një procesor, falë 3D V‑Cache dhe 12 bërthamave."
+   },
+   "price": 619,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/dark/cp-9900x3d.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "12 bërthama / 24 fije",
+      "sq": "12 bërthama / 24 fije",
+      "en": "12 bërthama / 24 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,5 GHz",
+      "sq": "Deri në 5,5 GHz",
+      "en": "Deri në 5,5 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "128 MB L3 me 3D V‑Cache",
+      "sq": "128 MB L3 me 3D V‑Cache",
+      "en": "128 MB L3 me 3D V‑Cache"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "TDP 120 W",
+      "sq": "TDP 120 W",
+      "en": "TDP 120 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Pa ftohës në paketë",
+      "sq": "Pa ftohës në paketë",
+      "en": "Pa ftohës në paketë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 495.2,
+   "vendor": "AMD",
+   "tags": [],
+   "barcode": "2001002296512",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "AM5",
+     "cores": 12,
+     "series": "Ryzen 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "RYZEN 9"
+    }
+   }
+  },
+  {
+   "id": "cp-9950x",
+   "slug": "cp-9950x",
+   "sku": "CP-9950X",
+   "categoryId": "cat-cpu",
+   "name": {
+    "me": "AMD Ryzen 9 9950X",
+    "sq": "AMD Ryzen 9 9950X",
+    "en": "AMD Ryzen 9 9950X"
+   },
+   "short": {
+    "me": "16 bërthama / 32 fije · Deri në 5,7 GHz",
+    "sq": "16 bërthama / 32 fije · Deri në 5,7 GHz",
+    "en": "16 bërthama / 32 fije · Deri në 5,7 GHz"
+   },
+   "description": {
+    "me": "Procesori më i fuqishëm AM5 për render, kompilim dhe punë profesionale.",
+    "sq": "Procesori më i fuqishëm AM5 për render, kompilim dhe punë profesionale.",
+    "en": "Procesori më i fuqishëm AM5 për render, kompilim dhe punë profesionale."
+   },
+   "price": 599,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/cp-9950x.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 bërthama / 32 fije",
+      "sq": "16 bërthama / 32 fije",
+      "en": "16 bërthama / 32 fije"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Deri në 5,7 GHz",
+      "sq": "Deri në 5,7 GHz",
+      "en": "Deri në 5,7 GHz"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "64 MB L3",
+      "sq": "64 MB L3",
+      "en": "64 MB L3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "TDP 170 W",
+      "sq": "TDP 170 W",
+      "en": "TDP 170 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Pa ftohës në paketë",
+      "sq": "Pa ftohës në paketë",
+      "en": "Pa ftohës në paketë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 479.2,
+   "vendor": "AMD",
+   "tags": [],
+   "barcode": "2001002375705",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "socket": "AM5",
+     "cores": 16,
+     "series": "Ryzen 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "cpu",
+     "c": "#c7c9cd",
+     "l": "RYZEN 9"
+    }
+   }
+  },
+  {
+   "id": "cp-4060dual",
+   "slug": "cp-4060dual",
+   "sku": "CP-4060DUAL",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "ASUS Dual GeForce RTX 4060 OC 8 GB",
+    "sq": "ASUS Dual GeForce RTX 4060 OC 8 GB",
+    "en": "ASUS Dual GeForce RTX 4060 OC 8 GB"
+   },
+   "short": {
+    "me": "8 GB GDDR6 · DLSS 3",
+    "sq": "8 GB GDDR6 · DLSS 3",
+    "en": "8 GB GDDR6 · DLSS 3"
+   },
+   "description": {
+    "me": "Kartelë efikase për lojëra në 1080p, me gjenerim kornizash DLSS 3.",
+    "sq": "Kartelë efikase për lojëra në 1080p, me gjenerim kornizash DLSS 3.",
+    "en": "Kartelë efikase për lojëra në 1080p, me gjenerim kornizash DLSS 3."
+   },
+   "price": 319,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 14,
+   "images": [
+    "/assets/products/photo/cp-4060dual.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 GB GDDR6",
+      "sq": "8 GB GDDR6",
+      "en": "8 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3",
+      "sq": "DLSS 3",
+      "en": "DLSS 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ventilatorë axial‑tech",
+      "sq": "Dy ventilatorë axial‑tech",
+      "en": "Dy ventilatorë axial‑tech"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "115 W",
+      "sq": "115 W",
+      "en": "115 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "HDMI 2.1, 3 × DP 1.4a",
+      "sq": "HDMI 2.1, 3 × DP 1.4a",
+      "en": "HDMI 2.1, 3 × DP 1.4a"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 251,
+   "cost": 267.96,
+   "vendor": "ASUS",
+   "tags": [],
+   "barcode": "2001002454899",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 8,
+     "series": "RTX 40"
+    },
+    "rating": 4.6,
+    "reviews": 155,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#2b2e34",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-4070s",
+   "slug": "cp-4070s",
+   "sku": "CP-4070S",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "MSI GeForce RTX 4070 SUPER 12G VENTUS 2X",
+    "sq": "MSI GeForce RTX 4070 SUPER 12G VENTUS 2X",
+    "en": "MSI GeForce RTX 4070 SUPER 12G VENTUS 2X"
+   },
+   "short": {
+    "me": "12 GB GDDR6X · DLSS 3.5, ray tracing",
+    "sq": "12 GB GDDR6X · DLSS 3.5, ray tracing",
+    "en": "12 GB GDDR6X · DLSS 3.5, ray tracing"
+   },
+   "description": {
+    "me": "Performancë e shkëlqyer në 1440p dhe përshpejtim AI për kreativë dhe lojtarë.",
+    "sq": "Performancë e shkëlqyer në 1440p dhe përshpejtim AI për kreativë dhe lojtarë.",
+    "en": "Performancë e shkëlqyer në 1440p dhe përshpejtim AI për kreativë dhe lojtarë."
+   },
+   "price": 679,
+   "salePrice": 629,
+   "unit": "kom",
+   "stock": 8,
+   "images": [
+    "/assets/products/photo/cp-4070s.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "12 GB GDDR6X",
+      "sq": "12 GB GDDR6X",
+      "en": "12 GB GDDR6X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3.5, ray tracing",
+      "sq": "DLSS 3.5, ray tracing",
+      "en": "DLSS 3.5, ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "220 W",
+      "sq": "220 W",
+      "en": "220 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Kompakte me dy ventilatorë",
+      "sq": "Kompakte me dy ventilatorë",
+      "en": "Kompakte me dy ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "HDMI 2.1a, 3 × DP",
+      "sq": "HDMI 2.1a, 3 × DP",
+      "en": "HDMI 2.1a, 3 × DP"
+     }
+    }
+   ],
+   "badges": [
+    "sale"
+   ],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 389,
+   "cost": 528.36,
+   "vendor": "MSI",
+   "tags": [],
+   "barcode": "2001002534089",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 12,
+     "series": "RTX 40"
+    },
+    "rating": 4.7,
+    "reviews": 241,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#202226",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx7800xt",
+   "slug": "cp-rx7800xt",
+   "sku": "CP-RX7800XT",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 7800 XT 16 GB",
+    "sq": "Sapphire PULSE Radeon RX 7800 XT 16 GB",
+    "en": "Sapphire PULSE Radeon RX 7800 XT 16 GB"
+   },
+   "short": {
+    "me": "16 GB GDDR6 · FSR 3",
+    "sq": "16 GB GDDR6 · FSR 3",
+    "en": "16 GB GDDR6 · FSR 3"
+   },
+   "description": {
+    "me": "Shumë VRAM dhe performancë e fortë në 1440p për çmimin.",
+    "sq": "Shumë VRAM dhe performancë e fortë në 1440p për çmimin.",
+    "en": "Shumë VRAM dhe performancë e fortë në 1440p për çmimin."
+   },
+   "price": 529,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/cp-rx7800xt.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6",
+      "sq": "16 GB GDDR6",
+      "en": "16 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 3",
+      "sq": "FSR 3",
+      "en": "FSR 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "263 W",
+      "sq": "263 W",
+      "en": "263 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohës me tre slote",
+      "sq": "Ftohës me tre slote",
+      "en": "Ftohës me tre slote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "HDMI 2.1, 2 × DP 2.1",
+      "sq": "HDMI 2.1, 2 × DP 2.1",
+      "en": "HDMI 2.1, 2 × DP 2.1"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 216,
+   "cost": 444.36,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001002613272",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 16,
+     "series": "RX 7000"
+    },
+    "rating": 4.7,
+    "reviews": 133,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "3"
+    }
+   }
+  },
+  {
+   "id": "cp-rx9070xt",
+   "slug": "cp-rx9070xt",
+   "sku": "CP-RX9070XT",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 9070 XT 16 GB",
+    "sq": "Sapphire PULSE Radeon RX 9070 XT 16 GB",
+    "en": "Sapphire PULSE Radeon RX 9070 XT 16 GB"
+   },
+   "short": {
+    "me": "16 GB GDDR6 · FSR 4, ray tracing",
+    "sq": "16 GB GDDR6 · FSR 4, ray tracing",
+    "en": "16 GB GDDR6 · FSR 4, ray tracing"
+   },
+   "description": {
+    "me": "Performancë e fortë në 1440p dhe 4K, me përmirësim të figurës FSR 4 me AI.",
+    "sq": "Performancë e fortë në 1440p dhe 4K, me përmirësim të figurës FSR 4 me AI.",
+    "en": "Performancë e fortë në 1440p dhe 4K, me përmirësim të figurës FSR 4 me AI."
+   },
+   "price": 729,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/cp-rx9070xt.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6",
+      "sq": "16 GB GDDR6",
+      "en": "16 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 4, ray tracing",
+      "sq": "FSR 4, ray tracing",
+      "en": "FSR 4, ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "304 W",
+      "sq": "304 W",
+      "en": "304 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Tre ventilatorë",
+      "sq": "Tre ventilatorë",
+      "en": "Tre ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "HDMI 2.1b, 2 × DP 2.1a",
+      "sq": "HDMI 2.1b, 2 × DP 2.1a",
+      "en": "HDMI 2.1b, 2 × DP 2.1a"
+     }
+    }
+   ],
+   "badges": [
+    "new"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 612.36,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001002692468",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 16,
+     "series": "RX 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "I ri",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "3"
+    }
+   }
+  },
+  {
+   "id": "cp-5080fe",
+   "slug": "cp-5080fe",
+   "sku": "CP-5080FE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 5080 Founders Edition",
+    "sq": "NVIDIA GeForce RTX 5080 Founders Edition",
+    "en": "NVIDIA GeForce RTX 5080 Founders Edition"
+   },
+   "short": {
+    "me": "16 GB GDDR7 · DLSS 4 me Multi Frame Generation",
+    "sq": "16 GB GDDR7 · DLSS 4 me Multi Frame Generation",
+    "en": "16 GB GDDR7 · DLSS 4 me Multi Frame Generation"
+   },
+   "description": {
+    "me": "Kartela zyrtare e NVIDIA për lojëra 4K dhe punë kreative, me DLSS 4.",
+    "sq": "Kartela zyrtare e NVIDIA për lojëra 4K dhe punë kreative, me DLSS 4.",
+    "en": "Kartela zyrtare e NVIDIA për lojëra 4K dhe punë kreative, me DLSS 4."
+   },
+   "price": 1199,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 2,
+   "images": [
+    "/assets/products/photo/dark/cp-5080fe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR7",
+      "sq": "16 GB GDDR7",
+      "en": "16 GB GDDR7"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 4 me Multi Frame Generation",
+      "sq": "DLSS 4 me Multi Frame Generation",
+      "en": "DLSS 4 me Multi Frame Generation"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "360 W",
+      "sq": "360 W",
+      "en": "360 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition me dy slote",
+      "sq": "Founders Edition me dy slote",
+      "en": "Founders Edition me dy slote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "HDMI 2.1b, 3 × DP 2.1b",
+      "sq": "HDMI 2.1b, 3 × DP 2.1b",
+      "en": "HDMI 2.1b, 3 × DP 2.1b"
+     }
+    }
+   ],
+   "badges": [
+    "new"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1007.16,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001002771651",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 16,
+     "series": "RTX 50"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "I ri",
+    "art": {
+     "s": "gpu",
+     "c": "#2b2d31",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-4070sfe",
+   "slug": "cp-4070sfe",
+   "sku": "CP-4070SFE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 4070 SUPER Founders Edition",
+    "sq": "NVIDIA GeForce RTX 4070 SUPER Founders Edition",
+    "en": "NVIDIA GeForce RTX 4070 SUPER Founders Edition"
+   },
+   "short": {
+    "me": "12 GB GDDR6X · DLSS 3.5, ray tracing",
+    "sq": "12 GB GDDR6X · DLSS 3.5, ray tracing",
+    "en": "12 GB GDDR6X · DLSS 3.5, ray tracing"
+   },
+   "description": {
+    "me": "Dizajni kompakt i NVIDIA për lojëra në 1440p, me ventilim të drejtpërdrejtë.",
+    "sq": "Dizajni kompakt i NVIDIA për lojëra në 1440p, me ventilim të drejtpërdrejtë.",
+    "en": "Dizajni kompakt i NVIDIA për lojëra në 1440p, me ventilim të drejtpërdrejtë."
+   },
+   "price": 629,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/cp-4070sfe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "12 GB GDDR6X",
+      "sq": "12 GB GDDR6X",
+      "en": "12 GB GDDR6X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3.5, ray tracing",
+      "sq": "DLSS 3.5, ray tracing",
+      "en": "DLSS 3.5, ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "220 W",
+      "sq": "220 W",
+      "en": "220 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition me dy slote",
+      "sq": "Founders Edition me dy slote",
+      "en": "Founders Edition me dy slote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "HDMI 2.1a, 3 × DP 1.4a",
+      "sq": "HDMI 2.1a, 3 × DP 1.4a",
+      "en": "HDMI 2.1a, 3 × DP 1.4a"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 528.36,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001002850844",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 12,
+     "series": "RTX 40"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#2b2d31",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx6500xt",
+   "slug": "cp-rx6500xt",
+   "sku": "CP-RX6500XT",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 6500 XT 4 GB",
+    "sq": "Sapphire PULSE Radeon RX 6500 XT 4 GB",
+    "en": "Sapphire PULSE Radeon RX 6500 XT 4 GB"
+   },
+   "short": {
+    "me": "4 GB GDDR6 · Dy ventilatorë",
+    "sq": "4 GB GDDR6 · Dy ventilatorë",
+    "en": "4 GB GDDR6 · Dy ventilatorë"
+   },
+   "description": {
+    "me": "Kartelë hyrëse për lojëra të lehta dhe përmirësim të PC‑ve të zyrës.",
+    "sq": "Kartelë hyrëse për lojëra të lehta dhe përmirësim të PC‑ve të zyrës.",
+    "en": "Kartelë hyrëse për lojëra të lehta dhe përmirësim të PC‑ve të zyrës."
+   },
+   "price": 169,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 7,
+   "images": [
+    "/assets/products/photo/cp-rx6500xt.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "4 GB GDDR6",
+      "sq": "4 GB GDDR6",
+      "en": "4 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ventilatorë",
+      "sq": "Dy ventilatorë",
+      "en": "Dy ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Kompakte",
+      "sq": "Kompakte",
+      "en": "Kompakte"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 107 W",
+      "sq": "Konsum rreth 107 W",
+      "en": "Konsum rreth 107 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për lojëra e‑sport në 1080p",
+      "sq": "Për lojëra e‑sport në 1080p",
+      "en": "Për lojëra e‑sport në 1080p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 141.96,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001002930034",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 4,
+     "series": "RX 6000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx6600",
+   "slug": "cp-rx6600",
+   "sku": "CP-RX6600",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 6600 8 GB",
+    "sq": "Sapphire PULSE Radeon RX 6600 8 GB",
+    "en": "Sapphire PULSE Radeon RX 6600 8 GB"
+   },
+   "short": {
+    "me": "8 GB GDDR6 · Dy ventilatorë",
+    "sq": "8 GB GDDR6 · Dy ventilatorë",
+    "en": "8 GB GDDR6 · Dy ventilatorë"
+   },
+   "description": {
+    "me": "Zgjedhje e mirë me buxhet për lojëra në 1080p.",
+    "sq": "Zgjedhje e mirë me buxhet për lojëra në 1080p.",
+    "en": "Zgjedhje e mirë me buxhet për lojëra në 1080p."
+   },
+   "price": 229,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/cp-rx6600.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 GB GDDR6",
+      "sq": "8 GB GDDR6",
+      "en": "8 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ventilatorë",
+      "sq": "Dy ventilatorë",
+      "en": "Dy ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 132 W",
+      "sq": "Konsum rreth 132 W",
+      "en": "Konsum rreth 132 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR",
+      "sq": "FSR",
+      "en": "FSR"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për lojëra në 1080p",
+      "sq": "Për lojëra në 1080p",
+      "en": "Për lojëra në 1080p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 192.36,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003009227",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 8,
+     "series": "RX 6000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx7600",
+   "slug": "cp-rx7600",
+   "sku": "CP-RX7600",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 7600 8 GB",
+    "sq": "Sapphire PULSE Radeon RX 7600 8 GB",
+    "en": "Sapphire PULSE Radeon RX 7600 8 GB"
+   },
+   "short": {
+    "me": "8 GB GDDR6 · Dy ventilatorë",
+    "sq": "8 GB GDDR6 · Dy ventilatorë",
+    "en": "8 GB GDDR6 · Dy ventilatorë"
+   },
+   "description": {
+    "me": "Arkitektura RDNA 3 për lojëra të rrjedhshme në 1080p.",
+    "sq": "Arkitektura RDNA 3 për lojëra të rrjedhshme në 1080p.",
+    "en": "Arkitektura RDNA 3 për lojëra të rrjedhshme në 1080p."
+   },
+   "price": 289,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/photo/cp-rx7600.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 GB GDDR6",
+      "sq": "8 GB GDDR6",
+      "en": "8 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ventilatorë",
+      "sq": "Dy ventilatorë",
+      "en": "Dy ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 165 W",
+      "sq": "Konsum rreth 165 W",
+      "en": "Konsum rreth 165 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 3",
+      "sq": "FSR 3",
+      "en": "FSR 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për lojëra në 1080p",
+      "sq": "Për lojëra në 1080p",
+      "en": "Për lojëra në 1080p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 242.76,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003088413",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 8,
+     "series": "RX 7000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx7600xt",
+   "slug": "cp-rx7600xt",
+   "sku": "CP-RX7600XT",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 7600 XT 16 GB",
+    "sq": "Sapphire PULSE Radeon RX 7600 XT 16 GB",
+    "en": "Sapphire PULSE Radeon RX 7600 XT 16 GB"
+   },
+   "short": {
+    "me": "16 GB GDDR6 · Dy ventilatorë",
+    "sq": "16 GB GDDR6 · Dy ventilatorë",
+    "en": "16 GB GDDR6 · Dy ventilatorë"
+   },
+   "description": {
+    "me": "16 GB memorie për lojëra të reja dhe punë kreative, me çmim të arsyeshëm.",
+    "sq": "16 GB memorie për lojëra të reja dhe punë kreative, me çmim të arsyeshëm.",
+    "en": "16 GB memorie për lojëra të reja dhe punë kreative, me çmim të arsyeshëm."
+   },
+   "price": 349,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 5,
+   "images": [
+    "/assets/products/photo/cp-rx7600xt.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6",
+      "sq": "16 GB GDDR6",
+      "en": "16 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ventilatorë",
+      "sq": "Dy ventilatorë",
+      "en": "Dy ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 190 W",
+      "sq": "Konsum rreth 190 W",
+      "en": "Konsum rreth 190 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 3",
+      "sq": "FSR 3",
+      "en": "FSR 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për 1080p dhe 1440p",
+      "sq": "Për 1080p dhe 1440p",
+      "en": "Për 1080p dhe 1440p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 293.16,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003167606",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 16,
+     "series": "RX 7000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx9060xt",
+   "slug": "cp-rx9060xt",
+   "sku": "CP-RX9060XT",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 9060 XT 16 GB",
+    "sq": "Sapphire PULSE Radeon RX 9060 XT 16 GB",
+    "en": "Sapphire PULSE Radeon RX 9060 XT 16 GB"
+   },
+   "short": {
+    "me": "16 GB GDDR6 · Dy ventilatorë",
+    "sq": "16 GB GDDR6 · Dy ventilatorë",
+    "en": "16 GB GDDR6 · Dy ventilatorë"
+   },
+   "description": {
+    "me": "Gjenerata RDNA 4 me FSR 4, për lojëra moderne me buxhet të mesëm.",
+    "sq": "Gjenerata RDNA 4 me FSR 4, për lojëra moderne me buxhet të mesëm.",
+    "en": "Gjenerata RDNA 4 me FSR 4, për lojëra moderne me buxhet të mesëm."
+   },
+   "price": 389,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 5,
+   "images": [
+    "/assets/products/photo/cp-rx9060xt.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6",
+      "sq": "16 GB GDDR6",
+      "en": "16 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Dy ventilatorë",
+      "sq": "Dy ventilatorë",
+      "en": "Dy ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 4",
+      "sq": "FSR 4",
+      "en": "FSR 4"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ray tracing",
+      "sq": "Ray tracing",
+      "en": "Ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për 1080p dhe 1440p",
+      "sq": "Për 1080p dhe 1440p",
+      "en": "Për 1080p dhe 1440p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 326.76,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003246790",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 16,
+     "series": "RX 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx7900gre",
+   "slug": "cp-rx7900gre",
+   "sku": "CP-RX7900GRE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 7900 GRE 16 GB",
+    "sq": "Sapphire PULSE Radeon RX 7900 GRE 16 GB",
+    "en": "Sapphire PULSE Radeon RX 7900 GRE 16 GB"
+   },
+   "short": {
+    "me": "16 GB GDDR6 · Tre ventilatorë",
+    "sq": "16 GB GDDR6 · Tre ventilatorë",
+    "en": "16 GB GDDR6 · Tre ventilatorë"
+   },
+   "description": {
+    "me": "Performancë e fortë në 1440p me shumë VRAM.",
+    "sq": "Performancë e fortë në 1440p me shumë VRAM.",
+    "en": "Performancë e fortë në 1440p me shumë VRAM."
+   },
+   "price": 599,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/cp-rx7900gre.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6",
+      "sq": "16 GB GDDR6",
+      "en": "16 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Tre ventilatorë",
+      "sq": "Tre ventilatorë",
+      "en": "Tre ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 260 W",
+      "sq": "Konsum rreth 260 W",
+      "en": "Konsum rreth 260 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 3",
+      "sq": "FSR 3",
+      "en": "FSR 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për lojëra në 1440p",
+      "sq": "Për lojëra në 1440p",
+      "en": "Për lojëra në 1440p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 503.16,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003325983",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 16,
+     "series": "RX 7000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "3"
+    }
+   }
+  },
+  {
+   "id": "cp-rx9070",
+   "slug": "cp-rx9070",
+   "sku": "CP-RX9070",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 9070 16 GB",
+    "sq": "Sapphire PULSE Radeon RX 9070 16 GB",
+    "en": "Sapphire PULSE Radeon RX 9070 16 GB"
+   },
+   "short": {
+    "me": "16 GB GDDR6 · FSR 4",
+    "sq": "16 GB GDDR6 · FSR 4",
+    "en": "16 GB GDDR6 · FSR 4"
+   },
+   "description": {
+    "me": "RDNA 4 efikase për lojëra në 1440p, me FSR 4 me AI.",
+    "sq": "RDNA 4 efikase për lojëra në 1440p, me FSR 4 me AI.",
+    "en": "RDNA 4 efikase për lojëra në 1440p, me FSR 4 me AI."
+   },
+   "price": 619,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/cp-rx9070.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6",
+      "sq": "16 GB GDDR6",
+      "en": "16 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 4",
+      "sq": "FSR 4",
+      "en": "FSR 4"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ray tracing",
+      "sq": "Ray tracing",
+      "en": "Ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 220 W",
+      "sq": "Konsum rreth 220 W",
+      "en": "Konsum rreth 220 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për 1440p dhe 4K",
+      "sq": "Për 1440p dhe 4K",
+      "en": "Për 1440p dhe 4K"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 519.96,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003405173",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 16,
+     "series": "RX 9000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-rx7900xtx",
+   "slug": "cp-rx7900xtx",
+   "sku": "CP-RX7900XTX",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "Sapphire PULSE Radeon RX 7900 XTX 24 GB",
+    "sq": "Sapphire PULSE Radeon RX 7900 XTX 24 GB",
+    "en": "Sapphire PULSE Radeon RX 7900 XTX 24 GB"
+   },
+   "short": {
+    "me": "24 GB GDDR6 · Tre ventilatorë",
+    "sq": "24 GB GDDR6 · Tre ventilatorë",
+    "en": "24 GB GDDR6 · Tre ventilatorë"
+   },
+   "description": {
+    "me": "Kartela më e fuqishme Radeon e gjeneratës RDNA 3, me 24 GB memorie.",
+    "sq": "Kartela më e fuqishme Radeon e gjeneratës RDNA 3, me 24 GB memorie.",
+    "en": "Kartela më e fuqishme Radeon e gjeneratës RDNA 3, me 24 GB memorie."
+   },
+   "price": 999,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 2,
+   "images": [
+    "/assets/products/photo/cp-rx7900xtx.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "24 GB GDDR6",
+      "sq": "24 GB GDDR6",
+      "en": "24 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Tre ventilatorë",
+      "sq": "Tre ventilatorë",
+      "en": "Tre ventilatorë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 355 W",
+      "sq": "Konsum rreth 355 W",
+      "en": "Konsum rreth 355 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "FSR 3",
+      "sq": "FSR 3",
+      "en": "FSR 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për lojëra në 4K",
+      "sq": "Për lojëra në 4K",
+      "en": "Për lojëra në 4K"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 839.16,
+   "vendor": "Sapphire",
+   "tags": [],
+   "barcode": "2001003484369",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "AMD Radeon",
+     "vram": 24,
+     "series": "RX 7000"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#1c1d21",
+     "l": "3"
+    }
+   }
+  },
+  {
+   "id": "cp-4060tife",
+   "slug": "cp-4060tife",
+   "sku": "CP-4060TIFE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 4060 Ti Founders Edition",
+    "sq": "NVIDIA GeForce RTX 4060 Ti Founders Edition",
+    "en": "NVIDIA GeForce RTX 4060 Ti Founders Edition"
+   },
+   "short": {
+    "me": "8 GB GDDR6 · DLSS 3",
+    "sq": "8 GB GDDR6 · DLSS 3",
+    "en": "8 GB GDDR6 · DLSS 3"
+   },
+   "description": {
+    "me": "Kartelë kompakte me DLSS 3, për lojëra në 1080p dhe 1440p.",
+    "sq": "Kartelë kompakte me DLSS 3, për lojëra në 1080p dhe 1440p.",
+    "en": "Kartelë kompakte me DLSS 3, për lojëra në 1080p dhe 1440p."
+   },
+   "price": 449,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/dark/cp-4060tife.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "8 GB GDDR6",
+      "sq": "8 GB GDDR6",
+      "en": "8 GB GDDR6"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3",
+      "sq": "DLSS 3",
+      "en": "DLSS 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ray tracing",
+      "sq": "Ray tracing",
+      "en": "Ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 160 W",
+      "sq": "Konsum rreth 160 W",
+      "en": "Konsum rreth 160 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition",
+      "sq": "Founders Edition",
+      "en": "Founders Edition"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 377.16,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001003563552",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 8,
+     "series": "RTX 40"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#3a3c40",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-4070fe",
+   "slug": "cp-4070fe",
+   "sku": "CP-4070FE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 4070 Founders Edition",
+    "sq": "NVIDIA GeForce RTX 4070 Founders Edition",
+    "en": "NVIDIA GeForce RTX 4070 Founders Edition"
+   },
+   "short": {
+    "me": "12 GB GDDR6X · DLSS 3",
+    "sq": "12 GB GDDR6X · DLSS 3",
+    "en": "12 GB GDDR6X · DLSS 3"
+   },
+   "description": {
+    "me": "Efikasitet i lartë dhe performancë e mirë në 1440p.",
+    "sq": "Efikasitet i lartë dhe performancë e mirë në 1440p.",
+    "en": "Efikasitet i lartë dhe performancë e mirë në 1440p."
+   },
+   "price": 599,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 3,
+   "images": [
+    "/assets/products/photo/dark/cp-4070fe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "12 GB GDDR6X",
+      "sq": "12 GB GDDR6X",
+      "en": "12 GB GDDR6X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3",
+      "sq": "DLSS 3",
+      "en": "DLSS 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ray tracing",
+      "sq": "Ray tracing",
+      "en": "Ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 200 W",
+      "sq": "Konsum rreth 200 W",
+      "en": "Konsum rreth 200 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition me dy slote",
+      "sq": "Founders Edition me dy slote",
+      "en": "Founders Edition me dy slote"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 503.16,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001003642745",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 12,
+     "series": "RTX 40"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#3a3c40",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-5070fe",
+   "slug": "cp-5070fe",
+   "sku": "CP-5070FE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 5070 Founders Edition",
+    "sq": "NVIDIA GeForce RTX 5070 Founders Edition",
+    "en": "NVIDIA GeForce RTX 5070 Founders Edition"
+   },
+   "short": {
+    "me": "12 GB GDDR7 · DLSS 4 me Multi Frame Generation",
+    "sq": "12 GB GDDR7 · DLSS 4 me Multi Frame Generation",
+    "en": "12 GB GDDR7 · DLSS 4 me Multi Frame Generation"
+   },
+   "description": {
+    "me": "Gjenerata Blackwell me DLSS 4, për lojëra të shpejta në 1440p.",
+    "sq": "Gjenerata Blackwell me DLSS 4, për lojëra të shpejta në 1440p.",
+    "en": "Gjenerata Blackwell me DLSS 4, për lojëra të shpejta në 1440p."
+   },
+   "price": 629,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 4,
+   "images": [
+    "/assets/products/photo/dark/cp-5070fe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "12 GB GDDR7",
+      "sq": "12 GB GDDR7",
+      "en": "12 GB GDDR7"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 4 me Multi Frame Generation",
+      "sq": "DLSS 4 me Multi Frame Generation",
+      "en": "DLSS 4 me Multi Frame Generation"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 250 W",
+      "sq": "Konsum rreth 250 W",
+      "en": "Konsum rreth 250 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition me dy slote",
+      "sq": "Founders Edition me dy slote",
+      "en": "Founders Edition me dy slote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për lojëra në 1440p",
+      "sq": "Për lojëra në 1440p",
+      "en": "Për lojëra në 1440p"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 528.36,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001003721938",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 12,
+     "series": "RTX 50"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#3a3c40",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "cp-4080sfe",
+   "slug": "cp-4080sfe",
+   "sku": "CP-4080SFE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 4080 SUPER Founders Edition",
+    "sq": "NVIDIA GeForce RTX 4080 SUPER Founders Edition",
+    "en": "NVIDIA GeForce RTX 4080 SUPER Founders Edition"
+   },
+   "short": {
+    "me": "16 GB GDDR6X · DLSS 3",
+    "sq": "16 GB GDDR6X · DLSS 3",
+    "en": "16 GB GDDR6X · DLSS 3"
+   },
+   "description": {
+    "me": "Performancë 4K me ray tracing, në dizajnin Founders Edition.",
+    "sq": "Performancë 4K me ray tracing, në dizajnin Founders Edition.",
+    "en": "Performancë 4K me ray tracing, në dizajnin Founders Edition."
+   },
+   "price": 1149,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 2,
+   "images": [
+    "/assets/products/photo/cp-4080sfe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "16 GB GDDR6X",
+      "sq": "16 GB GDDR6X",
+      "en": "16 GB GDDR6X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3",
+      "sq": "DLSS 3",
+      "en": "DLSS 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ray tracing",
+      "sq": "Ray tracing",
+      "en": "Ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 320 W",
+      "sq": "Konsum rreth 320 W",
+      "en": "Konsum rreth 320 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition",
+      "sq": "Founders Edition",
+      "en": "Founders Edition"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 965.16,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001003801128",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 16,
+     "series": "RTX 40"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#3a3c40",
+     "l": "3"
+    }
+   }
+  },
+  {
+   "id": "cp-4090fe",
+   "slug": "cp-4090fe",
+   "sku": "CP-4090FE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 4090 Founders Edition",
+    "sq": "NVIDIA GeForce RTX 4090 Founders Edition",
+    "en": "NVIDIA GeForce RTX 4090 Founders Edition"
+   },
+   "short": {
+    "me": "24 GB GDDR6X · DLSS 3",
+    "sq": "24 GB GDDR6X · DLSS 3",
+    "en": "24 GB GDDR6X · DLSS 3"
+   },
+   "description": {
+    "me": "Flamuri i gjeneratës Ada Lovelace, për 4K dhe punë me AI.",
+    "sq": "Flamuri i gjeneratës Ada Lovelace, për 4K dhe punë me AI.",
+    "en": "Flamuri i gjeneratës Ada Lovelace, për 4K dhe punë me AI."
+   },
+   "price": 1999,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 1,
+   "images": [
+    "/assets/products/photo/dark/cp-4090fe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "24 GB GDDR6X",
+      "sq": "24 GB GDDR6X",
+      "en": "24 GB GDDR6X"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 3",
+      "sq": "DLSS 3",
+      "en": "DLSS 3"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ray tracing",
+      "sq": "Ray tracing",
+      "en": "Ray tracing"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 450 W",
+      "sq": "Konsum rreth 450 W",
+      "en": "Konsum rreth 450 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition me tre slote",
+      "sq": "Founders Edition me tre slote",
+      "en": "Founders Edition me tre slote"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 1679.16,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001003880314",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 24,
+     "series": "RTX 40"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#3a3c40",
+     "l": "3"
+    }
+   }
+  },
+  {
+   "id": "cp-5090fe",
+   "slug": "cp-5090fe",
+   "sku": "CP-5090FE",
+   "categoryId": "cat-gpu",
+   "name": {
+    "me": "NVIDIA GeForce RTX 5090 Founders Edition",
+    "sq": "NVIDIA GeForce RTX 5090 Founders Edition",
+    "en": "NVIDIA GeForce RTX 5090 Founders Edition"
+   },
+   "short": {
+    "me": "32 GB GDDR7 · DLSS 4 me Multi Frame Generation",
+    "sq": "32 GB GDDR7 · DLSS 4 me Multi Frame Generation",
+    "en": "32 GB GDDR7 · DLSS 4 me Multi Frame Generation"
+   },
+   "description": {
+    "me": "Kartela më e fuqishme GeForce, për lojëra 4K me DLSS 4 dhe punë me AI.",
+    "sq": "Kartela më e fuqishme GeForce, për lojëra 4K me DLSS 4 dhe punë me AI.",
+    "en": "Kartela më e fuqishme GeForce, për lojëra 4K me DLSS 4 dhe punë me AI."
+   },
+   "price": 2499,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 1,
+   "images": [
+    "/assets/products/photo/dark/cp-5090fe.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "32 GB GDDR7",
+      "sq": "32 GB GDDR7",
+      "en": "32 GB GDDR7"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DLSS 4 me Multi Frame Generation",
+      "sq": "DLSS 4 me Multi Frame Generation",
+      "en": "DLSS 4 me Multi Frame Generation"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Konsum rreth 575 W",
+      "sq": "Konsum rreth 575 W",
+      "en": "Konsum rreth 575 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Founders Edition me dy slote",
+      "sq": "Founders Edition me dy slote",
+      "en": "Founders Edition me dy slote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Për 4K dhe AI",
+      "sq": "Për 4K dhe AI",
+      "en": "Për 4K dhe AI"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 3,
+   "cost": 2099.16,
+   "vendor": "NVIDIA",
+   "tags": [],
+   "barcode": "2001003959508",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "chip": "NVIDIA GeForce",
+     "vram": 32,
+     "series": "RTX 50"
+    },
+    "rating": 0,
+    "reviews": 0,
+    "badge": "",
+    "art": {
+     "s": "gpu",
+     "c": "#3a3c40",
+     "l": "2"
+    }
+   }
+  },
+  {
+   "id": "st-990pro2",
+   "slug": "st-990pro2",
+   "sku": "ST-990PRO2",
+   "categoryId": "cat-ssd",
+   "name": {
+    "me": "Samsung 990 PRO 2 TB",
+    "sq": "Samsung 990 PRO 2 TB",
+    "en": "Samsung 990 PRO 2 TB"
+   },
+   "short": {
+    "me": "M.2 2280 NVMe · Lexim 7.450 MB/s",
+    "sq": "M.2 2280 NVMe · Lexim 7.450 MB/s",
+    "en": "M.2 2280 NVMe · Lexim 7.450 MB/s"
+   },
+   "description": {
+    "me": "Një nga SSD‑të më të shpejta PCIe 4.0 për stacione pune, lojëra dhe PS5.",
+    "sq": "Një nga SSD‑të më të shpejta PCIe 4.0 për stacione pune, lojëra dhe PS5.",
+    "en": "Një nga SSD‑të më të shpejta PCIe 4.0 për stacione pune, lojëra dhe PS5."
+   },
+   "price": 219,
+   "salePrice": 179,
+   "unit": "kom",
+   "stock": 60,
+   "images": [
+    "/assets/products/st-990pro2.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "M.2 2280 NVMe",
+      "sq": "M.2 2280 NVMe",
+      "en": "M.2 2280 NVMe"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Lexim 7.450 MB/s",
+      "sq": "Lexim 7.450 MB/s",
+      "en": "Lexim 7.450 MB/s"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Shkrim 6.900 MB/s",
+      "sq": "Shkrim 6.900 MB/s",
+      "en": "Shkrim 6.900 MB/s"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "1.200 TBW",
+      "sq": "1.200 TBW",
+      "en": "1.200 TBW"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci 5 vjet",
+      "sq": "Garanci 5 vjet",
+      "en": "Garanci 5 vjet"
+     }
+    }
+   ],
+   "badges": [
+    "bestseller",
+    "sale"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 825,
+   "cost": 139.62,
+   "vendor": "Samsung",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004038691",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "SSD i brendshëm",
+     "capacity": 2000,
+     "interface": "NVMe PCIe 4.0"
+    },
+    "rating": 4.9,
+    "reviews": 512,
+    "badge": "Më i shituri",
+    "art": {
+     "s": "m2",
+     "c": "#111214",
+     "l": "990 PRO"
+    }
+   }
+  },
+  {
+   "id": "st-sn850x1",
+   "slug": "st-sn850x1",
+   "sku": "ST-SN850X1",
+   "categoryId": "cat-ssd",
+   "name": {
+    "me": "WD_BLACK SN850X 1 TB",
+    "sq": "WD_BLACK SN850X 1 TB",
+    "en": "WD_BLACK SN850X 1 TB"
+   },
+   "short": {
+    "me": "M.2 2280 NVMe · Lexim 7.300 MB/s",
+    "sq": "M.2 2280 NVMe · Lexim 7.300 MB/s",
+    "en": "M.2 2280 NVMe · Lexim 7.300 MB/s"
+   },
+   "description": {
+    "me": "SSD i nivelit të lartë për lojëra, me performancë të qëndrueshme.",
+    "sq": "SSD i nivelit të lartë për lojëra, me performancë të qëndrueshme.",
+    "en": "SSD i nivelit të lartë për lojëra, me performancë të qëndrueshme."
+   },
+   "price": 99,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 44,
+   "images": [
+    "/assets/products/st-sn850x1.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "M.2 2280 NVMe",
+      "sq": "M.2 2280 NVMe",
+      "en": "M.2 2280 NVMe"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Lexim 7.300 MB/s",
+      "sq": "Lexim 7.300 MB/s",
+      "en": "Lexim 7.300 MB/s"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Shkrim 6.300 MB/s",
+      "sq": "Shkrim 6.300 MB/s",
+      "en": "Shkrim 6.300 MB/s"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "600 TBW",
+      "sq": "600 TBW",
+      "en": "600 TBW"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci 5 vjet",
+      "sq": "Garanci 5 vjet",
+      "en": "Garanci 5 vjet"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 593,
+   "cost": 77.22,
+   "vendor": "WD",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004117884",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "SSD i brendshëm",
+     "capacity": 1000,
+     "interface": "NVMe PCIe 4.0"
+    },
+    "rating": 4.8,
+    "reviews": 367,
+    "badge": "",
+    "art": {
+     "s": "m2",
+     "c": "#111214",
+     "l": "SN850X"
+    }
+   }
+  },
+  {
+   "id": "cp-furyb32",
+   "slug": "cp-furyb32",
+   "sku": "CP-FURYB32",
+   "categoryId": "cat-ram",
+   "name": {
+    "me": "Kingston FURY Beast 32 GB DDR5‑6000",
+    "sq": "Kingston FURY Beast 32 GB DDR5‑6000",
+    "en": "Kingston FURY Beast 32 GB DDR5‑6000"
+   },
+   "short": {
+    "me": "2 × 16 GB · DDR5‑6000 CL30",
+    "sq": "2 × 16 GB · DDR5‑6000 CL30",
+    "en": "2 × 16 GB · DDR5‑6000 CL30"
+   },
+   "description": {
+    "me": "Komplet DDR5 i shpejtë dhe i besueshëm, i optimizuar për Intel dhe AMD.",
+    "sq": "Komplet DDR5 i shpejtë dhe i besueshëm, i optimizuar për Intel dhe AMD.",
+    "en": "Komplet DDR5 i shpejtë dhe i besueshëm, i optimizuar për Intel dhe AMD."
+   },
+   "price": 109,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 70,
+   "images": [
+    "/assets/products/cp-furyb32.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "2 × 16 GB",
+      "sq": "2 × 16 GB",
+      "en": "2 × 16 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DDR5‑6000 CL30",
+      "sq": "DDR5‑6000 CL30",
+      "en": "DDR5‑6000 CL30"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel XMP 3.0 / AMD EXPO",
+      "sq": "Intel XMP 3.0 / AMD EXPO",
+      "en": "Intel XMP 3.0 / AMD EXPO"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohës me profil të ulët",
+      "sq": "Ftohës me profil të ulët",
+      "en": "Ftohës me profil të ulët"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci e përjetshme",
+      "sq": "Garanci e përjetshme",
+      "en": "Garanci e përjetshme"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 572,
+   "cost": 85.02,
+   "vendor": "Kingston",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004197077",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Memorie RAM",
+     "socket": "DDR5"
+    },
+    "rating": 4.7,
+    "reviews": 354,
+    "badge": "",
+    "art": {
+     "s": "ram",
+     "c": "#1d1e22",
+     "l": "FURY"
+    }
+   }
+  },
+  {
+   "id": "cp-veng32",
+   "slug": "cp-veng32",
+   "sku": "CP-VENG32",
+   "categoryId": "cat-ram",
+   "name": {
+    "me": "Corsair Vengeance 32 GB DDR5‑6000",
+    "sq": "Corsair Vengeance 32 GB DDR5‑6000",
+    "en": "Corsair Vengeance 32 GB DDR5‑6000"
+   },
+   "short": {
+    "me": "2 × 16 GB · DDR5‑6000 CL36",
+    "sq": "2 × 16 GB · DDR5‑6000 CL36",
+    "en": "2 × 16 GB · DDR5‑6000 CL36"
+   },
+   "description": {
+    "me": "Memorie DDR5 me pamje të pastër dhe përputhshmëri të gjerë për ndërtime të reja.",
+    "sq": "Memorie DDR5 me pamje të pastër dhe përputhshmëri të gjerë për ndërtime të reja.",
+    "en": "Memorie DDR5 me pamje të pastër dhe përputhshmëri të gjerë për ndërtime të reja."
+   },
+   "price": 115,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 41,
+   "images": [
+    "/assets/products/cp-veng32.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "2 × 16 GB",
+      "sq": "2 × 16 GB",
+      "en": "2 × 16 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DDR5‑6000 CL36",
+      "sq": "DDR5‑6000 CL36",
+      "en": "DDR5‑6000 CL36"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel XMP 3.0",
+      "sq": "Intel XMP 3.0",
+      "en": "Intel XMP 3.0"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohës alumini",
+      "sq": "Ftohës alumini",
+      "en": "Ftohës alumini"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci e përjetshme",
+      "sq": "Garanci e përjetshme",
+      "en": "Garanci e përjetshme"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 465,
+   "cost": 89.7,
+   "vendor": "Corsair",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004276260",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Memorie RAM",
+     "socket": "DDR5"
+    },
+    "rating": 4.7,
+    "reviews": 287,
+    "badge": "",
+    "art": {
+     "s": "ram",
+     "c": "#2a2c30",
+     "l": "VENGEANCE"
+    }
+   }
+  },
+  {
+   "id": "cp-tz5rgb32",
+   "slug": "cp-tz5rgb32",
+   "sku": "CP-TZ5RGB32",
+   "categoryId": "cat-ram",
+   "name": {
+    "me": "G.Skill Trident Z5 RGB 32 GB DDR5‑6000",
+    "sq": "G.Skill Trident Z5 RGB 32 GB DDR5‑6000",
+    "en": "G.Skill Trident Z5 RGB 32 GB DDR5‑6000"
+   },
+   "short": {
+    "me": "2 × 16 GB · DDR5‑6000 CL30",
+    "sq": "2 × 16 GB · DDR5‑6000 CL30",
+    "en": "2 × 16 GB · DDR5‑6000 CL30"
+   },
+   "description": {
+    "me": "Memorie DDR5 e shpejtë me shirit RGB që përputhet me ndriçimin e PC‑së suaj.",
+    "sq": "Memorie DDR5 e shpejtë me shirit RGB që përputhet me ndriçimin e PC‑së suaj.",
+    "en": "Memorie DDR5 e shpejtë me shirit RGB që përputhet me ndriçimin e PC‑së suaj."
+   },
+   "price": 139,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 22,
+   "images": [
+    "/assets/products/cp-tz5rgb32.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "2 × 16 GB",
+      "sq": "2 × 16 GB",
+      "en": "2 × 16 GB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DDR5‑6000 CL30",
+      "sq": "DDR5‑6000 CL30",
+      "en": "DDR5‑6000 CL30"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ndriçim RGB",
+      "sq": "Ndriçim RGB",
+      "en": "Ndriçim RGB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Intel XMP 3.0",
+      "sq": "Intel XMP 3.0",
+      "en": "Intel XMP 3.0"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohës alumini",
+      "sq": "Ftohës alumini",
+      "en": "Ftohës alumini"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 432,
+   "cost": 108.42,
+   "vendor": "G.Skill",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004355453",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Memorie RAM",
+     "socket": "DDR5"
+    },
+    "rating": 4.8,
+    "reviews": 266,
+    "badge": "",
+    "art": {
+     "s": "ram",
+     "c": "#cfd2d8",
+     "l": "TRIDENT Z5"
+    }
+   }
+  },
+  {
+   "id": "cs-o11evo",
+   "slug": "cs-o11evo",
+   "sku": "CS-O11EVO",
+   "categoryId": "cat-case",
+   "name": {
+    "me": "Lian Li O11 Dynamic EVO",
+    "sq": "Lian Li O11 Dynamic EVO",
+    "en": "Lian Li O11 Dynamic EVO"
+   },
+   "short": {
+    "me": "Mid‑tower ATX, dy dhoma · Xham i kalitur përpara dhe anash",
+    "sq": "Mid‑tower ATX, dy dhoma · Xham i kalitur përpara dhe anash",
+    "en": "Mid‑tower ATX, dy dhoma · Xham i kalitur përpara dhe anash"
+   },
+   "description": {
+    "me": "Kasa ikonike me xham panoramik, e krijuar për ndërtime me ftohje me lëng dhe RGB.",
+    "sq": "Kasa ikonike me xham panoramik, e krijuar për ndërtime me ftohje me lëng dhe RGB.",
+    "en": "Kasa ikonike me xham panoramik, e krijuar për ndërtime me ftohje me lëng dhe RGB."
+   },
+   "price": 179,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 7,
+   "images": [
+    "/assets/products/cs-o11evo.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Mid‑tower ATX, dy dhoma",
+      "sq": "Mid‑tower ATX, dy dhoma",
+      "en": "Mid‑tower ATX, dy dhoma"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Xham i kalitur përpara dhe anash",
+      "sq": "Xham i kalitur përpara dhe anash",
+      "en": "Xham i kalitur përpara dhe anash"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "GPU deri në 422 mm",
+      "sq": "GPU deri në 422 mm",
+      "en": "GPU deri në 422 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Radiator deri në 360 mm",
+      "sq": "Radiator deri në 360 mm",
+      "en": "Radiator deri në 360 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "E zezë ose e bardhë",
+      "sq": "E zezë ose e bardhë",
+      "en": "E zezë ose e bardhë"
+     }
+    }
+   ],
+   "badges": [
+    "bestseller"
+   ],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 348,
+   "cost": 139.62,
+   "vendor": "Lian Li",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004434646",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Kasë",
+     "socket": "ATX"
+    },
+    "rating": 4.8,
+    "reviews": 214,
+    "badge": "Më i shituri",
+    "art": {
+     "s": "tower",
+     "c": "#1c1d21"
+    }
+   }
+  },
+  {
+   "id": "cs-h5flow",
+   "slug": "cs-h5flow",
+   "sku": "CS-H5FLOW",
+   "categoryId": "cat-case",
+   "name": {
+    "me": "NZXT H5 Flow",
+    "sq": "NZXT H5 Flow",
+    "en": "NZXT H5 Flow"
+   },
+   "short": {
+    "me": "Mid‑tower ATX kompakte · Panel i përparmë i perforuar",
+    "sq": "Mid‑tower ATX kompakte · Panel i përparmë i perforuar",
+    "en": "Mid‑tower ATX kompakte · Panel i përparmë i perforuar"
+   },
+   "description": {
+    "me": "Kasë kompakte me qarkullim të mirë ajri dhe menaxhim të thjeshtë të kabllove.",
+    "sq": "Kasë kompakte me qarkullim të mirë ajri dhe menaxhim të thjeshtë të kabllove.",
+    "en": "Kasë kompakte me qarkullim të mirë ajri dhe menaxhim të thjeshtë të kabllove."
+   },
+   "price": 109,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 15,
+   "images": [
+    "/assets/products/cs-h5flow.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Mid‑tower ATX kompakte",
+      "sq": "Mid‑tower ATX kompakte",
+      "en": "Mid‑tower ATX kompakte"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Panel i përparmë i perforuar",
+      "sq": "Panel i përparmë i perforuar",
+      "en": "Panel i përparmë i perforuar"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "GPU deri në 365 mm",
+      "sq": "GPU deri në 365 mm",
+      "en": "GPU deri në 365 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Radiator deri në 280 mm",
+      "sq": "Radiator deri në 280 mm",
+      "en": "Radiator deri në 280 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "E zezë ose e bardhë",
+      "sq": "E zezë ose e bardhë",
+      "en": "E zezë ose e bardhë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 307,
+   "cost": 85.02,
+   "vendor": "NZXT",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004513839",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Kasë",
+     "socket": "ATX"
+    },
+    "rating": 4.6,
+    "reviews": 188,
+    "badge": "",
+    "art": {
+     "s": "tower",
+     "c": "#1c1d21"
+    }
+   }
+  },
+  {
+   "id": "cs-north",
+   "slug": "cs-north",
+   "sku": "CS-NORTH",
+   "categoryId": "cat-case",
+   "name": {
+    "me": "Fractal Design North",
+    "sq": "Fractal Design North",
+    "en": "Fractal Design North"
+   },
+   "short": {
+    "me": "Mid‑tower ATX · Panel i përparmë me dru arre",
+    "sq": "Mid‑tower ATX · Panel i përparmë me dru arre",
+    "en": "Mid‑tower ATX · Panel i përparmë me dru arre"
+   },
+   "description": {
+    "me": "Dizajn skandinav me dru të vërtetë dhe xham anësor, për një PC që duket si mobilje.",
+    "sq": "Dizajn skandinav me dru të vërtetë dhe xham anësor, për një PC që duket si mobilje.",
+    "en": "Dizajn skandinav me dru të vërtetë dhe xham anësor, për një PC që duket si mobilje."
+   },
+   "price": 159,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 6,
+   "images": [
+    "/assets/products/cs-north.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Mid‑tower ATX",
+      "sq": "Mid‑tower ATX",
+      "en": "Mid‑tower ATX"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Panel i përparmë me dru arre",
+      "sq": "Panel i përparmë me dru arre",
+      "en": "Panel i përparmë me dru arre"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "GPU deri në 355 mm",
+      "sq": "GPU deri në 355 mm",
+      "en": "GPU deri në 355 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Radiator deri në 360 mm",
+      "sq": "Radiator deri në 360 mm",
+      "en": "Radiator deri në 360 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ngjyrë qymyri ose e bardhë",
+      "sq": "Ngjyrë qymyri ose e bardhë",
+      "en": "Ngjyrë qymyri ose e bardhë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 235,
+   "cost": 124.02,
+   "vendor": "Fractal Design",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004593022",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Kasë",
+     "socket": "ATX"
+    },
+    "rating": 4.8,
+    "reviews": 143,
+    "badge": "",
+    "art": {
+     "s": "tower",
+     "c": "#2c2e33"
+    }
+   }
+  },
+  {
+   "id": "cs-4000d",
+   "slug": "cs-4000d",
+   "sku": "CS-4000D",
+   "categoryId": "cat-case",
+   "name": {
+    "me": "Corsair 4000D Airflow",
+    "sq": "Corsair 4000D Airflow",
+    "en": "Corsair 4000D Airflow"
+   },
+   "short": {
+    "me": "Mid‑tower ATX · Panel i përparmë me rrjetë",
+    "sq": "Mid‑tower ATX · Panel i përparmë me rrjetë",
+    "en": "Mid‑tower ATX · Panel i përparmë me rrjetë"
+   },
+   "description": {
+    "me": "Klasikja e qarkullimit të ajrit: e lehtë për t'u montuar dhe e freskët nën ngarkesë.",
+    "sq": "Klasikja e qarkullimit të ajrit: e lehtë për t'u montuar dhe e freskët nën ngarkesë.",
+    "en": "Klasikja e qarkullimit të ajrit: e lehtë për t'u montuar dhe e freskët nën ngarkesë."
+   },
+   "price": 115,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 19,
+   "images": [
+    "/assets/products/cs-4000d.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Mid‑tower ATX",
+      "sq": "Mid‑tower ATX",
+      "en": "Mid‑tower ATX"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Panel i përparmë me rrjetë",
+      "sq": "Panel i përparmë me rrjetë",
+      "en": "Panel i përparmë me rrjetë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "GPU deri në 360 mm",
+      "sq": "GPU deri në 360 mm",
+      "en": "GPU deri në 360 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Radiator deri në 360 mm",
+      "sq": "Radiator deri në 360 mm",
+      "en": "Radiator deri në 360 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "E zezë ose e bardhë",
+      "sq": "E zezë ose e bardhë",
+      "en": "E zezë ose e bardhë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 649,
+   "cost": 89.7,
+   "vendor": "Corsair",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004672215",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Kasë",
+     "socket": "ATX"
+    },
+    "rating": 4.7,
+    "reviews": 402,
+    "badge": "",
+    "art": {
+     "s": "tower",
+     "c": "#1c1d21"
+    }
+   }
+  },
+  {
+   "id": "mb-b650tomahawk",
+   "slug": "mb-b650tomahawk",
+   "sku": "MB-B650TOMAHAWK",
+   "categoryId": "cat-mb",
+   "name": {
+    "me": "MSI MAG B650 TOMAHAWK WIFI",
+    "sq": "MSI MAG B650 TOMAHAWK WIFI",
+    "en": "MSI MAG B650 TOMAHAWK WIFI"
+   },
+   "short": {
+    "me": "Soket AM5, ATX · DDR5, 4 sllote",
+    "sq": "Soket AM5, ATX · DDR5, 4 sllote",
+    "en": "Soket AM5, ATX · DDR5, 4 sllote"
+   },
+   "description": {
+    "me": "Pllakë e fortë AM5 me ftohje të mirë të VRM‑ve dhe gjithçka që i duhet një PC‑je lojërash.",
+    "sq": "Pllakë e fortë AM5 me ftohje të mirë të VRM‑ve dhe gjithçka që i duhet një PC‑je lojërash.",
+    "en": "Pllakë e fortë AM5 me ftohje të mirë të VRM‑ve dhe gjithçka që i duhet një PC‑je lojërash."
+   },
+   "price": 239,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 9,
+   "images": [
+    "/assets/products/mb-b650tomahawk.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Soket AM5, ATX",
+      "sq": "Soket AM5, ATX",
+      "en": "Soket AM5, ATX"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DDR5, 4 sllote",
+      "sq": "DDR5, 4 sllote",
+      "en": "DDR5, 4 sllote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "PCIe 4.0 x16, 3 × M.2",
+      "sq": "PCIe 4.0 x16, 3 × M.2",
+      "en": "PCIe 4.0 x16, 3 × M.2"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Wi‑Fi 6E, 2.5 GbE",
+      "sq": "Wi‑Fi 6E, 2.5 GbE",
+      "en": "Wi‑Fi 6E, 2.5 GbE"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "VRM 14+2+1",
+      "sq": "VRM 14+2+1",
+      "en": "VRM 14+2+1"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 328,
+   "cost": 186.42,
+   "vendor": "MSI",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004751408",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Pllakë amë",
+     "socket": "AM5"
+    },
+    "rating": 4.7,
+    "reviews": 201,
+    "badge": "",
+    "art": {
+     "s": "ram",
+     "c": "#2a2c30",
+     "l": "TOMAHAWK"
+    }
+   }
+  },
+  {
+   "id": "mb-tufb650",
+   "slug": "mb-tufb650",
+   "sku": "MB-TUFB650",
+   "categoryId": "cat-mb",
+   "name": {
+    "me": "ASUS TUF GAMING B650‑PLUS WIFI",
+    "sq": "ASUS TUF GAMING B650‑PLUS WIFI",
+    "en": "ASUS TUF GAMING B650‑PLUS WIFI"
+   },
+   "short": {
+    "me": "Soket AM5, ATX · DDR5, 4 sllote",
+    "sq": "Soket AM5, ATX · DDR5, 4 sllote",
+    "en": "Soket AM5, ATX · DDR5, 4 sllote"
+   },
+   "description": {
+    "me": "Pllakë AM5 e qëndrueshme me raport të shkëlqyer çmim‑vlerë.",
+    "sq": "Pllakë AM5 e qëndrueshme me raport të shkëlqyer çmim‑vlerë.",
+    "en": "Pllakë AM5 e qëndrueshme me raport të shkëlqyer çmim‑vlerë."
+   },
+   "price": 199,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 11,
+   "images": [
+    "/assets/products/mb-tufb650.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Soket AM5, ATX",
+      "sq": "Soket AM5, ATX",
+      "en": "Soket AM5, ATX"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "DDR5, 4 sllote",
+      "sq": "DDR5, 4 sllote",
+      "en": "DDR5, 4 sllote"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "PCIe 4.0 x16, 2 × M.2",
+      "sq": "PCIe 4.0 x16, 2 × M.2",
+      "en": "PCIe 4.0 x16, 2 × M.2"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Wi‑Fi 6, 2.5 GbE",
+      "sq": "Wi‑Fi 6, 2.5 GbE",
+      "en": "Wi‑Fi 6, 2.5 GbE"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Komponentë TUF",
+      "sq": "Komponentë TUF",
+      "en": "Komponentë TUF"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 273,
+   "cost": 155.22,
+   "vendor": "ASUS",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004830592",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Pllakë amë",
+     "socket": "AM5"
+    },
+    "rating": 4.6,
+    "reviews": 167,
+    "badge": "",
+    "art": {
+     "s": "ram",
+     "c": "#3a3d33",
+     "l": "TUF"
+    }
+   }
+  },
+  {
+   "id": "cl-nhd15",
+   "slug": "cl-nhd15",
+   "sku": "CL-NHD15",
+   "categoryId": "cat-cooler",
+   "name": {
+    "me": "Noctua NH‑D15",
+    "sq": "Noctua NH‑D15",
+    "en": "Noctua NH‑D15"
+   },
+   "short": {
+    "me": "Ftohës ajri me dy kulla · 2 × NF‑A15 140 mm",
+    "sq": "Ftohës ajri me dy kulla · 2 × NF‑A15 140 mm",
+    "en": "Ftohës ajri me dy kulla · 2 × NF‑A15 140 mm"
+   },
+   "description": {
+    "me": "Legjenda e ftohjes me ajër: fuqi e ftohësve me lëng, pa pompë dhe pa zhurmë.",
+    "sq": "Legjenda e ftohjes me ajër: fuqi e ftohësve me lëng, pa pompë dhe pa zhurmë.",
+    "en": "Legjenda e ftohjes me ajër: fuqi e ftohësve me lëng, pa pompë dhe pa zhurmë."
+   },
+   "price": 119,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 10,
+   "images": [
+    "/assets/products/cl-nhd15.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohës ajri me dy kulla",
+      "sq": "Ftohës ajri me dy kulla",
+      "en": "Ftohës ajri me dy kulla"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "2 × NF‑A15 140 mm",
+      "sq": "2 × NF‑A15 140 mm",
+      "en": "2 × NF‑A15 140 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Lartësia 165 mm",
+      "sq": "Lartësia 165 mm",
+      "en": "Lartësia 165 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Shumë i qetë",
+      "sq": "Shumë i qetë",
+      "en": "Shumë i qetë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci 6 vjet",
+      "sq": "Garanci 6 vjet",
+      "en": "Garanci 6 vjet"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 825,
+   "cost": 92.82,
+   "vendor": "Noctua",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004909786",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ftohës",
+     "socket": "AM5 / LGA1700"
+    },
+    "rating": 4.9,
+    "reviews": 512,
+    "badge": "",
+    "art": {
+     "s": "tower",
+     "c": "#b8bcc4"
+    }
+   }
+  },
+  {
+   "id": "cl-ak620d",
+   "slug": "cl-ak620d",
+   "sku": "CL-AK620D",
+   "categoryId": "cat-cooler",
+   "name": {
+    "me": "DeepCool AK620 Digital",
+    "sq": "DeepCool AK620 Digital",
+    "en": "DeepCool AK620 Digital"
+   },
+   "short": {
+    "me": "Ftohës ajri me dy kulla · Ekran dixhital i temperaturës",
+    "sq": "Ftohës ajri me dy kulla · Ekran dixhital i temperaturës",
+    "en": "Ftohës ajri me dy kulla · Ekran dixhital i temperaturës"
+   },
+   "description": {
+    "me": "Ftohës i fuqishëm me ekran që tregon temperaturën e procesorit në kohë reale.",
+    "sq": "Ftohës i fuqishëm me ekran që tregon temperaturën e procesorit në kohë reale.",
+    "en": "Ftohës i fuqishëm me ekran që tregon temperaturën e procesorit në kohë reale."
+   },
+   "price": 79,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 18,
+   "images": [
+    "/assets/products/cl-ak620d.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohës ajri me dy kulla",
+      "sq": "Ftohës ajri me dy kulla",
+      "en": "Ftohës ajri me dy kulla"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran dixhital i temperaturës",
+      "sq": "Ekran dixhital i temperaturës",
+      "en": "Ekran dixhital i temperaturës"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ndriçim ARGB",
+      "sq": "Ndriçim ARGB",
+      "en": "Ndriçim ARGB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Lartësia 162 mm",
+      "sq": "Lartësia 162 mm",
+      "en": "Lartësia 162 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "2 × 120 mm FDB",
+      "sq": "2 × 120 mm FDB",
+      "en": "2 × 120 mm FDB"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 384,
+   "cost": 61.62,
+   "vendor": "DeepCool",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001004988972",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ftohës",
+     "socket": "AM5 / LGA1700"
+    },
+    "rating": 4.7,
+    "reviews": 236,
+    "badge": "",
+    "art": {
+     "s": "tower",
+     "c": "#1c1d21"
+    }
+   }
+  },
+  {
+   "id": "cl-lf3-360",
+   "slug": "cl-lf3-360",
+   "sku": "CL-LF3-360",
+   "categoryId": "cat-cooler",
+   "name": {
+    "me": "Arctic Liquid Freezer III 360 A‑RGB",
+    "sq": "Arctic Liquid Freezer III 360 A‑RGB",
+    "en": "Arctic Liquid Freezer III 360 A‑RGB"
+   },
+   "short": {
+    "me": "Ftohje me lëng 360 mm · 3 × P12 PWM A‑RGB",
+    "sq": "Ftohje me lëng 360 mm · 3 × P12 PWM A‑RGB",
+    "en": "Ftohje me lëng 360 mm · 3 × P12 PWM A‑RGB"
+   },
+   "description": {
+    "me": "Një nga ftohësit me lëng me performancën më të mirë, me çmim shumë të arsyeshëm.",
+    "sq": "Një nga ftohësit me lëng me performancën më të mirë, me çmim shumë të arsyeshëm.",
+    "en": "Një nga ftohësit me lëng me performancën më të mirë, me çmim shumë të arsyeshëm."
+   },
+   "price": 119,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 12,
+   "images": [
+    "/assets/products/cl-lf3-360.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohje me lëng 360 mm",
+      "sq": "Ftohje me lëng 360 mm",
+      "en": "Ftohje me lëng 360 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "3 × P12 PWM A‑RGB",
+      "sq": "3 × P12 PWM A‑RGB",
+      "en": "3 × P12 PWM A‑RGB"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ventilator VRM i integruar",
+      "sq": "Ventilator VRM i integruar",
+      "en": "Ventilator VRM i integruar"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci 6 vjet",
+      "sq": "Garanci 6 vjet",
+      "en": "Garanci 6 vjet"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ndriçim A‑RGB",
+      "sq": "Ndriçim A‑RGB",
+      "en": "Ndriçim A‑RGB"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": true,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 552,
+   "cost": 92.82,
+   "vendor": "Arctic",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001005068161",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ftohës",
+     "socket": "AM5 / LGA1700"
+    },
+    "rating": 4.8,
+    "reviews": 341,
+    "badge": "Zgjedhje e ekspertëve",
+    "art": {
+     "s": "tower",
+     "c": "#1c1d21"
+    }
+   }
+  },
+  {
+   "id": "cl-kraken240",
+   "slug": "cl-kraken240",
+   "sku": "CL-KRAKEN240",
+   "categoryId": "cat-cooler",
+   "name": {
+    "me": "NZXT Kraken 240 RGB",
+    "sq": "NZXT Kraken 240 RGB",
+    "en": "NZXT Kraken 240 RGB"
+   },
+   "short": {
+    "me": "Ftohje me lëng 240 mm · Ekran LCD 1,54\" në pompë",
+    "sq": "Ftohje me lëng 240 mm · Ekran LCD 1,54\" në pompë",
+    "en": "Ftohje me lëng 240 mm · Ekran LCD 1,54\" në pompë"
+   },
+   "description": {
+    "me": "Ftohës kompakt me lëng me ekran LCD në pompë dhe ndriçim RGB.",
+    "sq": "Ftohës kompakt me lëng me ekran LCD në pompë dhe ndriçim RGB.",
+    "en": "Ftohës kompakt me lëng me ekran LCD në pompë dhe ndriçim RGB."
+   },
+   "price": 159,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 7,
+   "images": [
+    "/assets/products/cl-kraken240.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ftohje me lëng 240 mm",
+      "sq": "Ftohje me lëng 240 mm",
+      "en": "Ftohje me lëng 240 mm"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ekran LCD 1,54\" në pompë",
+      "sq": "Ekran LCD 1,54\" në pompë",
+      "en": "Ekran LCD 1,54\" në pompë"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "2 × F120 RGB Core",
+      "sq": "2 × F120 RGB Core",
+      "en": "2 × F120 RGB Core"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Kontroll me NZXT CAM",
+      "sq": "Kontroll me NZXT CAM",
+      "en": "Kontroll me NZXT CAM"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Ndriçim RGB",
+      "sq": "Ndriçim RGB",
+      "en": "Ndriçim RGB"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 201,
+   "cost": 124.02,
+   "vendor": "NZXT",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001005147354",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Ftohës",
+     "socket": "AM5 / LGA1700"
+    },
+    "rating": 4.6,
+    "reviews": 122,
+    "badge": "",
+    "art": {
+     "s": "tower",
+     "c": "#1c1d21"
+    }
+   }
+  },
+  {
+   "id": "ps-rm750e",
+   "slug": "ps-rm750e",
+   "sku": "PS-RM750E",
+   "categoryId": "cat-psu",
+   "name": {
+    "me": "Corsair RM750e",
+    "sq": "Corsair RM750e",
+    "en": "Corsair RM750e"
+   },
+   "short": {
+    "me": "750 W · 80 PLUS Gold",
+    "sq": "750 W · 80 PLUS Gold",
+    "en": "750 W · 80 PLUS Gold"
+   },
+   "description": {
+    "me": "Furnizim i qetë dhe efikas për shumicën e PC‑ve të lojërave.",
+    "sq": "Furnizim i qetë dhe efikas për shumicën e PC‑ve të lojërave.",
+    "en": "Furnizim i qetë dhe efikas për shumicën e PC‑ve të lojërave."
+   },
+   "price": 109,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 20,
+   "images": [
+    "/assets/products/ps-rm750e.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "750 W",
+      "sq": "750 W",
+      "en": "750 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "80 PLUS Gold",
+      "sq": "80 PLUS Gold",
+      "en": "80 PLUS Gold"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Plotësisht modular",
+      "sq": "Plotësisht modular",
+      "en": "Plotësisht modular"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "ATX 3.0, PCIe 5.0",
+      "sq": "ATX 3.0, PCIe 5.0",
+      "en": "ATX 3.0, PCIe 5.0"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci 7 vjet",
+      "sq": "Garanci 7 vjet",
+      "en": "Garanci 7 vjet"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 627,
+   "cost": 85.02,
+   "vendor": "Corsair",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001005226547",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Furnizim me rrymë",
+     "socket": "ATX 3.0"
+    },
+    "rating": 4.7,
+    "reviews": 388,
+    "badge": "",
+    "art": {
+     "s": "ups",
+     "c": "#1f2023"
+    }
+   }
+  },
+  {
+   "id": "ps-pp12m850",
+   "slug": "ps-pp12m850",
+   "sku": "PS-PP12M850",
+   "categoryId": "cat-psu",
+   "name": {
+    "me": "be quiet! Pure Power 12 M 850W",
+    "sq": "be quiet! Pure Power 12 M 850W",
+    "en": "be quiet! Pure Power 12 M 850W"
+   },
+   "short": {
+    "me": "850 W · 80 PLUS Gold",
+    "sq": "850 W · 80 PLUS Gold",
+    "en": "850 W · 80 PLUS Gold"
+   },
+   "description": {
+    "me": "Rezervë e mjaftueshme fuqie për kartela grafike të nivelit të lartë.",
+    "sq": "Rezervë e mjaftueshme fuqie për kartela grafike të nivelit të lartë.",
+    "en": "Rezervë e mjaftueshme fuqie për kartela grafike të nivelit të lartë."
+   },
+   "price": 129,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 13,
+   "images": [
+    "/assets/products/ps-pp12m850.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "850 W",
+      "sq": "850 W",
+      "en": "850 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "80 PLUS Gold",
+      "sq": "80 PLUS Gold",
+      "en": "80 PLUS Gold"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Modular",
+      "sq": "Modular",
+      "en": "Modular"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "ATX 3.0, 12VHPWR",
+      "sq": "ATX 3.0, 12VHPWR",
+      "en": "ATX 3.0, 12VHPWR"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Shumë i qetë",
+      "sq": "Shumë i qetë",
+      "en": "Shumë i qetë"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 344,
+   "cost": 100.62,
+   "vendor": "be quiet!",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001005305730",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Furnizim me rrymë",
+     "socket": "ATX 3.0"
+    },
+    "rating": 4.7,
+    "reviews": 211,
+    "badge": "",
+    "art": {
+     "s": "ups",
+     "c": "#1f2023"
+    }
+   }
+  },
+  {
+   "id": "ps-focusgx1000",
+   "slug": "ps-focusgx1000",
+   "sku": "PS-FOCUSGX1000",
+   "categoryId": "cat-psu",
+   "name": {
+    "me": "Seasonic FOCUS GX‑1000",
+    "sq": "Seasonic FOCUS GX‑1000",
+    "en": "Seasonic FOCUS GX‑1000"
+   },
+   "short": {
+    "me": "1000 W · 80 PLUS Gold",
+    "sq": "1000 W · 80 PLUS Gold",
+    "en": "1000 W · 80 PLUS Gold"
+   },
+   "description": {
+    "me": "Furnizim premium për stacione pune dhe kartelat grafike më të fuqishme.",
+    "sq": "Furnizim premium për stacione pune dhe kartelat grafike më të fuqishme.",
+    "en": "Furnizim premium për stacione pune dhe kartelat grafike më të fuqishme."
+   },
+   "price": 189,
+   "salePrice": null,
+   "unit": "kom",
+   "stock": 5,
+   "images": [
+    "/assets/products/ps-focusgx1000.webp"
+   ],
+   "options": [],
+   "specs": [
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "1000 W",
+      "sq": "1000 W",
+      "en": "1000 W"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "80 PLUS Gold",
+      "sq": "80 PLUS Gold",
+      "en": "80 PLUS Gold"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Plotësisht modular",
+      "sq": "Plotësisht modular",
+      "en": "Plotësisht modular"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "ATX 3.0",
+      "sq": "ATX 3.0",
+      "en": "ATX 3.0"
+     }
+    },
+    {
+     "label": {
+      "me": "",
+      "sq": "",
+      "en": ""
+     },
+     "value": {
+      "me": "Garanci 10 vjet",
+      "sq": "Garanci 10 vjet",
+      "en": "Garanci 10 vjet"
+     }
+    }
+   ],
+   "badges": [],
+   "featured": false,
+   "status": "active",
+   "warrantyYears": 2,
+   "sold": 256,
+   "cost": 147.42,
+   "vendor": "Seasonic",
+   "tags": [
+    "ndërtuesi"
+   ],
+   "barcode": "2001005384926",
+   "incoming": 0,
+   "unavailable": 0,
+   "template": "standard",
+   "channels": [
+    "online",
+    "pos"
+   ],
+   "itcom": {
+    "attrs": {
+     "type": "Furnizim me rrymë",
+     "socket": "ATX 3.0"
+    },
+    "rating": 4.8,
+    "reviews": 156,
+    "badge": "",
+    "art": {
+     "s": "ups",
+     "c": "#1f2023"
+    }
+   }
+  }
+ ]
+}

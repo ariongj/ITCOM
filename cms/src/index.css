@@ -1,0 +1,6 @@
+@import "tailwindcss";
+/* Storefront sheet: CMS-only classes (src/admin) are left out of the scan, which keeps this render-critical file
+   ~30% smaller. The CMS adds the complete sheet on top (src/admin/admin.css). The few src/admin modules the
+   storefront imports (booking dates/rules, menu links) contain no classes. */
+@source not "./admin";
+@import "./styles/app.css";

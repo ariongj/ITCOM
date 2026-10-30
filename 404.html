@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Faqja nuk u gjet · ITCOM</title>
   <link rel="icon" href="/ITCOM/assets/favicon.svg" type="image/svg+xml" />
+  <script>
+    // Deep links into the CMS (/ITCOM/admin/…) have no file of their own: open the CMS and let it restore the path.
+    (function () {
+      var p = location.pathname;
+      if (p.indexOf("/ITCOM/admin/") === 0 && p !== "/ITCOM/admin/") {
+        try { sessionStorage.setItem("itcom-cms-redirect", p + location.search + location.hash); } catch (e) {}
+        location.replace("/ITCOM/admin/");
+      }
+    })();
+  </script>
   <style>
     :root { --bg: #f5f6f7; --ink: #101114; --muted: #737882; color-scheme: light; }
     @media (prefers-color-scheme: dark) { :root { --bg: #0c0d10; --ink: #f3f4f6; --muted: #8f949e; color-scheme: dark; } }

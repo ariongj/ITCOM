@@ -42,6 +42,21 @@ A 3D configurator at `#builder` (menu button **Ndërto PC**, home banner, or `in
 
 The 3D code loads only when the builder opens. three.js r160 is vendored in `js/vendor/` (MIT).
 
+## CMS (/admin)
+
+The shop has the same CMS as the Selca and Miftari Vision builds: **https://ariongj.github.io/ITCOM/admin/** (footer link "Hyrje për stafin"). Demo login is pre-filled: `admin@itcom.example` / `itcom2026`.
+
+- **Modules**: overview dashboard, orders (detail, status workflow, invoices, draft orders, returns), products (editor with photos, prices and sale prices, stock, specs, SEO), categories, inventory and purchase orders, customers and segments, inbox (business quote requests), info pages, media, home-page banners (Online Store → Slajdet), analytics, integrations and settings (contact data, WhatsApp, VAT, free-delivery threshold, delivery fee). Albanian, English and Serbian admin.
+- **Connected to the shop** (`js/cms-bridge.js`): when the CMS has data in the browser, the shop uses it: products, prices, sale prices, stock, photos, categories, store settings, the info pages (`returns`, `warranty`, `about`, `business`, `careers`, `privacy`) and the home banners. Orders placed at checkout and "Kërkoni ofertë" requests go into the CMS (instantly if it is open in another tab; otherwise they wait in an outbox and are imported when the CMS is opened).
+- **Demo only, like Selca/Optika**: everything is stored in the browser's `localStorage`, so changes are visible in that browser only, not to other visitors, and there is no real login. Before going live it needs a backend (database + accounts) or a publish step that writes the catalogue back to the site.
+- **Source** is in `cms/` (Vite + React + TypeScript, based on the Optika app). The catalogue seed is generated from `js/products.js`. To rebuild after changing the shop catalogue or the CMS code:
+
+```bash
+cd cms && npm ci && npm run site   # → admin/index.html, cms-assets/, fonts/
+```
+
+Deep links such as `/ITCOM/admin/narudzbe` work through `404.html`, which reopens the CMS on that screen.
+
 ## Photos
 
 Banner photos in `assets/photos/` are real photographs from Unsplash (Unsplash License): ELLA DON (gaming, PC builder banner), User_Pascal (network switch, networking banner), ergonofis (workspace, ITCOM Business). Sources and licence notes are in `assets/photos/asset-manifest.json` and `CREDITS.md`. They are used only for banners, never as product photos.

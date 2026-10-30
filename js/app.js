@@ -387,13 +387,30 @@
     { id: "cp-5090fe", label: "E re", title: "GeForce RTX 5090 Founders Edition", text: "32 GB GDDR7 dhe DLSS 4 për lojëra 4K dhe punë me AI.", bg: "radial-gradient(90% 120% at 75% 50%, #172012 0%, #0b0c0f 70%)" },
     { id: "lp-proartp16", label: "Për krijues", title: "ASUS ProArt P16", text: "Ekran 4K OLED 16\" dhe grafikë NVIDIA RTX për video, foto dhe 3D.", bg: "radial-gradient(90% 120% at 75% 50%, #1e2428 0%, #0b0c0f 70%)" },
   ];
+  // Banerët nga CMS-i (Online Store → Slajdet) zëvendësojnë ata të mësipërmit; ngjyrat e sfondit përsëriten.
+  if (window.CMS?.slides) {
+    const bgs = SLIDES.map((x) => x.bg);
+    SLIDES.splice(0, SLIDES.length, ...window.CMS.slides.map((x, i) => ({ ...x, bg: bgs[i % bgs.length] })));
+  }
   let slide = 0, slideTimer;
   const SLIDE_MS = 6000;
 
   function renderHero() {
     $("#slides").innerHTML = SLIDES.map((s, i) => {
       const p = byId[s.id];
-      const d = discount(p);
+      if (!p) {
+        // Baner pa produkt: imazhi dhe një lidhje (p.sh. te një faqe ose kategori)
+        const href = s.href && !/^\/(produkt|faqe)\//.test(s.href) ? s.href : "#";
+        return `<div class="slide" style="--bg1:${s.bg}" role="group" aria-roledescription="banner" aria-label="${i + 1} nga ${SLIDES.length}">
+        <div>
+          ${s.label ? `<span class="slide__label">${esc(s.label)}</span>` : ""}
+          <h2>${esc(s.title)}</h2>
+          <p>${esc(s.text)}</p>
+          ${s.cta ? `<div class="slide__cta"><a class="btn btn--cta btn--lg" href="${esc(href)}">${esc(s.cta)}</a></div>` : ""}
+        </div>
+        ${s.img ? `<div class="slide__art"><img src="${esc(s.img)}" alt="" ${i ? 'loading="lazy"' : ""} /></div>` : ""}
+      </div>`;
+      }
       return `<div class="slide" style="--bg1:${s.bg}" role="group" aria-roledescription="banner" aria-label="${i + 1} nga ${SLIDES.length}">
         <div>
           <span class="slide__label">${esc(s.label)}</span>
@@ -406,7 +423,7 @@
           </div>
         </div>
         <div class="slide__art" data-open="${p.id}">
-          <img src="${esc(imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${i ? 'loading="lazy"' : ""} />
+          <img src="${esc(s.img || imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${i ? 'loading="lazy"' : ""} />
         </div>
       </div>`;
     }).join("");
@@ -712,7 +729,7 @@
   function route() {
     const h = location.hash.slice(1);
     if (h === "builder") window.ITCOM.openBuilder?.();
-    else if (byId[h]) openProduct(h);
+    else if (byId[h] || byId[window.CMS?.slugToId?.[h]]) openProduct(byId[h] ? h : window.CMS.slugToId[h]);
     else if (h.startsWith("info-") && INFO[h.slice(5)]) openInfo(h.slice(5));
   }
   window.addEventListener("hashchange", route);
@@ -829,6 +846,9 @@
         </ul>`,
     },
   };
+
+  // Faqet e redaktuara në CMS zëvendësojnë tekstet e mësipërme (sipas slug-ut: returns, warranty, about …).
+  for (const [slug, pg] of Object.entries(window.CMS?.pages || {})) INFO[slug] = { title: pg.title, html: () => pg.html };
 
   function openInfo(key) {
     const page = INFO[key];
@@ -1108,8 +1128,10 @@
         toast("U hap WhatsApp me porosinë tuaj. Dërgojeni mesazhin për ta përfunduar.");
         return;
       }
-      const orderNo = "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
-      const email = form.email.value.trim();
+      const fields = Object.fromEntries(["name", "company", "phone", "email", "address", "city", "zip"].map((k) => [k, form.elements[k]?.value.trim() || ""]));
+      const saved_ = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty })), form: fields, totals: t, delivery: delivery(), pay: form.pay.value });
+      const orderNo = saved_ || "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
+      const email = fields.email;
       cart = [];
       saveCart();
       renderCart();
@@ -1423,7 +1445,8 @@
     e.preventDefault();
     const input = $("#b2bEmail");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim())) { toast("Shkruani një email pune, p.sh. ju@kompania.com"); input.focus(); return; }
-    toast("Faleminderit! Ky dyqan demo ende nuk dërgon kërkesa për ofertë.");
+    const sent = window.CMS?.saveInquiry({ email: input.value.trim() });
+    toast(sent ? "Faleminderit! Kërkesa juaj u dërgua — do t'ju kontaktojmë së shpejti." : "Faleminderit! Ky dyqan demo ende nuk dërgon kërkesa për ofertë.");
     input.value = "";
   });
 
