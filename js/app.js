@@ -17,6 +17,22 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const discount = (p) => (p.old ? Math.round((1 - p.price / p.old) * 100) : 0);
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const slugify = (t) => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const catSlug = (c) => slugify(c);
+  const catFromSlug = (slug) => window.CATEGORIES.find((c) => catSlug(c.id) === slug)?.id;
+  // Rrënja e dyqanit (p.sh. /ITCOM/). Çdo produkt ka adresën e vet: /ITCOM/p/<id>/ (faqe statike, e indeksueshme).
+  const BASE = new URL(document.baseURI).pathname;
+  const productHref = (id) => `${BASE}p/${encodeURIComponent(id)}/`;
+  const pathProduct = () => { const m = location.pathname.slice(BASE.length).match(/^p\/([^/]+)\/?$/); return m ? decodeURIComponent(m[1]) : null; };
+  // Navigimi mes pamjeve (ballina, katalogu, produkti, shporta, porosia) bëhet me hash, që Back të punojë.
+  // Navigim brenda dyqanit: adresat #/… në rrënjë, faqet e produkteve me adresën e tyre (pa ringarkim).
+  const go = (target) => {
+    const next = target.startsWith("#") ? BASE + target : target;
+    if (next === location.pathname + location.hash) route();
+    else if (target.startsWith("#") && location.pathname === BASE) location.hash = target;
+    else { history.pushState(null, "", next); route(); $("#main").focus({ preventScroll: true }); }
+  };
+  const announce = (text) => { const el = document.getElementById("announce"); if (el) { el.textContent = ""; setTimeout(() => { el.textContent = text; }, 30); } };
 
   // Ruajtja në shfletues mund të mos jetë e disponueshme; dyqani punon edhe pa të.
   const saved = {
@@ -64,8 +80,6 @@
   const logoSvg = (name, cls = "") => (LOGOS[name] ? `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${LOGOS[name].path}"/></svg>` : "");
   const brandMark = (name) => `<span class="bmark ${LOGOS[name] ? "" : "bmark--text"}">${logoSvg(name)}<span>${esc(name)}</span></span>`;
 
-  const rate = (r) => r.toFixed(1).replace(".", ",");
-  const stars = (r) => `<span class="stars" style="--pct:${(r / 5) * 100}%" aria-label="Vlerësuar ${rate(r)} nga 5"></span>`;
 
   const stockLabel = (p) => {
     if (!p.stock) return '<span class="stock stock--out">Jashtë stokut</span>';
@@ -104,9 +118,9 @@
 
   /* ================================================================ gjendja */
   const catMax = (cat) => Math.ceil(Math.max(...PRODUCTS.filter((p) => cat === "All" || p.cat === cat).map((p) => p.price)) / 50) * 50;
-  const blankFilters = (cat = "All") => ({ q: "", cat, brands: new Set(), f: {}, min: 0, max: catMax(cat), inStock: false, onSale: false, rating: 0 });
-  const state = Object.assign(blankFilters(), { sort: "featured", per: 24, page: 1, view: saved.get("view", "grid") });
-  const closedFacets = new Set(saved.get("closedFacets", ["rating"]));
+  const blankFilters = (cat = "All") => ({ q: "", cat, brands: new Set(), f: {}, min: 0, max: catMax(cat), inStock: false, onSale: false });
+  const state = Object.assign(blankFilters(), { sort: "featured", per: 24, page: 1 });
+  const closedFacets = new Set(saved.get("closedFacets", []));
   const expandedFacets = new Set();
 
   let cart = saved.get("cart", []).filter((l) => byId[l.id] && byId[l.id].stock > 0);
@@ -122,7 +136,6 @@
     if (skip !== "price" && (p.price < state.min || p.price > state.max)) return false;
     if (skip !== "inStock" && state.inStock && !p.stock) return false;
     if (skip !== "onSale" && state.onSale && !p.old) return false;
-    if (skip !== "rating" && state.rating && p.rating < state.rating) return false;
     for (const [k, set] of Object.entries(state.f)) {
       if (!set.size || skip === "f:" + k) continue;
       const v = p.attrs[k];
@@ -132,13 +145,12 @@
     return true;
   }
 
+  const CAT_ORDER = (p) => window.CATEGORIES.findIndex((c) => c.id === p.cat);
   const SORTS = {
-    featured: (a, b) => (b.stock > 0) - (a.stock > 0) || (b.badge ? 1 : 0) - (a.badge ? 1 : 0) || b.rating * Math.log(b.reviews + 1) - a.rating * Math.log(a.reviews + 1),
+    featured: (a, b) => (b.stock > 0) - (a.stock > 0) || (b.old ? 1 : 0) - (a.old ? 1 : 0) || CAT_ORDER(a) - CAT_ORDER(b) || b.price - a.price,
     "price-asc": (a, b) => a.price - b.price,
     "price-desc": (a, b) => b.price - a.price,
     discount: (a, b) => discount(b) - discount(a) || b.price - a.price,
-    rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews,
-    reviews: (a, b) => b.reviews - a.reviews,
     name: (a, b) => a.name.localeCompare(b.name, "sq"),
   };
 
@@ -156,7 +168,6 @@
     if (priceActive()) out.push(["price", "Çmimi", `${fmt0(state.min)} – ${fmt0(state.max)}`]);
     if (state.inStock) out.push(["inStock", "", "Në stok"]);
     if (state.onSale) out.push(["onSale", "", "Në zbritje"]);
-    if (state.rating) out.push(["rating", "Vlerësimi", `${rate(state.rating)}★ e lart`]);
     return out;
   }
 
@@ -166,14 +177,13 @@
     else if (key.startsWith("brand:")) state.brands.delete(key.slice(6));
     else if (key.startsWith("f:")) { const [, k, ...v] = key.split(":"); state.f[k]?.delete(v.join(":")); }
     else if (key === "price") { state.min = 0; state.max = catMax(state.cat); }
-    else if (key === "rating") state.rating = 0;
     else state[key] = false;
     state.page = 1;
     render();
   }
 
   function resetFilters(cat = "All") {
-    const keep = { sort: state.sort, per: state.per, view: state.view };
+    const keep = { sort: state.sort, per: state.per };
     Object.assign(state, blankFilters(cat), keep, { page: 1 });
     $("#search").value = "";
   }
@@ -267,11 +277,6 @@
       { fk: "onSale", label: "Në zbritje", count: saleCount, checked: state.onSale },
     ]), (state.inStock ? 1 : 0) + (state.onSale ? 1 : 0)));
 
-    const ratingRows = [0, 4.5, 4].map((r) => {
-      const n = PRODUCTS.filter((p) => p.rating >= r && matches(p, "rating")).length;
-      return `<label class="check"><input type="radio" name="rating" data-fk="rating:${r}" ${state.rating === r ? "checked" : ""} /> <span>${r ? `${stars(r)} ${rate(r)} e lart` : "Çdo vlerësim"}</span><span class="count">${n}</span></label>`;
-    }).join("");
-    groups.push(facetGroup("rating", "Vlerësimi i klientëve", ratingRows, state.rating ? 1 : 0));
 
     $("#facetHost").innerHTML = groups.join("");
     syncDual();
@@ -288,89 +293,97 @@
 
   /* ================================================================ rezultatet */
   const addLabel = (p, inCart) => (!p.stock ? "Jashtë stokut" : inCart ? "Në shportë" : "Shto në shportë");
+  // Etiketa vetëm kur ka arsye reale: zbritje e vërtetë ose produkt i ri.
+  const cardTag = (p, pick) => {
+    const d = discount(p);
+    if (d) return `<span class="ptag ptag--sale">−${d}%</span>`;
+    if (pick) return `<span class="ptag">Përzgjedhje ITCOM</span>`;
+    if (p.badge && p.badge !== "Më i shituri") return `<span class="ptag">${esc(p.badge)}</span>`;
+    return "";
+  };
+  const shortSpecs = (p) => keySpecs(p).slice(0, 3).join(" · ") || p.specs.slice(0, 2).join(" · ");
 
-  function card(p) {
-    const w = wish.has(p.id), inCart = cartQty(p.id) > 0, cmp = compare.includes(p.id), d = discount(p);
-    const addBtn = (cls) => `<button type="button" class="btn ${cls} add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="Shto ${esc(p.name)} në shportë">${svg(inCart ? ICON.check : ICON.cart)}${addLabel(p, inCart)}</button>`;
+  function card(p, opts = {}) {
+    const w = wish.has(p.id), inCart = cartQty(p.id) > 0, cmp = compare.includes(p.id);
     const ship = p.price >= S.freeShippingFrom ? "Dërgesë falas" : `Dërgesë ${fmt(S.shippingFee)}`;
     return `
-      <article class="card" data-id="${p.id}">
-        <div class="card__media" data-open="${p.id}">
-          ${media(p)}
-          <div class="tags">${d ? `<span class="tag tag--sale">−${d}%</span>` : ""}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ""}</div>
+      <article class="pcard" data-id="${p.id}">
+        <div class="pcard__top">
+          ${cardTag(p, opts.pick)}
+          <span class="pcard__icons">
+            <button type="button" class="pcard__icon ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}" aria-label="${cmp ? "Hiq nga krahasimi" : "Shto për krahasim"}: ${esc(p.name)}">${svg(ICON.compare)}</button>
+            <button type="button" class="pcard__icon ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Ruaj te"} të ruajturat: ${esc(p.name)}">${svg(ICON.heart)}</button>
+          </span>
         </div>
-        <div class="card__actions">
-          <button type="button" class="icon-btn ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Shto në"} listën e dëshirave">${svg(ICON.heart)}</button>
-          <button type="button" class="icon-btn ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}" aria-label="${cmp ? "Hiq nga krahasimi" : "Shto për krahasim"}">${svg(ICON.compare)}</button>
+        <a class="pcard__media" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true">${media(p)}</a>
+        <div class="pcard__body">
+          <span class="pcard__brand">${esc(p.brand)}</span>
+          <h3 class="pcard__title"><a href="${productHref(p.id)}">${esc(p.name)}</a></h3>
+          <p class="pcard__specs">${esc(shortSpecs(p))}</p>
+          <div class="pcard__price">${priceHTML(p)}</div>
+          <p class="pcard__stock">${stockLabel(p)}${p.stock ? `<span class="pcard__ship">${ship}</span>` : ""}</p>
+          <button type="button" class="btn btn--cta btn--block add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="${esc(addLabel(p, inCart))}: ${esc(p.name)}">${addLabel(p, inCart)}</button>
         </div>
-        <div class="card__body">
-          <div class="card__meta">${brandMark(p.brand)}<span class="mono">${esc(p.id.toUpperCase())}</span></div>
-          <h3 class="card__title" data-open="${p.id}">${esc(p.name)}</h3>
-          <div class="rating">${p.reviews ? `${stars(p.rating)} <span>${rate(p.rating)} (${p.reviews})</span>` : '<span class="muted">Ende pa vlerësime</span>'}</div>
-          <p class="card__specs">${esc(keySpecs(p).join(" · "))}</p>
-          <p class="card__desc">${esc(p.desc)}</p>
-          <div class="card__price">${priceHTML(p)}</div>
-          <div class="card__sub">
-            <span class="card__inst">${inst(p)}</span>
-            ${stockLabel(p)}
-            ${p.stock ? `<span class="card__ship">${svg(ICON.truck)}${ship}</span>` : ""}
-          </div>
-          <div class="card__foot">${addBtn("btn--cta")}</div>
-        </div>
-        <div class="card__side"><div>${priceHTML(p)}</div><div class="card__inst">${inst(p)}</div>${stockLabel(p)}${addBtn("btn--cta")}</div>
       </article>`;
   }
+  const skeleton = (n) => Array.from({ length: n }, () => `<div class="pcard pcard--skeleton" aria-hidden="true"><div class="sk sk--img"></div><div class="sk sk--line"></div><div class="sk sk--line sk--short"></div><div class="sk sk--btn"></div></div>`).join("");
 
   function renderResults() {
-    const list = PRODUCTS.filter((p) => matches(p)).sort(SORTS[state.sort]);
-    const pages = Math.max(1, Math.ceil(list.length / state.per));
-    state.page = Math.min(state.page, pages);
-    const slice = list.slice((state.page - 1) * state.per, state.page * state.per);
-
     const grid = $("#grid");
-    grid.classList.toggle("grid--list", state.view === "list");
-    grid.innerHTML = slice.map(card).join("");
-    $("#empty").hidden = list.length > 0;
+    try {
+      const list = PRODUCTS.filter((p) => matches(p)).sort(SORTS[state.sort]);
+      const pages = Math.max(1, Math.ceil(list.length / state.per));
+      state.page = Math.min(state.page, pages);
+      const slice = list.slice((state.page - 1) * state.per, state.page * state.per);
+      $("#loadError").hidden = true;
+      grid.innerHTML = slice.map((p) => card(p)).join("");
+      $("#empty").hidden = list.length > 0;
 
-    $("#resultsTitle").textContent = state.q && state.cat === "All" ? `Rezultatet për “${state.q}”` : state.cat === "All" ? "Të gjitha produktet" : state.cat;
-    const from = list.length ? (state.page - 1) * state.per + 1 : 0;
-    $("#resultsCount").textContent = list.length > state.per ? `${from}–${from + slice.length - 1} nga ${list.length} produkte` : plural(list.length, "produkt", "produkte");
+      const title = state.q ? `Rezultatet për “${state.q}”` : state.onSale && state.cat === "All" ? "Ofertat" : state.cat === "All" ? "Të gjitha produktet" : state.cat;
+      $("#resultsTitle").textContent = title;
+      const from = list.length ? (state.page - 1) * state.per + 1 : 0;
+      const countText = list.length > state.per ? `${from}–${from + slice.length - 1} nga ${list.length} produkte` : plural(list.length, "produkt", "produkte");
+      $("#resultsCount").textContent = countText;
+      if (view === "catalog") document.title = `${title} · ITCOM`;
 
-    const crumbs = [`<button type="button" data-crumb="home">Ballina</button>`, "/", state.cat === "All" ? `<span aria-current="page">Produktet</span>` : `<button type="button" data-crumb="all">Produktet</button>`];
-    if (state.cat !== "All") crumbs.push("/", `<span aria-current="page">${esc(state.cat)}</span>`);
-    $("#crumbs").innerHTML = crumbs.map((c) => (c === "/" ? '<span aria-hidden="true">/</span>' : c)).join("");
+      const crumbs = [`<a href="#/">Ballina</a>`];
+      if (state.cat !== "All") crumbs.push(`<a href="#/produktet">Produktet</a>`, `<span aria-current="page">${esc(state.cat)}</span>`);
+      else crumbs.push(`<span aria-current="page">${state.q ? "Kërkimi" : state.onSale ? "Ofertat" : "Produktet"}</span>`);
+      $("#crumbs").innerHTML = crumbs.join('<span aria-hidden="true">/</span>');
 
-    const act = activeFilters();
-    $("#chips").innerHTML = act.map(([k, label, val]) =>
-      `<button type="button" class="chip" data-chip="${esc(k)}" aria-label="Hiq filtrin ${esc(label)} ${esc(val)}">${label ? `<b>${esc(label)}:</b>` : ""} ${esc(val)}${svg(ICON.x)}</button>`).join("") +
-      (act.length > 1 ? `<button type="button" class="chip chip--clear" data-chip="all">Pastro të gjitha</button>` : "");
-    const pill = $("#filterCount");
-    pill.textContent = act.length;
-    pill.hidden = !act.length;
+      const act = activeFilters();
+      $("#chips").innerHTML = act.map(([k, label, val]) =>
+        `<button type="button" class="chip" data-chip="${esc(k)}" aria-label="Hiq filtrin ${esc(label)} ${esc(val)}">${label ? `<b>${esc(label)}:</b>` : ""} ${esc(val)}${svg(ICON.x)}</button>`).join("") +
+        (act.length > 1 ? `<button type="button" class="chip chip--clear" data-chip="all">Pastro të gjitha</button>` : "");
+      const pill = $("#filterCount");
+      pill.textContent = act.length;
+      pill.hidden = !act.length;
 
-    const pager = $("#pager");
-    if (pages <= 1) pager.innerHTML = "";
-    else {
-      const nums = [];
-      for (let i = 1; i <= pages; i++) {
-        if (i === 1 || i === pages || Math.abs(i - state.page) <= 1) nums.push(i);
-        else if (nums[nums.length - 1] !== "…") nums.push("…");
+      const pager = $("#pager");
+      if (pages <= 1) pager.innerHTML = "";
+      else {
+        const nums = [];
+        for (let i = 1; i <= pages; i++) {
+          if (i === 1 || i === pages || Math.abs(i - state.page) <= 1) nums.push(i);
+          else if (nums[nums.length - 1] !== "…") nums.push("…");
+        }
+        pager.innerHTML = `<button type="button" data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""} aria-label="Faqja e mëparshme">‹</button>` +
+          nums.map((n) => (n === "…" ? `<button type="button" disabled>…</button>` : `<button type="button" data-page="${n}" ${n === state.page ? 'aria-current="page"' : ""}>${n}</button>`)).join("") +
+          `<button type="button" data-page="${state.page + 1}" ${state.page === pages ? "disabled" : ""} aria-label="Faqja tjetër">›</button>`;
       }
-      pager.innerHTML = `<button type="button" data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""} aria-label="Faqja e mëparshme">‹</button>` +
-        nums.map((n) => (n === "…" ? `<button type="button" disabled>…</button>` : `<button type="button" data-page="${n}" ${n === state.page ? 'aria-current="page"' : ""}>${n}</button>`)).join("") +
-        `<button type="button" data-page="${state.page + 1}" ${state.page === pages ? "disabled" : ""} aria-label="Faqja tjetër">›</button>`;
+      $("#sort").value = state.sort;
+      $("#applyFilters").textContent = `Shfaq ${plural(list.length, "rezultat", "rezultate")}`;
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = "";
+      $("#empty").hidden = true;
+      $("#loadError").hidden = false;
     }
-
-    $("#sort").value = state.sort;
-    $("#perPage").value = String(state.per);
-    $("#viewGrid").setAttribute("aria-pressed", state.view === "grid");
-    $("#viewList").setAttribute("aria-pressed", state.view === "list");
-    $("#applyFilters").textContent = `Shfaq ${plural(list.length, "rezultat", "rezultate")}`;
   }
 
   function renderCatNav() {
-    $("#catNav").innerHTML = [{ id: "All" }, ...CATS].map((c) =>
-      `<li><button type="button" data-cat="${esc(c.id)}" aria-pressed="${state.cat === c.id}">${c.id === "All" ? "Të gjitha" : esc(c.id)}</button></li>`).join("");
+    $("#catNav").innerHTML = CATS.map((c) =>
+      `<li><a href="#/kategoria/${catSlug(c.id)}" ${view === "catalog" && state.cat === c.id ? 'aria-current="page"' : ""}>${esc(c.id)}</a></li>`).join("");
   }
 
   function render() {
@@ -379,70 +392,66 @@
     renderResults();
   }
 
-  const goCatalog = () => $("#catalog").scrollIntoView({ block: "start" });
+  // Hap katalogun për gjendjen aktuale të filtrave (kategoria është pjesë e URL-së).
+  const goCatalog = () => go(state.q ? `#/kerko/${encodeURIComponent(state.q)}` : state.cat !== "All" ? `#/kategoria/${catSlug(state.cat)}` : state.onSale ? "#/ofertat" : "#/produktet");
 
   /* ================================================================ ballina */
+  // Hero: një artikull në plan të parë. Nga CMS-i (Online Store → Slajdet) kur ka; ndryshe këto.
   const SLIDES = [
-    { id: "lp-mba13m4", label: "E re", title: "MacBook Air 13\" me çipin M4", text: "16 GB memorie, deri në 18 orë bateri. Tani në stok, me dërgesë falas.", bg: "radial-gradient(90% 120% at 75% 50%, #1d2230 0%, #0b0c0f 70%)" },
-    { id: "cp-5090fe", label: "E re", title: "GeForce RTX 5090 Founders Edition", text: "32 GB GDDR7 dhe DLSS 4 për lojëra 4K dhe punë me AI.", bg: "radial-gradient(90% 120% at 75% 50%, #172012 0%, #0b0c0f 70%)" },
-    { id: "lp-proartp16", label: "Për krijues", title: "ASUS ProArt P16", text: "Ekran 4K OLED 16\" dhe grafikë NVIDIA RTX për video, foto dhe 3D.", bg: "radial-gradient(90% 120% at 75% 50%, #1e2428 0%, #0b0c0f 70%)" },
+    { id: "lp-mba13m4", label: "Përzgjedhja ITCOM / Laptopë", title: "Më shumë mundësi. Më pak peshë.", text: "MacBook Air 13\" M4 · 16 GB · 256 GB" },
+    { id: "cp-5090fe", label: "Përzgjedhja ITCOM / Kartela grafike", title: "Performancë 4K. Pa kompromis.", text: "GeForce RTX 5090 Founders Edition · 32 GB GDDR7" },
+    { id: "lp-proartp16", label: "Përzgjedhja ITCOM / Për krijues", title: "Ekran 4K OLED. Fuqi RTX.", text: "ASUS ProArt P16 · AMD Ryzen AI 9" },
   ];
-  // Banerët nga CMS-i (Online Store → Slajdet) zëvendësojnë ata të mësipërmit; ngjyrat e sfondit përsëriten.
-  if (window.CMS?.slides) {
-    const bgs = SLIDES.map((x) => x.bg);
-    SLIDES.splice(0, SLIDES.length, ...window.CMS.slides.map((x, i) => ({ ...x, bg: bgs[i % bgs.length] })));
-  }
+  if (window.CMS?.slides) SLIDES.splice(0, SLIDES.length, ...window.CMS.slides);
   let slide = 0, slideTimer;
-  const SLIDE_MS = 6000;
+  const SLIDE_MS = 7000;
 
   function renderHero() {
     $("#slides").innerHTML = SLIDES.map((s, i) => {
       const p = byId[s.id];
+      const pos = `role="group" aria-roledescription="artikull" aria-label="${i + 1} nga ${SLIDES.length}"`;
       if (!p) {
-        // Baner pa produkt: imazhi dhe një lidhje (p.sh. te një faqe ose kategori)
-        const href = s.href && !/^\/(produkt|faqe)\//.test(s.href) ? s.href : "#";
-        return `<div class="slide" style="--bg1:${s.bg}" role="group" aria-roledescription="banner" aria-label="${i + 1} nga ${SLIDES.length}">
-        <div>
-          ${s.label ? `<span class="slide__label">${esc(s.label)}</span>` : ""}
-          <h2>${esc(s.title)}</h2>
-          <p>${esc(s.text)}</p>
-          ${s.cta ? `<div class="slide__cta"><a class="btn btn--cta btn--lg" href="${esc(href)}">${esc(s.cta)}</a></div>` : ""}
-        </div>
-        ${s.img ? `<div class="slide__art"><img src="${esc(s.img)}" alt="" ${i ? 'loading="lazy"' : ""} /></div>` : ""}
-      </div>`;
-      }
-      return `<div class="slide" style="--bg1:${s.bg}" role="group" aria-roledescription="banner" aria-label="${i + 1} nga ${SLIDES.length}">
-        <div>
-          <span class="slide__label">${esc(s.label)}</span>
-          <h2>${esc(s.title)}</h2>
-          <p>${esc(s.text)}</p>
-          <div class="slide__price"><b>${fmt(p.price)}</b>${p.old ? `<s>${fmt(p.old)}</s><span class="slide__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}<small>${inst(p)}</small></div>
-          <div class="slide__cta">
-            <button type="button" class="btn btn--cta btn--lg" data-add="${p.id}">Shto në shportë</button>
-            <button type="button" class="btn btn--ghost btn--lg" data-open="${p.id}">Shiko detajet</button>
+        const href = s.href && !/^\/(produkt|faqe)\//.test(s.href) ? s.href : "#/";
+        return `<div class="slide" ${pos}>
+          <div class="slide__copy">
+            ${s.label ? `<span class="eyebrow">${esc(s.label)}</span>` : ""}
+            <h2>${esc(s.title)}</h2>
+            ${s.text ? `<p class="slide__spec">${esc(s.text)}</p>` : ""}
+            ${s.cta ? `<a class="btn btn--cta" href="${esc(href)}">${esc(s.cta)}</a>` : ""}
           </div>
+          ${s.img ? `<div class="slide__art"><img src="${esc(s.img)}" alt="" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} /></div>` : ""}
+        </div>`;
+      }
+      return `<div class="slide" ${pos}>
+        <div class="slide__copy">
+          <span class="eyebrow">${esc(s.label || p.cat)}</span>
+          <h2>${esc(s.title || p.name)}</h2>
+          <p class="slide__spec">${esc(s.text || shortSpecs(p))}</p>
+          <div class="slide__price">${priceHTML(p)}</div>
+          <a class="btn btn--cta" href="${productHref(p.id)}">Shiko produktin</a>
         </div>
-        <div class="slide__art" data-open="${p.id}">
-          <img src="${esc(s.img || imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${i ? 'loading="lazy"' : ""} />
-        </div>
+        <a class="slide__art" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true">
+          <img src="${esc(s.img || imgSrc(p))}" alt="" data-pid="${p.id}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} />
+        </a>
       </div>`;
     }).join("");
-    $("#dots").innerHTML = SLIDES.map((s, i) => `<button type="button" role="tab" data-slide="${i}" aria-label="Shfaq: ${esc(s.title)}"></button>`).join("");
+    $("#dots").innerHTML = SLIDES.map((s, i) => `<button type="button" role="tab" data-slide="${i}" aria-label="Shfaq: ${esc(s.title || byId[s.id]?.name || "")}"></button>`).join("");
+    $("#slider").classList.toggle("is-single", SLIDES.length < 2);
     goSlide(0);
 
-    const PROMOS = [
-      { small: "Kartela grafike", title: "Radeon RX 9000 me FSR 4", link: "Shiko kartelat", art: "cp-rx9070xt", key: "gpus", bg: "#f1f2f5" },
-      { small: "Laptopë 2‑në‑1", title: "Laptop dhe tablet në një", link: "Shiko modelet", art: "lp-yoga9i", key: "2in1", bg: "#eef1f6" },
-    ];
-    $("#promos").innerHTML = PROMOS.map((pr) => pr.photo ? `
-      <button type="button" class="promo promo--photo" data-promo="${pr.key}">
-        <picture class="promo__photo"><source type="image/webp" srcset="assets/photos/${pr.photo}-800.webp" /><img src="assets/photos/${pr.photo}-1600.jpg" alt="${esc(pr.alt)}" width="800" height="533" loading="lazy" decoding="async" /></picture>
-        <span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${esc(pr.title)}</span><span class="promo__link">${esc(pr.link)}</span>
-      </button>` : `
-      <button type="button" class="promo" data-promo="${pr.key}" style="--pbg:${pr.bg}">
-        <span class="promo__small">${esc(pr.small)}</span><span class="promo__title">${esc(pr.title)}</span><span class="promo__link">${esc(pr.link)}</span>
-        <span class="promo__art"><img src="${esc(imgSrc(byId[pr.art]))}" alt="" data-pid="${pr.art}" loading="lazy" /></span>
-      </button>`).join("");
+    const gpu = byId["cp-5070fe"] || PRODUCTS.find((p) => p.cat === "Kartela grafike");
+    $("#promos").innerHTML = `
+      <a class="promo promo--dark" href="#/kategoria/${catSlug("Kartela grafike")}">
+        <span class="eyebrow">Kartela grafike</span>
+        <span class="promo__title">Fuqia që zgjedh ti.</span>
+        <span class="promo__link">Shiko kartelat</span>
+        ${gpu ? `<span class="promo__art"><img src="${esc(imgSrc(gpu))}" alt="" data-pid="${gpu.id}" loading="lazy" /></span>` : ""}
+      </a>
+      <button type="button" class="promo promo--light" data-business>
+        <span class="eyebrow">ITCOM Business</span>
+        <span class="promo__title">Pajise ekipin me qartësi.</span>
+        <span class="promo__link">Kërko ofertë për biznes</span>
+      </button>`;
   }
 
   function goSlide(i) {
@@ -453,81 +462,44 @@
   }
   function autoSlide() {
     clearInterval(slideTimer);
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (SLIDES.length < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     slideTimer = setInterval(() => goSlide(slide + 1), SLIDE_MS);
   }
 
+  // Përzgjedhja e kuratuar në ballinë: nga CMS-i (produktet "featured"), ndryshe këto.
+  const PICKS = ["lp-mba13m4", "lp-proartp16", "cp-4070s", "cp-7800x3d"];
+  const SERVICES_STRIP = [
+    ["Dërgesa", "Kosto sipas porosisë", "delivery"],
+    ["Garancia", "Detaje për çdo produkt", "warranty"],
+    ["Pagesa", "Zgjidh mënyrën tënde", "installments"],
+    ["Mbështetja", "Pyet para se të blesh", "contact"],
+  ];
+
   function renderHome() {
     const count = (c) => PRODUCTS.filter((p) => p.cat === c).length;
-    $("#sideCats").innerHTML = CATS.map((c) => `<li><button type="button" data-cat="${esc(c.id)}">${svg(catIcon(c.id))}<span>${esc(c.id)}</span><small>${count(c.id)}</small></button></li>`).join("");
+    $("#sideCats").innerHTML = CATS.map((c) => `<li><a href="#/kategoria/${catSlug(c.id)}">${esc(c.id)}</a></li>`).join("");
     const brandCount = {};
     PRODUCTS.forEach((p) => { brandCount[p.brand] = (brandCount[p.brand] || 0) + 1; });
-    $("#sideBrands").innerHTML = Object.entries(brandCount).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([b, n]) =>
-      `<li><button type="button" data-brand="${esc(b)}">${logoSvg(b, "icon") || svg(ICON.grid)}<span>${esc(b)}</span><small>${n}</small></button></li>`).join("");
+    const brands = Object.entries(brandCount).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    $("#sideBrands").innerHTML = brands.slice(0, 5).map(([b]) => `<li><button type="button" data-brand="${esc(b)}">${esc(b)}</button></li>`).join("");
     $("#searchCat").innerHTML = `<option value="All">Të gjitha</option>` + CATS.map((c) => `<option value="${esc(c.id)}">${esc(c.id)}</option>`).join("");
 
-    const deals = PRODUCTS.filter((p) => p.old && p.stock).sort(SORTS.discount).slice(0, 10);
-    $("#dealsRail").innerHTML = deals.map(card).join("");
-    $("#deals").hidden = deals.length < 4; // a shelf with one or two offers looks empty
+    $("#services").innerHTML = SERVICES_STRIP.map(([t, sub, info]) =>
+      `<li><button type="button" data-info="${info}">${svg(ICON.check)}<span><b>${t}</b><small>${sub}</small></span></button></li>`).join("");
+    $("#catTiles").innerHTML = CATS.map((c) =>
+      `<a class="cat-tile" href="#/kategoria/${catSlug(c.id)}">${svg(catIcon(c.id))}<b>${esc(c.id)}</b><small>${plural(count(c.id), "produkt", "produkte")}</small></a>`).join("");
 
-    // Raftet me produkte, si në dyqanet e mëdha
-    const SHELVES = [
-      { title: "Më të shiturat", list: PRODUCTS.filter((p) => p.stock).sort(SORTS.reviews).slice(0, 10), all: "reviews" },
-      { title: "Laptopë", list: PRODUCTS.filter((p) => p.cat === "Laptopë").sort(SORTS.featured).slice(0, 10), cat: "Laptopë" },
-      { title: "Procesorë", list: PRODUCTS.filter((p) => p.cat === "Procesorë").sort(SORTS.featured).slice(0, 10), cat: "Procesorë" },
-      { title: "Kartela grafike", list: PRODUCTS.filter((p) => p.cat === "Kartela grafike").sort(SORTS.featured).slice(0, 10), cat: "Kartela grafike" },
-    ];
-    $("#shelves").innerHTML = SHELVES.map((sh, i) => `
-      <section class="container shelf" aria-labelledby="shelf${i}">
-        <div class="shelf__head">
-          <h2 id="shelf${i}">${esc(sh.title)}</h2>
-          <button class="shelf__all" ${sh.cat ? `data-cat="${esc(sh.cat)}"` : 'data-bestsellers'}>Shiko të gjitha</button>
-          <div class="shelf__nav">
-            <button class="icon-btn" data-rail="shelfRail${i}" data-dir="-1" aria-label="Lëviz majtas">${svg('<path d="m15 18-6-6 6-6"/>')}</button>
-            <button class="icon-btn" data-rail="shelfRail${i}" data-dir="1" aria-label="Lëviz djathtas">${svg('<path d="m9 18 6-6-6-6"/>')}</button>
-          </div>
-        </div>
-        <div class="rail" id="shelfRail${i}">${sh.list.map(card).join("")}</div>
-      </section>`).join("");
+    const cmsPicks = window.CMS?.featured?.filter((id) => byId[id] && PRODUCTS.includes(byId[id]));
+    const picks = (cmsPicks?.length ? cmsPicks : PICKS).map((id) => byId[id]).filter(Boolean).slice(0, 4);
+    $("#picks").innerHTML = picks.map((p) => card(p, { pick: true })).join("");
 
-    const HERO_IMG = { "Laptopë": "lp-zbs14", "Procesorë": "cp-9800x3d", "Kartela grafike": "cp-rx9070xt" };
-    $("#catTiles").innerHTML = CATS.map((c) => {
-      const art = byId[HERO_IMG[c.id]] || PRODUCTS.find((p) => p.cat === c.id);
-      return `<button type="button" class="cat-card" data-cat="${esc(c.id)}">${media(art)}<b>${esc(c.id)}</b><small>${plural(count(c.id), "produkt", "produkte")}</small></button>`;
-    }).join("");
-
-    const counts = {};
-    PRODUCTS.forEach((p) => { counts[p.brand] = (counts[p.brand] || 0) + 1; });
-    $("#brandRail").innerHTML = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([b, n]) =>
-      `<button type="button" class="brand-tile" data-brand="${esc(b)}" style="--brand-color:${LOGOS[b] ? LOGOS[b].hex : "#111827"}">${LOGOS[b] ? logoSvg(b) : `<span class="brand-tile__word">${esc(b)}</span>`}<span>${esc(b)}</span><small>${plural(n, "produkt", "produkte")}</small></button>`).join("");
-
-    $("#footerCats").innerHTML = CATS.map((c) => `<li><button type="button" data-cat="${esc(c.id)}">${esc(c.id)}</button></li>`).join("");
+    $("#brandRow").innerHTML = brands.map(([b]) => `<li><button type="button" data-brand="${esc(b)}">${logoSvg(b, "icon")}<span>${esc(b)}</span></button></li>`).join("");
     $("#year").textContent = new Date().getFullYear();
-    $("#phoneText").textContent = S.phone;
-    renderRecent();
   }
 
-  function renderRecent() {
-    const items = recent.map((id) => byId[id]).filter(Boolean);
-    $("#recentBlock").hidden = !items.length;
-    $("#recentRail").innerHTML = items.map(card).join("");
-  }
   function addRecent(id) {
     recent = [id, ...recent.filter((x) => x !== id)].slice(0, 10);
     saved.set("recent", recent);
-    renderRecent();
-  }
-
-  function tickCountdown() {
-    if (!$("#cdH")) return;
-    const now = new Date();
-    const end = new Date(now); end.setHours(24, 0, 0, 0);
-    let s = Math.max(0, Math.floor((end - now) / 1000));
-    const h = String(Math.floor(s / 3600)).padStart(2, "0"); s %= 3600;
-    const m = String(Math.floor(s / 60)).padStart(2, "0");
-    $("#cdH").textContent = h;
-    $("#cdM").textContent = m;
-    $("#cdS").textContent = String(s % 60).padStart(2, "0");
   }
 
   /* ================================================================ menyja e kategorive */
@@ -563,7 +535,7 @@
     sgActive = -1;
     if (!q) { box.hidden = true; return; }
     const ql = q.toLowerCase();
-    const score = (p) => (p.name.toLowerCase().startsWith(ql) ? 4 : 0) + (p.name.toLowerCase().includes(ql) ? 2 : 0) + (p.brand.toLowerCase() === ql ? 1 : 0) + p.reviews / 10000;
+    const score = (p) => (p.name.toLowerCase().startsWith(ql) ? 4 : 0) + (p.name.toLowerCase().includes(ql) ? 2 : 0) + (p.brand.toLowerCase() === ql ? 1 : 0) + (p.stock ? 0.5 : 0);
     const hits = PRODUCTS.filter((p) => textMatch(p, q)).sort((a, b) => score(b) - score(a));
     const cats = {};
     hits.forEach((p) => { cats[p.cat] = (cats[p.cat] || 0) + 1; });
@@ -583,7 +555,6 @@
     $("#search").value = state.q;
     hideSuggest();
     $("#search").blur();
-    render();
     goCatalog();
   }
 
@@ -602,7 +573,7 @@
     renderCart();
     refreshCards();
     bump("#cartCount");
-    if (!quiet) toast(`U shtua në shportë: <b>${esc(p.name)}</b>`, { label: "Shiko shportën", fn: openCart });
+    if (!quiet) { toast(`U shtua në shportë: <b>${esc(p.name)}</b>`, { label: "Shiko shportën", fn: () => go("#/shporta") }); announce(`${p.name} u shtua në shportë`); }
     return true;
   }
 
@@ -672,6 +643,8 @@
       </li>`;
     }).join("");
     $("#cartTotals").innerHTML = totalsHTML(t);
+    if (view === "cart") renderCartPage();
+    else if (view === "checkout" && !cart.length) go("#/shporta");
   }
 
   // Përditëson butonat në kartat e dukshme pa i rindërtuar.
@@ -721,20 +694,98 @@
   }
   function closeModal() { if (modal.open) modal.close(); }
 
-  // Çdo produkt dhe faqe informuese ka lidhjen e vet (p.sh. #lp-x1c12, #info-delivery) që mund të ndahet.
-  function setHash(h) {
-    try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch { /* ignore */ }
+  /* ================================================================ pamjet dhe adresat */
+  // #/ ballina · #/kategoria/laptope · #/produktet · #/ofertat · #/kerko/<fjala> · #/p/<id> · #/shporta · #/porosia
+  // #builder dhe #info-<faqja> hapen sipër pamjes aktuale.
+  let view = "";
+  let infoBack = "";
+  const VIEWS = { home: "#viewHome", catalog: "#viewCatalog", product: "#viewProduct", cart: "#viewCart", checkout: "#viewCheckout", done: "#viewDone" };
+  const META_DESC = $('meta[name="description"]')?.getAttribute("content") || "";
+  function showView(name, title, desc) {
+    const changed = view !== name;
+    view = name;
+    for (const [k, sel] of Object.entries(VIEWS)) $(sel).hidden = k !== name;
+    $("#business").hidden = name !== "home";
+    document.body.dataset.view = name;
+    document.title = title || "ITCOM — Laptopë, procesorë dhe kartela grafike";
+    $('meta[name="description"]')?.setAttribute("content", desc || META_DESC);
+    const canonical = name === "product" ? location.href.split("#")[0] : name === "home" ? S.siteUrl : "";
+    $('link[rel="canonical"]')?.setAttribute("href", canonical ? canonical.replace(location.origin + BASE, S.siteUrl) : S.siteUrl);
+    renderCatNav();
+    return changed;
   }
-  modal.addEventListener("close", () => setHash(""));
+  let routed = "";
+  const productId = (key) => (byId[key] ? key : window.CMS?.slugToId?.[key]);
   function route() {
-    const h = location.hash.slice(1);
-    if (h === "builder") window.ITCOM.openBuilder?.();
-    else if (byId[h] || byId[window.CMS?.slugToId?.[h]]) openProduct(byId[h] ? h : window.CMS.slugToId[h]);
-    else if (h.startsWith("info-") && INFO[h.slice(5)]) openInfo(h.slice(5));
+    let h = decodeURIComponent(location.hash.slice(1));
+    const pid = productId(pathProduct() || "");
+    // Adresat #/… i përkasin rrënjës; nga një faqe produkti e pastrojmë adresën.
+    if (location.pathname !== BASE && h.startsWith("/")) history.replaceState(null, "", BASE + location.hash);
+    else if (location.pathname !== BASE && !pid) history.replaceState(null, "", BASE + location.hash);
+    else if (pid && !h) h = "/p/" + pid;
+    routed = location.pathname + location.hash;
+    const under = () => { if (!view) { if (pid) renderProduct(pid); else showView("home"); } };
+    closeCart(); closeFilters(); hideSuggest(); toggleMega(false);
+    if (h === "builder") { under(); window.ITCOM.openBuilder?.(); return; }
+    if (h.startsWith("info-")) { under(); infoBack = infoBack || location.pathname + (pid ? "" : "#/"); openInfo(h.slice(5), true); return; }
+    // Lidhjet e vjetra #lp-x1c12 → #/p/lp-x1c12
+    const legacy = productId(h);
+    if (legacy) { history.replaceState(null, "", productHref(legacy)); return route(); }
+    closeModal();
+    const parts = h.replace(/^\//, "").split("/");
+    const scrollTop = () => { window.scrollTo({ top: 0 }); };
+    if (parts[0] === "p" && productId(parts[1])) {
+      const id = productId(parts[1]);
+      if (location.pathname !== productHref(id)) history.replaceState(null, "", productHref(id));
+      routed = location.pathname;
+      renderProduct(id); scrollTop(); return;
+    }
+    if (parts[0] === "kategoria" && catFromSlug(parts[1])) {
+      const cat = catFromSlug(parts[1]);
+      if (state.cat !== cat || state.q || state.onSale) resetFilters(cat);
+      showView("catalog"); render(); scrollTop(); return;
+    }
+    if (parts[0] === "produktet") { if (state.cat !== "All" || state.q || state.onSale) resetFilters(); showView("catalog"); render(); scrollTop(); return; }
+    if (parts[0] === "ofertat") { if (!state.onSale || state.cat !== "All" || state.q) { resetFilters(); state.onSale = true; state.sort = "discount"; } showView("catalog"); render(); scrollTop(); return; }
+    if (parts[0] === "kerko") {
+      const q = parts.slice(1).join("/");
+      if (state.q !== q) { resetFilters(state.q ? state.cat : "All"); state.q = q; $("#search").value = q; }
+      showView("catalog"); $("#grid").innerHTML = skeleton(8);
+      requestAnimationFrame(() => render()); scrollTop(); return;
+    }
+    if (parts[0] === "shporta") { renderCartPage(); scrollTop(); return; }
+    if (parts[0] === "porosia") { if (!cart.length) { history.replaceState(null, "", BASE + "#/shporta"); renderCartPage(); } else renderCheckout(); scrollTop(); return; }
+    if (parts[0] === "konfirmimi") { renderDone(parts[1]); scrollTop(); return; }
+    showView("home"); scrollTop();
   }
-  window.addEventListener("hashchange", route);
+  // Ndryshimet e adresës (para/prapa, #…): një herë për çdo adresë, edhe kur shfletuesi njofton dy herë.
+  const onNav = () => { if (location.pathname + location.hash === routed) return; route(); $("#main").focus({ preventScroll: true }); };
+  window.addEventListener("hashchange", onNav);
+  window.addEventListener("popstate", onNav);
+  // Lidhjet e dyqanit hapen pa ringarkim; Ctrl/Cmd+klik ose skeda e re punojnë si lidhje të zakonshme.
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest("a[href]");
+    if (!a || a.target || a.hasAttribute("download") || a.hasAttribute("data-builder")) return;
+    const url = new URL(a.href);
+    if (url.origin !== location.origin) return;
+    const inShop = url.pathname === BASE ? url.hash.startsWith("#/") : url.pathname.startsWith(BASE + "p/");
+    if (inShop) { e.preventDefault(); go(url.pathname === BASE ? url.hash : url.pathname); return; }
+    // Lidhje brenda faqes (p.sh. "Kalo te përmbajtja") kur adresa e faqes nuk është rrënja.
+    if (url.pathname === BASE && url.hash.length > 1 && location.pathname !== BASE) {
+      const t = document.getElementById(url.hash.slice(1));
+      if (t) { e.preventDefault(); t.focus({ preventScroll: true }); t.scrollIntoView(); }
+    }
+  });
+
+  // Faqet informuese kanë lidhjen e vet (#info-delivery); kur mbyllen, kthehemi te pamja ku ishim.
+  modal.addEventListener("close", () => {
+    if (location.hash.startsWith("#info-")) { history.replaceState(null, "", infoBack || BASE + "#/"); infoBack = ""; routed = location.pathname + location.hash; }
+  });
 
   /* ================================================================ faqet informuese */
+  // Numri në js/products.js është shembull derisa ta vendosë dyqani (ose CMS-i); nuk e shfaqim si të vërtetë.
+  const realPhone = () => S.phone && S.phone !== "+383 44 000 000";
   const INFO = {
     delivery: {
       title: "Dërgesa",
@@ -790,24 +841,23 @@
         <ul><li>Sillni produktin me faturën ose fletën e garancisë, ose na kontaktoni që ta marrim ne.</li></ul>`,
     },
     installments: {
-      title: "Pagesa me këste",
+      title: "Pagesat",
       html: () => `
-        <p class="lead">Blini sot dhe paguani deri në ${S.installments} këste mujore me kartelat e bankave partnere.</p>
-        <div class="info__facts">
-          <div><b>${fmt(1200)}</b><span>Çmimi i produktit</span></div>
-          <div><b>${S.installments} × ${fmt(1200 / S.installments)}</b><span>Këstet mujore</span></div>
-        </div>
+        <p class="lead">Zgjidh mënyrën e pagesës kur përfundon porosinë. Asnjë pagesë nuk merret online.</p>
         <ul>
-          <li>Zgjidhni "Me këste mujore" kur përfundoni porosinë.</li>
-          <li>Kushtet e sakta varen nga banka juaj dhe konfirmohen para pagesës.</li>
-        </ul>`,
+          <li><b>Pagesë në dorëzim</b> — me para në dorë ose me kartelë te korrieri.</li>
+          <li><b>Transfertë bankare</b> — ju dërgojmë faturë pro‑forma me email; porosia nisë pas pagesës.</li>
+          ${S.installments ? `<li><b>Me këste</b> — deri në ${S.installments} muaj me kartelat e bankave partnere. Kushtet e sakta varen nga banka dhe konfirmohen para dërgesës.</li>` : ""}
+        </ul>
+        <p>Çmimet përfshijnë TVSH ${Math.round(S.vatRate * 100)}%. Për kompani lëshojmë faturë me TVSH.</p>`,
     },
     contact: {
       title: "Kontakti",
       html: () => `
         <p class="lead">Jemi këtu për pyetje rreth produkteve, porosive ose ofertave për biznese.</p>
         <div class="info__contact">
-          <div>${svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>')}<span>Telefoni <b>${esc(S.phone)}</b></span></div>
+          ${realPhone() ? `<div>${svg('<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>')}<span>Telefoni <b>${esc(S.phone)}</b></span></div>` : ""}
+          <button type="button" class="btn btn--primary" data-business>Na shkruani</button>
           ${S.whatsapp ? `<a href="https://wa.me/${esc(S.whatsapp)}" target="_blank" rel="noopener">${svg('<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/>')}<span>Shkruani në WhatsApp</span></a>` : ""}
           ${S.email ? `<div>${svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/>')}<span>Email <b>${esc(S.email)}</b></span></div>` : ""}
         </div>`,
@@ -834,6 +884,27 @@
       title: "Karriera",
       html: () => `<p class="lead">Aktualisht nuk kemi pozita të hapura.</p><p>Nëse dëshironi të punoni me ne në shitje, servis ose logjistikë, na kontaktoni dhe do t'ju njoftojmë kur të hapet një pozitë.</p>`,
     },
+    terms: {
+      title: "Kushtet e blerjes",
+      html: () => `
+        <p class="lead">Këto kushte vlejnë për çdo porosi në dyqanin online të ITCOM.</p>
+        <h3>Porosia</h3>
+        <ul>
+          <li>Porosia konsiderohet e pranuar pasi ekipi ITCOM ju kontakton dhe e konfirmon disponueshmërinë dhe çmimin.</li>
+          <li>Çmimet janë në euro dhe përfshijnë TVSH. Kostoja e dërgesës shfaqet para se ta dërgoni porosinë.</li>
+          <li>Fotot tregojnë modelin; ngjyra dhe konfigurimi i saktë verifikohen sipas kodit të artikullit.</li>
+        </ul>
+        <h3>Dërgesa dhe pagesa</h3>
+        <ul>
+          <li>Dërgojmë në gjithë Kosovën, zakonisht brenda 1–2 ditëve pune. Ose merreni falas në dyqan.</li>
+          <li>Pagesa bëhet në dorëzim ose me transfertë bankare. Nuk ruajmë të dhëna kartelash.</li>
+        </ul>
+        <h3>Kthimi dhe garancia</h3>
+        <ul>
+          <li>Kthim brenda 14 ditëve nga pranimi, për produkte të paprekura në paketimin origjinal.</li>
+          <li>Garanci 24 muaj për defektet e fabrikës, sipas kushteve te faqja “Garancia dhe servisi”.</li>
+        </ul>`,
+    },
     privacy: {
       title: "Politika e privatësisë",
       html: () => `
@@ -850,11 +921,12 @@
   // Faqet e redaktuara në CMS zëvendësojnë tekstet e mësipërme (sipas slug-ut: returns, warranty, about …).
   for (const [slug, pg] of Object.entries(window.CMS?.pages || {})) INFO[slug] = { title: pg.title, html: () => pg.html };
 
-  function openInfo(key) {
+  function openInfo(key, fromRoute = false) {
     const page = INFO[key];
     if (!page) return;
     toggleMega(false);
-    const nav = ["delivery", "returns", "warranty", "installments", "contact", "business"];
+    if (!fromRoute && !location.hash.startsWith("#info-")) infoBack = location.pathname + (location.hash || (location.pathname === BASE ? "#/" : ""));
+    const nav = ["delivery", "installments", "returns", "warranty", "terms", "contact"];
     openModal(`
       <article class="info">
         <span class="eyebrow">ITCOM</span>
@@ -862,83 +934,184 @@
         ${page.html()}
         <nav class="info__nav" aria-label="Faqe të tjera">${nav.map((k) => `<button type="button" data-info="${k}" ${k === key ? 'aria-current="page"' : ""}>${esc(INFO[k].title)}</button>`).join("")}</nav>
       </article>`, "modal--info");
-    setHash("info-" + key);
+    history.replaceState(null, "", location.pathname + "#info-" + key);
+    routed = location.pathname + location.hash;
   }
 
   /* ================================================================ faqja e produktit */
-  function openProduct(id) {
+  const gallery = (p) => (p.imgs && p.imgs.length ? p.imgs : [imgSrc(p)]);
+
+  function renderProduct(id) {
     const p = byId[id];
     if (!p) return;
-    hideSuggest();
-    toggleMega(false);
     addRecent(id);
-    setHash(id);
     const d = discount(p);
-    const related = PRODUCTS.filter((x) => x.cat === p.cat && x.id !== p.id).sort((a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price)).slice(0, 6);
+    const imgs = gallery(p);
+    const related = PRODUCTS.filter((x) => x.cat === p.cat && x.id !== p.id).sort((a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price)).slice(0, 4);
     const specRows = [
-      ["Brendi", p.brand], ["Modeli", p.name], ["Kodi i produktit", p.id.toUpperCase()],
+      ["Modeli", p.name], ["Brendi", p.brand], ["Kodi i artikullit", p.id.toUpperCase()],
       ...(FACETS[p.cat] || []).filter((f) => p.attrs[f.key] !== undefined).map((f) => [f.label, f.fmt ? f.fmt(p.attrs[f.key]) : p.attrs[f.key]]),
       ["Veçoritë kryesore", p.specs.join(" · ")],
       ["Garancia", "24 muaj"],
     ];
     const w = wish.has(p.id), cmp = compare.includes(p.id);
-    openModal(`
-      <div class="pdp">
-        <div class="pdp__media">${media(p)}</div>
-        <div class="pdp__info">
-          <div class="pdp__brand">${brandMark(p.brand)}<span>${esc(p.cat)}</span><span class="mono">${esc(p.id.toUpperCase())}</span></div>
-          <h2>${esc(p.name)}</h2>
-          <div class="pdp__meta"><span class="rating">${p.reviews ? `${stars(p.rating)} ${rate(p.rating)} · ${p.reviews} vlerësime` : "Ende pa vlerësime"}</span>${stockLabel(p)}</div>
-          <ul class="pdp__highlights">${p.specs.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
-          <div class="pdp__buybox">
-            <div class="pdp__price">${priceHTML(p)}${d ? `<span class="pdp__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}</div>
-            <div class="pdp__inst">ose <b>${S.installments} × ${fmt(p.price / S.installments)}</b> në muaj · përfshirë TVSH ${Math.round(S.vatRate * 100)}%</div>
-            <div class="pdp__buy">
-              <div class="qty" role="group" aria-label="Sasia">
-                <button type="button" id="pdpMinus" aria-label="Zvogëlo sasinë">−</button>
-                <span id="pdpQty">1</span>
-                <button type="button" id="pdpPlus" aria-label="Rrit sasinë">+</button>
-              </div>
-              <button type="button" class="btn btn--primary btn--lg" id="pdpAdd" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>
-              <button type="button" class="btn btn--ghost btn--lg" id="pdpBuy" ${p.stock ? "" : "disabled"}>Bli tani</button>
-              <button type="button" class="icon-btn ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Shto në"} listën e dëshirave">${svg(ICON.heart)}</button>
-              <button type="button" class="icon-btn ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}" aria-label="${cmp ? "Hiq nga krahasimi" : "Shto për krahasim"}">${svg(ICON.compare)}</button>
+    const inShop = PRODUCTS.includes(p);
+    const crumbs = [`<a href="#/">Ballina</a>`, inShop ? `<a href="#/kategoria/${catSlug(p.cat)}">${esc(p.cat)}</a>` : "", `<span aria-current="page">${esc(p.name)}</span>`].filter(Boolean);
+    const ship = p.price >= S.freeShippingFrom ? "Dërgesë falas" : `Dërgesa ${fmt(S.shippingFee)} · falas mbi ${fmt0(S.freeShippingFrom)}`;
+    showView("product", `${p.name} · ITCOM`, `${p.name}: ${shortSpecs(p)}. ${fmt(p.price)} me TVSH, garanci 24 muaj, dërgesë në gjithë Kosovën.`);
+    $("#viewProduct").innerHTML = `
+      <nav class="crumbs" aria-label="Navigimi">${crumbs.join('<span aria-hidden="true">/</span>')}</nav>
+      <div class="pp">
+        <div class="pp__gallery">
+          <div class="pp__main" id="ppMain">${media(p, "", true)}</div>
+          <p class="pp__caption">Foto nga prodhuesi · varianti përfundimtar verifikohet sipas kodit të artikullit</p>
+          ${imgs.length > 1 ? `<div class="pp__thumbs" role="tablist" aria-label="Fotot e produktit">${imgs.map((src, i) => `<button type="button" role="tab" data-thumb="${i}" aria-selected="${i === 0}" aria-label="Foto ${i + 1}"><img src="${esc(src)}" alt="" loading="lazy" /></button>`).join("")}</div>` : ""}
+        </div>
+        <div class="pp__info">
+          <span class="eyebrow">${esc(p.brand)} / ${esc(p.cat)}</span>
+          <h1>${esc(p.name)}</h1>
+          <p class="pp__sub">${esc(shortSpecs(p))}</p>
+          <p class="pp__sku">Kodi i artikullit: <span class="mono">${esc(p.id.toUpperCase())}</span></p>
+          <div class="pp__price">${priceHTML(p)}${d ? `<span class="pp__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}</div>
+          <p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%${S.installments ? ` · ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj` : ""}</p>
+          <div class="pp__stock">${stockLabel(p)}<span>${p.stock ? `Porosit sot, arrin <b>${deliveryDate(2)}</b> · marrje falas në dyqan` : "Aktualisht i padisponueshëm — pyetni për afatin"}</span></div>
+          <div class="pp__buy">
+            <button type="button" class="btn btn--cta btn--lg" id="ppAdd" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>
+            <div class="qty qty--lg" role="group" aria-label="Sasia">
+              <button type="button" id="ppMinus" aria-label="Zvogëlo sasinë">−</button>
+              <span id="ppQty" aria-live="polite">1</span>
+              <button type="button" id="ppPlus" aria-label="Rrit sasinë">+</button>
             </div>
-            <ul class="pdp__ship">
-              <li>${svg(ICON.truck)}<span>${p.stock ? `Porositni sot, arrin <b>${deliveryDate(2)}</b>` : "Aktualisht i padisponueshëm"} · ${p.price >= S.freeShippingFrom ? "dërgesë falas" : `dërgesa ${fmt(S.shippingFee)}, falas mbi ${fmt0(S.freeShippingFrom)}`}</span></li>
-              <li>${svg(ICON.store)}<span>Marrje falas në dyqanin ITCOM</span></li>
-              <li>${svg(ICON.shield)}<span>Garanci 24 muaj · Kthim brenda 14 ditëve</span></li>
-            </ul>
+          </div>
+          <ul class="pp__terms">
+            <li><button type="button" data-info="delivery">Dërgesa</button><span>${ship}</span></li>
+            <li><button type="button" data-info="warranty">Garancia</button><span>24 muaj · kthim brenda 14 ditëve</span></li>
+          </ul>
+          <div class="pp__actions">
+            <button type="button" class="link-btn ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}">${svg(ICON.compare)}Krahaso</button>
+            <button type="button" class="link-btn ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}">${svg(ICON.heart)}Ruaj</button>
+            <button type="button" class="link-btn" data-ask="${p.id}">${svg('<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/>')}Pyet për produktin</button>
           </div>
         </div>
       </div>
-      <div class="pdp__tabs">
-        <div class="tabs" role="tablist">
-          <button type="button" role="tab" aria-selected="true" data-tab="specs">Specifikimet</button>
-          <button type="button" role="tab" aria-selected="false" data-tab="about">Përshkrimi</button>
+      <div class="pp__details">
+        <div>
+          <div class="tabs" role="tablist" aria-label="Detajet e produktit">
+            <button type="button" role="tab" aria-selected="true" aria-controls="tabSpecs" data-tab="specs">Specifikimet</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tabAbout" data-tab="about">Përshkrimi</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tabShip" data-tab="ship">Dërgesa &amp; garancia</button>
+          </div>
+          <div id="tabSpecs" role="tabpanel" data-pane="specs"><table class="spec-table"><tbody>${specRows.map(([k, v]) => `<tr><th scope="row">${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</tbody></table></div>
+          <div id="tabAbout" role="tabpanel" data-pane="about" hidden><p class="pp__desc">${esc(p.desc)}</p></div>
+          <div id="tabShip" role="tabpanel" data-pane="ship" hidden>
+            <ul class="pp__shiplist">
+              <li><b>Dërgesë standarde</b><span>${p.price >= S.freeShippingFrom ? "Falas" : fmt(S.shippingFee)} · 1–2 ditë pune në gjithë Kosovën</span></li>
+              <li><b>Dërgesë e shpejtë</b><span>+${fmt(S.expressFee)} · ditën tjetër të punës</span></li>
+              <li><b>Marrje në dyqan</b><span>Falas · gati brenda 2 orëve</span></li>
+              <li><b>Garancia</b><span>24 muaj për defektet e fabrikës · kthim brenda 14 ditëve</span></li>
+            </ul>
+          </div>
         </div>
-        <div data-pane="specs"><table class="spec-table"><tbody>${specRows.map(([k, v]) => `<tr><th scope="row">${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</tbody></table></div>
-        <div data-pane="about" hidden><p>${esc(p.desc)}</p></div>
+        <aside class="pp__help">
+          <h2>A është zgjedhja e duhur për ty?</h2>
+          <p>Trego si do ta përdorësh${p.cat === "Laptopë" ? " laptopin" : p.cat === "Kartela grafike" ? " kartelën dhe çfarë kompjuteri ke" : " procesorin dhe me çfarë pllake"}. Ekipi të ndihmon të verifikosh variantin.</p>
+          <button type="button" class="btn btn--primary" data-ask="${p.id}">Pyet ekipin ITCOM</button>
+        </aside>
       </div>
-      ${related.length ? `<div class="related"><h3>Produkte të ngjashme</h3><div class="rail">${related.map(card).join("")}</div></div>` : ""}
-    `, "modal--product");
+      ${imgs.length > 1 ? `<section class="pp__angles"><h2>E njëjta pajisje. Nga kënde të ndryshme.</h2><div class="pp__angles-grid">${imgs.slice(1).map((src) => `<div class="media"><img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy" /></div>`).join("")}</div></section>` : ""}
+      ${related.length ? `<section class="home-sec"><div class="home-sec__head"><h2 class="home-sec__title">Produkte të ngjashme</h2>${inShop ? `<a class="home-sec__link" href="#/kategoria/${catSlug(p.cat)}">Të gjitha</a>` : ""}</div><div class="pgrid">${related.map((x) => card(x)).join("")}</div></section>` : ""}
+      <div class="pp__bar" aria-hidden="true"><b>${fmt(p.price)}</b><button type="button" class="btn btn--cta" data-add="${p.id}" tabindex="-1" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button></div>`;
 
     let qty = 1;
-    const room = () => p.stock - cartQty(p.id);
-    const sync = () => {
-      $("#pdpQty").textContent = qty;
-      $("#pdpMinus").disabled = qty <= 1;
-      $("#pdpPlus").disabled = qty >= room();
-    };
+    const room = () => Math.max(1, p.stock - cartQty(p.id));
+    const sync = () => { $("#ppQty").textContent = qty; $("#ppMinus").disabled = qty <= 1; $("#ppPlus").disabled = qty >= room(); };
     sync();
-    $("#pdpMinus").onclick = () => { qty = Math.max(1, qty - 1); sync(); };
-    $("#pdpPlus").onclick = () => { qty = Math.min(room(), qty + 1); sync(); };
-    $("#pdpAdd").onclick = () => { addToCart(p.id, qty); qty = 1; sync(); };
-    $("#pdpBuy").onclick = () => { if (cartQty(p.id) === 0) addToCart(p.id, qty, true); openCheckout(); };
-    $$("[data-tab]", modal).forEach((t) => t.addEventListener("click", () => {
-      $$("[data-tab]", modal).forEach((x) => x.setAttribute("aria-selected", x === t));
-      $$("[data-pane]", modal).forEach((pane) => { pane.hidden = pane.dataset.pane !== t.dataset.tab; });
+    $("#ppMinus").onclick = () => { qty = Math.max(1, qty - 1); sync(); };
+    $("#ppPlus").onclick = () => { qty = Math.min(room(), qty + 1); sync(); };
+    $("#ppAdd").onclick = () => { if (addToCart(p.id, qty)) { qty = 1; sync(); } };
+    const root = $("#viewProduct");
+    $$("[data-tab]", root).forEach((t) => t.addEventListener("click", () => {
+      $$("[data-tab]", root).forEach((x) => x.setAttribute("aria-selected", x === t));
+      $$("[data-pane]", root).forEach((pane) => { pane.hidden = pane.dataset.pane !== t.dataset.tab; });
     }));
+    $$("[data-thumb]", root).forEach((t) => t.addEventListener("click", () => {
+      $$("[data-thumb]", root).forEach((x) => x.setAttribute("aria-selected", x === t));
+      $("#ppMain img").src = imgs[Number(t.dataset.thumb)];
+    }));
+  }
+
+  /* ================================================================ forma: pyetje dhe oferta për biznes */
+  function openForm({ title, intro, fields, submit, onSubmit }) {
+    openModal(`
+      <form class="lead-form" id="leadForm" novalidate>
+        <h2>${title}</h2>
+        <p class="muted">${intro}</p>
+        <div class="form-grid">${fields.map((f) => `
+          <label class="field ${f.full ? "full" : ""}" for="lf-${f.id}">${f.label}${f.optional ? ' <span class="muted">(opsionale)</span>' : ""}
+            ${f.type === "textarea" ? `<textarea id="lf-${f.id}" name="${f.id}" rows="4">${esc(f.value || "")}</textarea>` : `<input id="lf-${f.id}" name="${f.id}" type="${f.type || "text"}" value="${esc(f.value || "")}" ${f.attrs || ""} />`}
+            <span class="err"></span>
+          </label>`).join("")}</div>
+        <button class="btn btn--cta btn--lg" type="submit">${submit}</button>
+      </form>`, "modal--info");
+    const form = $("#leadForm");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let bad = null;
+      for (const f of fields) {
+        const el = form.elements[f.id];
+        const v = el.value.trim();
+        let err = "";
+        if (!f.optional && !v) err = "Plotësojeni këtë fushë";
+        else if (v && f.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) err = "Shkruani një email të vlefshëm";
+        else if (v && f.type === "tel" && v.replace(/\D/g, "").length < 8) err = "Shkruani një numër me të paktën 8 shifra";
+        el.closest(".field").classList.toggle("invalid", !!err);
+        el.closest(".field").querySelector(".err").textContent = err;
+        if (err && !bad) bad = el;
+      }
+      if (bad) { bad.focus(); return; }
+      onSubmit(Object.fromEntries(fields.map((f) => [f.id, form.elements[f.id].value.trim()])));
+    });
+    form.elements[fields[0].id].focus();
+  }
+  const me = () => Account.user();
+  function openAsk(id) {
+    const p = byId[id];
+    openForm({
+      title: "Pyet për produktin",
+      intro: `${esc(p.name)} · ${esc(p.id.toUpperCase())}. Ekipi ITCOM ju përgjigjet brenda ditës së punës.`,
+      submit: "Dërgo pyetjen",
+      fields: [
+        { id: "name", label: "Emri", value: me()?.name, attrs: 'autocomplete="name"' },
+        { id: "phone", label: "Telefoni", type: "tel", attrs: 'autocomplete="tel"' },
+        { id: "email", label: "Email-i", type: "email", optional: true, value: me()?.email, attrs: 'autocomplete="email"' },
+        { id: "message", label: "Pyetja juaj", type: "textarea", full: true, value: p.cat === "Laptopë" ? "Do ta përdor për: " : "" },
+      ],
+      onSubmit: (v) => {
+        const ok = window.CMS?.saveInquiry({ type: "contact", name: v.name, phone: v.phone, email: v.email, message: v.message, productId: p.id, tags: ["pyetje-produkti"] });
+        closeModal();
+        toast(ok ? "Faleminderit! Pyetja u dërgua — do t'ju kontaktojmë së shpejti." : "Pyetja nuk u dërgua. Na telefononi ose provoni përsëri.");
+      },
+    });
+  }
+  function openBusiness() {
+    const items = cart.length ? cart.map((l) => `${l.qty} × ${byId[l.id].name}`).join("\n") : "";
+    openForm({
+      title: "Kërko ofertë për biznes",
+      intro: "Trego çfarë i duhet kompanisë. Ofertën me çmime për sasi, faturë me TVSH dhe afatet ta dërgojmë brenda një dite pune.",
+      submit: "Dërgo kërkesën",
+      fields: [
+        { id: "company", label: "Kompania", attrs: 'autocomplete="organization"' },
+        { id: "name", label: "Personi i kontaktit", value: me()?.name, attrs: 'autocomplete="name"' },
+        { id: "email", label: "Email-i i punës", type: "email", value: me()?.email, attrs: 'autocomplete="email"' },
+        { id: "phone", label: "Telefoni", type: "tel", attrs: 'autocomplete="tel"' },
+        { id: "message", label: "Çfarë ju duhet", type: "textarea", full: true, value: items ? `Artikujt nga shporta:\n${items}\n\n` : "" },
+      ],
+      onSubmit: (v) => {
+        const ok = window.CMS?.saveInquiry({ type: "quote", company: v.company, name: v.name, email: v.email, phone: v.phone, message: v.message, tags: ["b2b"] });
+        closeModal();
+        toast(ok ? "Faleminderit! Kërkesa për ofertë u dërgua — ekipi ITCOM ju kontakton brenda një dite pune." : "Kërkesa nuk u dërgua. Na telefononi ose provoni përsëri.");
+      },
+    });
   }
 
   /* ================================================================ krahasimi */
@@ -973,28 +1146,36 @@
     const ps = compare.map((id) => byId[id]);
     const cat = ps[0].cat;
     const minPrice = Math.min(...ps.map((p) => p.price));
-    const maxRating = Math.max(...ps.map((p) => p.rating));
-    const rows = [
-      ["Çmimi", ps.map((p) => `<span class="${p.price === minPrice ? "best" : ""}">${fmt(p.price)}</span>`), ps.map((p) => p.price)],
-      ["Vlerësimi", ps.map((p) => (p.reviews ? `<span class="${p.rating === maxRating ? "best" : ""}">${rate(p.rating)} ★</span> <span class="muted">(${p.reviews})</span>` : '<span class="muted">Pa vlerësime</span>')), ps.map((p) => p.rating)],
-      ["Disponueshmëria", ps.map(stockLabel), ps.map((p) => (p.stock ? (p.stock <= 5 ? 1 : 2) : 0))],
-      ["Brendi", ps.map((p) => esc(p.brand)), ps.map((p) => p.brand)],
-      ...(FACETS[cat] || []).map((f) => [f.label, ps.map((p) => (p.attrs[f.key] === undefined ? "—" : esc(f.fmt ? f.fmt(p.attrs[f.key]) : p.attrs[f.key]))), ps.map((p) => String(p.attrs[f.key]))]),
-      ["Veçoritë kryesore", ps.map((p) => p.specs.map(esc).join("<br>")), ps.map((p) => p.specs.join())],
+    const groups = [
+      ["Bazat", [
+        ["Çmimi", ps.map((p) => `<span class="${p.price === minPrice ? "best" : ""}">${fmt(p.price)}</span>`), ps.map((p) => p.price)],
+        ["Disponueshmëria", ps.map(stockLabel), ps.map((p) => (p.stock ? (p.stock <= 5 ? 1 : 2) : 0))],
+        ["Brendi", ps.map((p) => esc(p.brand)), ps.map((p) => p.brand)],
+      ]],
+      ["Specifikimet", (FACETS[cat] || []).map((f) => [f.label, ps.map((p) => (p.attrs[f.key] === undefined ? "—" : esc(f.fmt ? f.fmt(p.attrs[f.key]) : p.attrs[f.key]))), ps.map((p) => String(p.attrs[f.key]))])],
+      ["Veçoritë dhe garancia", [
+        ["Veçoritë kryesore", ps.map((p) => p.specs.map(esc).join("<br>")), ps.map((p) => p.specs.join())],
+        ["Garancia", ps.map(() => "24 muaj"), ps.map(() => "24")],
+      ]],
     ];
-    const body = rows.map(([label, cells, raw]) => {
-      const diff = new Set(raw).size > 1;
-      if (onlyDiff && !diff) return "";
-      return `<tr class="${diff ? "diff" : ""}"><th scope="row">${label}</th>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
+    const body = groups.map(([title, rows]) => {
+      const html = rows.map(([label, cells, raw]) => {
+        const diff = new Set(raw).size > 1;
+        if (onlyDiff && !diff) return "";
+        return `<tr class="${diff ? "diff" : ""}"><th scope="row">${label}</th>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
+      }).join("");
+      return html ? `<tbody><tr class="cmp__group"><th colspan="${ps.length + 1}" scope="colgroup">${title}</th></tr>${html}</tbody>` : "";
     }).join("");
     openModal(`
       <div class="cmp">
         <h2>Krahasimi: ${esc(cat)}</h2>
         <div class="cmp__opts"><label class="check"><input type="checkbox" id="cmpDiff" ${onlyDiff ? "checked" : ""} /> Shfaq vetëm dallimet</label><span>Rreshtat me sfond ndryshojnë mes produkteve.</span></div>
-        <table>
-          <thead><tr><td></td>${ps.map((p) => `<td><div class="cmp-head">${media(p)}<b>${esc(p.name)}</b><div class="row"><button type="button" class="btn btn--primary" data-add="${p.id}" ${p.stock ? "" : "disabled"}>Shto në shportë</button><button type="button" class="btn btn--ghost" data-uncmp="${p.id}" data-reopen>Hiq</button></div></div></td>`).join("")}</tr></thead>
-          <tbody>${body}</tbody>
-        </table>
+        <div class="cmp__scroll" tabindex="0" aria-label="Tabela e krahasimit">
+          <table>
+            <thead><tr><td></td>${ps.map((p) => `<th scope="col"><div class="cmp-head">${media(p)}<a href="${productHref(p.id)}" data-close-modal>${esc(p.name)}</a><b>${fmt(p.price)}</b><div class="row"><button type="button" class="btn btn--cta" data-add="${p.id}" ${p.stock ? "" : "disabled"}>Shto në shportë</button><button type="button" class="link-btn" data-uncmp="${p.id}" data-reopen>Hiq</button></div></div></th>`).join("")}</tr></thead>
+            ${body}
+          </table>
+        </div>
       </div>`, "modal--compare");
     $("#cmpDiff").onchange = (e) => openCompare(e.target.checked);
   }
@@ -1020,61 +1201,123 @@
       : `<div class="empty">${svg(ICON.heart, "icon icon--xl")}<h3>Ende nuk keni ruajtur asgjë</h3><p class="muted">Prekni zemrën te çdo produkt për ta ruajtur këtu.</p></div>`}</div>`, "modal--wish");
   }
 
-  /* ================================================================ porosia */
-  function openCheckout() {
-    if (!cart.length) return;
-    closeCart();
-    const me = Account.user();
-    const draft = Object.assign(me ? { name: me.name, email: me.email } : {}, saved.get("checkout", {}));
-    const f = (id, label, type = "text", extra = "", cls = "") => `
-      <label class="field ${cls}" for="co-${id}">${label}
-        <input id="co-${id}" name="${id}" type="${type}" value="${esc(draft[id] || "")}" ${extra} />
-        <span class="err"></span>
-      </label>`;
-    openModal(`
-      <form class="checkout" id="checkoutForm" novalidate>
-        <div>
-          <h2>Përfundo porosinë</h2>
-          <p class="muted">Dyqan demo: nuk dërgohet asnjë porosi dhe nuk merret asnjë pagesë.</p>
-          <h3>Të dhënat e kontaktit</h3>
-          <div class="form-grid">
-            ${f("name", "Emri dhe mbiemri", "text", 'autocomplete="name"')}
-            ${f("company", "Kompania (opsionale)", "text", 'autocomplete="organization"')}
-            ${f("email", "Email-i", "email", 'autocomplete="email"')}
-            ${f("phone", "Telefoni", "tel", 'autocomplete="tel" placeholder="+383 4x xxx xxx"')}
-          </div>
-          <h3>Adresa e dërgesës</h3>
-          <div class="form-grid">
-            ${f("address", "Rruga dhe numri", "text", 'autocomplete="street-address"', "full")}
-            ${f("city", "Qyteti", "text", 'autocomplete="address-level2"')}
-            ${f("zip", "Kodi postar", "text", 'autocomplete="postal-code" inputmode="numeric"')}
-          </div>
-          <h3>Mënyra e dërgesës</h3>
-          <div class="options">
-            <label class="option"><input type="radio" name="delivery" value="standard" checked /><span>Dërgesë standarde<small>Arrin ${deliveryDate(2)}</small></span><b id="dStd"></b></label>
-            <label class="option"><input type="radio" name="delivery" value="express" /><span>Dërgesë e shpejtë<small>Arrin ${deliveryDate(1)}</small></span><b id="dExp"></b></label>
-            <label class="option"><input type="radio" name="delivery" value="pickup" /><span>Marrje në dyqan<small>Gati për 2 orë</small></span><b>Falas</b></label>
-          </div>
-          <h3>Mënyra e pagesës</h3>
-          <div class="options">
-            <label class="option"><input type="radio" name="pay" value="cod" checked /><span>Pagesë në dorëzim<small>Me para në dorë ose me kartelë te korrieri</small></span></label>
-            <label class="option"><input type="radio" name="pay" value="inst" /><span>Me këste mujore<small>Deri në ${S.installments} muaj me kartelat e bankave partnere</small></span></label>
-            <label class="option"><input type="radio" name="pay" value="bank" /><span>Transfertë bankare<small>Faturë pro‑forma me email</small></span></label>
-          </div>
+  /* ================================================================ shporta, porosia, konfirmimi */
+  const steps = (n) => `<ol class="steps" aria-label="Hapat e blerjes">${["Shporta", "Të dhënat", "Konfirmimi"].map((t, i) => `<li ${i + 1 === n ? 'aria-current="step"' : ""} class="${i + 1 < n ? "is-done" : ""}">${t}</li>`).join("")}</ol>`;
+  const summaryHTML = (t, cta) => `
+    <aside class="sum" aria-label="Përmbledhja">
+      <h2>Përmbledhja</h2>
+      <ul class="sum__lines">${cart.map((l) => `<li><span>${l.qty} × ${esc(byId[l.id].name)}</span><span class="num">${fmt(byId[l.id].price * l.qty)}</span></li>`).join("")}</ul>
+      <dl class="sum__totals">
+        <dt>Nëntotali</dt><dd>${fmt(t.subtotal)}</dd>
+        ${t.savings > 0 ? `<dt>Kurseni</dt><dd class="save">−${fmt(t.savings)}</dd>` : ""}
+        <dt>Dërgesa</dt><dd id="sumShip">${t.shipping === 0 ? "0,00 €" : fmt(t.shipping)}</dd>
+        <dt class="grand">Totali</dt><dd class="grand" id="sumTotal">${fmt(t.total)}</dd>
+      </dl>
+      <p class="sum__vat">Përfshirë TVSH ${Math.round(S.vatRate * 100)}% (${fmt(t.vat)}).</p>
+      ${cta}
+    </aside>`;
+
+  function renderCartPage() {
+    showView("cart", "Shporta · ITCOM");
+    const t = totals();
+    const left = S.freeShippingFrom - t.subtotal;
+    $("#viewCart").innerHTML = `
+      ${steps(1)}
+      <h1>Shporta jote</h1>
+      <p class="muted page-sub">Kostot dhe të dhënat kryesore në një vend.</p>
+      ${cart.length ? `
+      <div class="flow">
+        <div class="flow__main">
+          ${left > 0 ? `<p class="ship-note">Shto edhe <b>${fmt(left)}</b> për dërgesë falas.</p>` : `<p class="ship-note ship-note--ok">Dërgesa jote është falas.</p>`}
+          <ul class="cline-list">${cart.map((l) => {
+            const p = byId[l.id];
+            return `<li class="cline">
+              <a href="${productHref(p.id)}" class="cline__img" tabindex="-1" aria-hidden="true">${media(p)}</a>
+              <div class="cline__info">
+                <h2><a href="${productHref(p.id)}">${esc(p.name)}</a></h2>
+                <p class="muted">${esc(shortSpecs(p))}</p>
+                <b class="cline__price">${fmt(p.price * l.qty)}</b>
+                ${l.qty > 1 ? `<small class="muted">${fmt(p.price)} / copë</small>` : ""}
+              </div>
+              <div class="cline__ctl">
+                <div class="qty" role="group" aria-label="Sasia për ${esc(p.name)}">
+                  <button type="button" data-qty="${p.id}" data-d="-1" aria-label="Zvogëlo sasinë">−</button>
+                  <span>${l.qty}</span>
+                  <button type="button" data-qty="${p.id}" data-d="1" ${l.qty >= p.stock ? "disabled" : ""} aria-label="Rrit sasinë">+</button>
+                </div>
+                <button type="button" class="link-btn" data-remove="${p.id}">Hiq</button>
+              </div>
+            </li>`;
+          }).join("")}</ul>
+          <a class="link-back" href="#/produktet">← Kthehu te produktet</a>
         </div>
-        <aside class="summary">
-          <h3>Përmbledhja e porosisë</h3>
-          <ul>${cart.map((l) => `<li><span>${l.qty} × ${esc(byId[l.id].name)}</span><span class="num">${fmt(byId[l.id].price * l.qty)}</span></li>`).join("")}</ul>
-          <dl class="totals" id="coTotals"></dl>
-          <button class="btn btn--primary btn--block btn--lg" type="submit" value="site">Porosit</button>
+        ${summaryHTML(t, `<a class="btn btn--cta btn--block btn--lg" href="#/porosia">Vazhdo te porosia</a>`)}
+      </div>` : `
+      <div class="state">
+        ${svg(ICON.bag, "icon icon--xl")}
+        <h2>Shporta jote është bosh</h2>
+        <p class="muted">Shfleto kategoritë ose kërko një model.</p>
+        <a class="btn btn--primary" href="#/produktet">Shiko produktet</a>
+      </div>`}`;
+  }
+
+  function renderCheckout() {
+    showView("checkout", "Përfundo porosinë · ITCOM");
+    const u = Account.user();
+    const draft = Object.assign(u ? { name: u.name, email: u.email } : {}, saved.get("checkout", {}));
+    const f = (id, label, type = "text", extra = "", cls = "", optional = false) => `
+      <label class="field ${cls}" for="co-${id}">${label}${optional ? ' <span class="muted">(opsionale)</span>' : ""}
+        <input id="co-${id}" name="${id}" type="${type}" value="${esc(draft[id] || "")}" ${extra} />
+        <span class="err" id="co-${id}-err"></span>
+      </label>`;
+    const t0 = totals();
+    $("#viewCheckout").innerHTML = `
+      ${steps(2)}
+      <h1>Përfundo porosinë</h1>
+      <p class="muted page-sub">Vetëm të dhënat që duhen për dërgesën. Pagesa nuk kryhet online.</p>
+      <form class="flow" id="checkoutForm" novalidate>
+        <div class="flow__main">
+          <section class="card-box">
+            <div class="card-box__head"><h2>${u ? `Porosit si ${esc(u.name.split(" ")[0])}` : "Vazhdo si vizitor"}</h2>${u ? "" : '<button type="button" class="link-btn" data-account>Hyr në llogari</button>'}</div>
+            <p class="muted">Llogaria mbetet opsionale.</p>
+            <div class="form-grid">
+              ${f("name", "Emri dhe mbiemri", "text", 'autocomplete="name"')}
+              ${f("email", "Email-i", "email", 'autocomplete="email"')}
+              ${f("phone", "Telefoni", "tel", 'autocomplete="tel" placeholder="+383 4x xxx xxx"')}
+              ${f("city", "Qyteti", "text", 'autocomplete="address-level2"')}
+              ${f("address", "Rruga dhe numri", "text", 'autocomplete="street-address"', "full")}
+              ${f("company", "Kompania", "text", 'autocomplete="organization"', "", true)}
+              ${f("zip", "Kodi postar", "text", 'autocomplete="postal-code" inputmode="numeric"', "", true)}
+            </div>
+          </section>
+          <section class="card-box">
+            <h2>Pagesa dhe dërgesa</h2>
+            <fieldset class="options">
+              <legend>Dërgesa</legend>
+              <label class="option"><input type="radio" name="delivery" value="standard" checked /><span>Dërgesë standarde<small>Arrin ${deliveryDate(2)}</small></span><b id="dStd"></b></label>
+              <label class="option"><input type="radio" name="delivery" value="express" /><span>Dërgesë e shpejtë<small>Arrin ${deliveryDate(1)}</small></span><b id="dExp"></b></label>
+              <label class="option"><input type="radio" name="delivery" value="pickup" /><span>Marrje në dyqan<small>Gati për 2 orë</small></span><b>Falas</b></label>
+            </fieldset>
+            <fieldset class="options">
+              <legend>Pagesa</legend>
+              <label class="option"><input type="radio" name="pay" value="cod" checked /><span>Pagesë në dorëzim<small>Me para në dorë ose me kartelë te korrieri</small></span></label>
+              <label class="option"><input type="radio" name="pay" value="bank" /><span>Transfertë bankare<small>Faturë pro‑forma me email</small></span></label>
+              ${S.installments ? `<label class="option"><input type="radio" name="pay" value="inst" /><span>Me këste mujore<small>Deri në ${S.installments} muaj · kushtet i konfirmon ekipi para dërgesës</small></span></label>` : ""}
+            </fieldset>
+          </section>
+        </div>
+        ${summaryHTML(t0, `<button class="btn btn--cta btn--block btn--lg" type="submit" value="site">Dërgo porosinë</button>
           ${S.whatsapp ? `<button class="btn btn--wa btn--block btn--lg" type="submit" value="wa">Porosit me WhatsApp</button>` : ""}
-        </aside>
-      </form>`, "modal--checkout");
+          <p class="sum__note">Pas porosisë ju telefonojmë për konfirmim. Asnjë pagesë nuk merret online.</p>
+          <a class="link-back" href="#/shporta">← Kthehu te shporta</a>`)}
+      </form>`;
 
     const form = $("#checkoutForm");
     const delivery = () => form.delivery.value;
     const update = () => {
-      $("#coTotals").innerHTML = totalsHTML(totals(delivery()));
+      const t = totals(delivery());
+      $("#sumShip").textContent = t.shipping === 0 ? "0,00 €" : fmt(t.shipping);
+      $("#sumTotal").textContent = fmt(t.total);
       const base = totals("standard").shipping;
       $("#dStd").textContent = base === 0 ? "Falas" : fmt(base);
       $("#dExp").textContent = fmt(base + S.expressFee);
@@ -1086,16 +1329,17 @@
       const d = saved.get("checkout", {});
       d[e.target.name] = e.target.value;
       saved.set("checkout", d);
-      e.target.closest(".field")?.classList.remove("invalid");
+      const field = e.target.closest(".field");
+      if (field?.classList.contains("invalid")) { field.classList.remove("invalid"); e.target.removeAttribute("aria-invalid"); }
     });
 
     const rules = {
       name: (v) => v.trim().length >= 2 || "Shkruani emrin dhe mbiemrin",
       email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || "Shkruani një email të vlefshëm, p.sh. emri@kompania.com",
       phone: (v) => v.replace(/\D/g, "").length >= 8 || "Shkruani një numër telefoni me të paktën 8 shifra",
-      address: (v) => v.trim().length >= 4 || "Shkruani rrugën dhe numrin",
       city: (v) => v.trim().length >= 2 || "Shkruani qytetin",
-      zip: (v) => /^[A-Za-z0-9 -]{3,10}$/.test(v.trim()) || "Shkruani një kod postar të vlefshëm, p.sh. 10000",
+      address: (v) => delivery() === "pickup" || v.trim().length >= 4 || "Shkruani rrugën dhe numrin",
+      zip: (v) => !v.trim() || /^[A-Za-z0-9 -]{3,10}$/.test(v.trim()) || "Kodi postar duket i pasaktë, p.sh. 10000",
     };
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -1106,10 +1350,12 @@
         const field = input.closest(".field");
         field.classList.toggle("invalid", res !== true);
         field.querySelector(".err").textContent = res === true ? "" : res;
+        if (res === true) input.removeAttribute("aria-invalid"); else { input.setAttribute("aria-invalid", "true"); input.setAttribute("aria-describedby", `co-${name}-err`); }
         if (res !== true && !firstBad) firstBad = input;
       }
-      if (firstBad) { firstBad.focus(); return; }
+      if (firstBad) { firstBad.focus(); announce("Plotësoni fushat e shënuara"); return; }
       const t = totals(delivery());
+      const fields = Object.fromEntries(["name", "company", "phone", "email", "address", "city", "zip"].map((k) => [k, form.elements[k]?.value.trim() || ""]));
       if (e.submitter?.value === "wa" && S.whatsapp) {
         // Porosia dërgohet si mesazh WhatsApp te dyqani; shporta mbetet derisa klienti ta konfirmojë.
         const payLabel = { cod: "Pagesë në dorëzim", inst: "Me këste mujore", bank: "Transfertë bankare" }[form.pay.value];
@@ -1119,33 +1365,45 @@
           ...cart.map((l) => `• ${l.qty} × ${byId[l.id].name} (${byId[l.id].id.toUpperCase()}) – ${fmt(byId[l.id].price * l.qty)}`),
           `Totali: ${fmt(t.total)} (${delLabel}, ${payLabel})`,
           "",
-          `Emri: ${form.name.value.trim()}${form.company.value.trim() ? ` (${form.company.value.trim()})` : ""}`,
-          `Telefoni: ${form.phone.value.trim()}`,
-          `Email: ${form.email.value.trim()}`,
-          `Adresa: ${form.address.value.trim()}, ${form.zip.value.trim()} ${form.city.value.trim()}`,
+          `Emri: ${fields.name}${fields.company ? ` (${fields.company})` : ""}`,
+          `Telefoni: ${fields.phone}`,
+          `Email: ${fields.email}`,
+          `Adresa: ${fields.address}, ${fields.zip} ${fields.city}`,
         ];
         window.open(`https://wa.me/${S.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`, "_blank", "noopener");
         toast("U hap WhatsApp me porosinë tuaj. Dërgojeni mesazhin për ta përfunduar.");
         return;
       }
-      const fields = Object.fromEntries(["name", "company", "phone", "email", "address", "city", "zip"].map((k) => [k, form.elements[k]?.value.trim() || ""]));
-      const saved_ = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty })), form: fields, totals: t, delivery: delivery(), pay: form.pay.value });
-      const orderNo = saved_ || "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
-      const email = fields.email;
+      const number = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty })), form: fields, totals: t, delivery: delivery(), pay: form.pay.value })
+        || "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
+      try { sessionStorage.setItem("itcom:last-order", JSON.stringify({ number, total: t.total, email: fields.email, items: cart.map((l) => `${l.qty} × ${byId[l.id].name}`), delivery: delivery() })); } catch { /* ignore */ }
       cart = [];
       saveCart();
       renderCart();
       refreshCards();
-      openModal(`
-        <div class="success">
-          <div class="success__icon">${svg(ICON.check)}</div>
-          <h2>Porosia u pranua</h2>
-          <p class="muted">Numri i porosisë suaj</p>
-          <code>${orderNo}</code>
-          <p>Totali <b>${fmt(t.total)}</b>. Në një dyqan real, konfirmimi do të dërgohej te <b>${esc(email)}</b>.</p>
-          <button type="button" class="btn btn--primary btn--lg" data-close-modal>Vazhdo blerjen</button>
-        </div>`, "modal--success");
+      go(`#/konfirmimi/${encodeURIComponent(number)}`);
     });
+  }
+
+  function renderDone(number) {
+    let o = null;
+    try { o = JSON.parse(sessionStorage.getItem("itcom:last-order") || "null"); } catch { /* ignore */ }
+    showView("done", "Porosia u pranua · ITCOM");
+    $("#viewDone").innerHTML = `
+      ${steps(3)}
+      <div class="done">
+        <div class="done__icon">${svg(ICON.check)}</div>
+        <h1>Porosia u pranua</h1>
+        <p class="muted">Numri i porosisë</p>
+        <code class="done__no">${esc(number || o?.number || "")}</code>
+        ${o ? `<ul class="done__items">${o.items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul><p>Totali <b>${fmt(o.total)}</b>${o.delivery === "pickup" ? " · marrje në dyqan" : ""}.</p>` : ""}
+        <ol class="done__next">
+          <li>Ju telefonojmë brenda ditës së punës për ta konfirmuar porosinë.</li>
+          <li>${o?.delivery === "pickup" ? "Ju lajmërojmë kur porosia të jetë gati në dyqan." : "Korrieri ju telefonon para se të vijë te adresa juaj."}</li>
+          <li>Paguani në dorëzim ose me transfertë, sipas zgjedhjes suaj.</li>
+        </ol>
+        <a class="btn btn--primary btn--lg" href="#/">Vazhdo blerjen</a>
+      </div>`;
   }
 
   /* ================================================================ njoftimet */
@@ -1274,7 +1532,7 @@
 
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-promo],[data-mega],[data-deals],[data-crumb],[data-slide],[data-rail],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-all-brands],[data-bestsellers],[data-builder],[data-account],[data-build-open],[data-build-cart],[data-build-del]");
+    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-mega],[data-slide],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-builder],[data-business],[data-ask],[data-account],[data-build-open],[data-build-cart],[data-build-del]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
     if (!t) return;
@@ -1282,35 +1540,27 @@
     if (d.add) addToCart(d.add);
     else if (d.wish) toggleWish(d.wish);
     else if (d.cmp) toggleCompare(d.cmp);
-    else if (d.open) openProduct(d.open);
+    else if (d.open) go(productHref(d.open));
     else if (d.qty) setQty(d.qty, cartQty(d.qty) + Number(d.d));
     else if (d.remove) removeLine(d.remove);
     else if (d.uncmp) { compare = compare.filter((x) => x !== d.uncmp); saveCompare(); if ("reopen" in d) compare.length >= 2 ? openCompare() : closeModal(); }
-    else if (d.cat) { closeModal(); toggleMega(false); resetFilters(d.cat); render(); goCatalog(); }
-    else if (d.mega) { const [c, k, v] = d.mega.split("|"); toggleMega(false); resetFilters(c); state.f[k] = new Set([v]); render(); goCatalog(); }
-    else if (d.brand) { resetFilters(); state.brands.add(d.brand); render(); goCatalog(); }
-    else if ("deals" in d) { resetFilters(); state.onSale = true; state.sort = "discount"; render(); goCatalog(); }
-    else if (d.promo) {
-      if (d.promo === "gpus") resetFilters("Kartela grafike");
-      else if (d.promo === "2in1") { resetFilters("Laptopë"); state.f.type = new Set(["2‑në‑1"]); }
-      render(); goCatalog();
-    }
-    else if (d.chip) { d.chip === "all" ? (resetFilters(), render()) : removeFilter(d.chip); }
-    else if (d.page) { state.page = Number(d.page); renderResults(); goCatalog(); }
-    else if (d.crumb) { resetFilters(); render(); if (d.crumb === "home") window.scrollTo({ top: 0 }); else goCatalog(); }
+    else if (d.cat) { closeModal(); toggleMega(false); resetFilters(d.cat); go(`#/kategoria/${catSlug(d.cat)}`); }
+    else if (d.mega) { const [c, k, v] = d.mega.split("|"); toggleMega(false); resetFilters(c); state.f[k] = new Set([v]); go(`#/kategoria/${catSlug(c)}`); }
+    else if (d.brand) { closeModal(); resetFilters(); state.brands.add(d.brand); go("#/produktet"); }
+    else if (d.chip) { if (d.chip === "all") { const q = state.q; resetFilters(state.cat); state.q = q; render(); } else removeFilter(d.chip); }
+    else if (d.page) { state.page = Number(d.page); renderResults(); $("#viewCatalog").scrollIntoView({ block: "start" }); }
     else if (d.slide) { goSlide(Number(d.slide)); autoSlide(); }
-    else if (d.rail) { const r = $("#" + d.rail); r.scrollBy({ left: Number(d.dir) * r.clientWidth * 0.8, behavior: "smooth" }); }
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
     else if (d.info) openInfo(d.info);
-    else if ("builder" in d) window.ITCOM.openBuilder?.();
+    else if ("builder" in d) { e.preventDefault(); closeModal(); window.ITCOM.openBuilder?.(); }
+    else if ("business" in d) openBusiness();
+    else if (d.ask) openAsk(d.ask);
     else if ("account" in d) openAccount();
     else if (d.buildOpen) { const b = Account.builds().find((x) => x.id === d.buildOpen); if (b) window.ITCOM.openBuilder?.(b); }
-    else if (d.buildCart) { const b = Account.builds().find((x) => x.id === d.buildCart); if (b) { let n = 0; for (const id of [...Object.values(b.parts), ...(b.assembly ? ["srv-assembly"] : [])]) if (addToCart(id, 1, true)) n++; closeModal(); toast(`U shtuan ${n} artikuj nga “${esc(b.name)}”`, { label: "Shiko shportën", fn: openCart }); } }
+    else if (d.buildCart) { const b = Account.builds().find((x) => x.id === d.buildCart); if (b) { let n = 0; for (const id of [...Object.values(b.parts), ...(b.assembly ? ["srv-assembly"] : [])]) if (addToCart(id, 1, true)) n++; closeModal(); toast(`U shtuan ${n} artikuj nga “${esc(b.name)}”`, { label: "Shiko shportën", fn: () => go("#/shporta") }); } }
     else if (d.buildDel) { Account.deleteBuild(d.buildDel); openAccount(); }
     else if (d.slideDir) { goSlide(slide + Number(d.slideDir)); autoSlide(); }
-    else if ("bestsellers" in d) { resetFilters(); state.sort = "reviews"; render(); goCatalog(); }
-    else if ("allBrands" in d) { resetFilters(); expandedFacets.add("brand"); closedFacets.delete("brand"); render(); goCatalog(); }
     else if ("close" in d) closeCart();
     else if ("closeModal" in d) closeModal();
   });
@@ -1329,7 +1579,6 @@
       (state.f[k] ||= new Set());
       on ? state.f[k].add(v) : state.f[k].delete(v);
     }
-    else if (fk.startsWith("rating:")) state.rating = Number(fk.slice(7));
     else state[fk] = on;
     state.page = 1;
     render();
@@ -1385,23 +1634,22 @@
   });
 
   $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; state.page = 1; renderResults(); });
-  $("#perPage").addEventListener("change", (e) => { state.per = Number(e.target.value); state.page = 1; renderResults(); });
-  $("#viewGrid").addEventListener("click", () => { state.view = "grid"; saved.set("view", "grid"); renderResults(); });
-  $("#viewList").addEventListener("click", () => { state.view = "list"; saved.set("view", "list"); renderResults(); });
-  $("#resetFilters").addEventListener("click", () => { resetFilters(); render(); });
-  $("#emptyReset").addEventListener("click", () => { resetFilters(); render(); });
+  const clearFilters = () => { const q = state.q; resetFilters(state.cat); state.q = q; $("#search").value = q; render(); };
+  $("#resetFilters").addEventListener("click", clearFilters);
+  $("#emptyReset").addEventListener("click", clearFilters);
+  $("#retryResults").addEventListener("click", render);
   $("#openFilters").addEventListener("click", openFilters);
   $("#closeFilters").addEventListener("click", closeFilters);
-  $("#applyFilters").addEventListener("click", () => { closeFilters(); goCatalog(); });
+  $("#applyFilters").addEventListener("click", () => { closeFilters(); $("#viewCatalog").scrollIntoView({ block: "start" }); });
   $("#cartBtn").addEventListener("click", openCart);
   $("#wishlistBtn").addEventListener("click", openWishlist);
   $("#accountBtn").addEventListener("click", () => openAccount());
   $("#compareBtn").addEventListener("click", () => openCompare());
   $("#cmpOpen").addEventListener("click", () => openCompare());
   $("#cmpClear").addEventListener("click", () => { compare = []; saveCompare(); });
-  $("#checkoutBtn").addEventListener("click", openCheckout);
+  $("#checkoutBtn").addEventListener("click", () => go("#/porosia"));
+  $("#cartPageBtn").addEventListener("click", () => go("#/shporta"));
   $("#megaBtn").addEventListener("click", () => toggleMega());
-  $("#recentClear").addEventListener("click", () => { recent = []; saved.set("recent", recent); renderRecent(); });
   overlay.addEventListener("click", () => { closeCart(); closeFilters(); });
   modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
@@ -1441,19 +1689,11 @@
   // Rrëshqitja nuk duhet të llogaritet edhe si klik mbi produkt.
   slider.addEventListener("click", (e) => { if (swiped) { e.stopPropagation(); e.preventDefault(); swiped = false; } }, true);
 
-  $("#b2bForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const input = $("#b2bEmail");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim())) { toast("Shkruani një email pune, p.sh. ju@kompania.com"); input.focus(); return; }
-    const sent = window.CMS?.saveInquiry({ email: input.value.trim() });
-    toast(sent ? "Faleminderit! Kërkesa juaj u dërgua — do t'ju kontaktojmë së shpejti." : "Faleminderit! Ky dyqan demo ende nuk dërgon kërkesa për ofertë.");
-    input.value = "";
-  });
-
   document.addEventListener("keydown", (e) => {
     const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
     if (e.key === "/" && !typing && !modal.open) { e.preventDefault(); search.focus(); }
     if (e.key === "Escape") { closeCart(); closeFilters(); toggleMega(false); hideSuggest(); }
+    if (e.key === "Escape" && document.activeElement?.closest("#slider")) clearInterval(slideTimer);
   });
 
   /* ================================================================ nisja */
@@ -1461,13 +1701,10 @@
   autoSlide();
   renderHome();
   renderMega();
-  render();
   renderCart();
   renderWishCount();
   renderAccountBtn();
   renderTray();
-  tickCountdown();
-  setInterval(tickCountdown, 1000);
 
   // Të dhëna të strukturuara për motorët e kërkimit (Google).
   try {
@@ -1481,8 +1718,7 @@
         position: i + 1,
         item: {
           "@type": "Product", name: p.name, sku: p.id.toUpperCase(), brand: { "@type": "Brand", name: p.brand },
-          description: p.desc, category: p.cat, url: S.siteUrl + "#" + p.id,
-          ...(p.reviews ? { aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating, reviewCount: p.reviews } } : {}),
+          description: p.desc, category: p.cat, url: `${S.siteUrl}p/${p.id}/`, image: new URL(imgSrc(p), S.siteUrl).href,
           offers: { "@type": "Offer", price: p.price.toFixed(2), priceCurrency: S.currency, availability: p.stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" },
         },
       })),
@@ -1490,6 +1726,6 @@
     document.head.appendChild(ld);
   } catch { /* ignore */ }
 
-  // Lidhje e drejtpërdrejtë: #lp-x1c12 hap produktin, #info-delivery hap faqen e dërgesës.
+  // Lidhje e drejtpërdrejtë: #/p/lp-x1c12, #/kategoria/laptope, #info-delivery …
   route();
 })();

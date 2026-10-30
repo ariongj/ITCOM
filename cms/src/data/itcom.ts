@@ -188,6 +188,41 @@ Nëse dëshironi të punoni me ne në shitje, servis ose logjistikë, na kontakt
       `We have no open positions right now.
 
 If you would like to work with us in sales, service or logistics, get in touch and we will let you know when a position opens.`),
+    page('pg-terms', 'terms', T('Kushtet e blerjes', 'Terms of sale'),
+      `Këto kushte vlejnë për çdo porosi në dyqanin online të ITCOM.
+
+### Porosia
+
+- Porosia konsiderohet e pranuar pasi ekipi ITCOM ju kontakton dhe e konfirmon disponueshmërinë dhe çmimin.
+- Çmimet janë në euro dhe përfshijnë TVSH. Kostoja e dërgesës shfaqet para se ta dërgoni porosinë.
+- Fotot tregojnë modelin; ngjyra dhe konfigurimi i saktë verifikohen sipas kodit të artikullit.
+
+### Dërgesa dhe pagesa
+
+- Dërgojmë në gjithë Kosovën, zakonisht brenda 1–2 ditëve pune. Ose merreni falas në dyqan.
+- Pagesa bëhet në dorëzim ose me transfertë bankare. Nuk ruajmë të dhëna kartelash.
+
+### Kthimi dhe garancia
+
+- Kthim brenda 14 ditëve nga pranimi, për produkte të paprekura në paketimin origjinal.
+- Garanci 24 muaj për defektet e fabrikës, sipas kushteve te faqja “Garancia dhe servisi”.`,
+      `These terms apply to every order in the ITCOM online shop.
+
+### Orders
+
+- An order is accepted once the ITCOM team contacts you and confirms availability and price.
+- Prices are in euros and include VAT. The delivery cost is shown before you send the order.
+- Photos show the model; the exact colour and configuration are checked against the item code.
+
+### Delivery and payment
+
+- We deliver across Kosovo, usually within 1–2 working days. Or pick it up free in store.
+- Payment is cash on delivery or bank transfer. We do not store card details.
+
+### Returns and warranty
+
+- Returns within 14 days of delivery, for unused products in their original packaging.
+- 24-month warranty for manufacturing defects, as described on the "Warranty and service" page.`),
     page('pg-privacy', 'privacy', T('Politika e privatësisë', 'Privacy policy'),
       `Mbledhim vetëm të dhënat që na duhen për të përpunuar dhe dërguar porosinë tuaj.
 
@@ -217,7 +252,7 @@ export function buildItcomSlides(products: Product[]): Placement[] {
     eyebrow,
     title,
     subtitle,
-    cta: { label: T('Shto në shportë', 'Add to cart'), href: `#${id}` },
+    cta: { label: T('Shiko produktin', 'View product'), href: `#${id}` },
     secondary: { label: T('Shiko detajet', 'View details'), href: `#${id}` },
     image: img(id),
     alt: S(title.sq),
@@ -227,12 +262,12 @@ export function buildItcomSlides(products: Product[]): Placement[] {
     order,
   });
   return [
-    slide(1, 'lp-mba13m4', T('E re', 'New'), T('MacBook Air 13" me çipin M4', 'MacBook Air 13" with M4'),
-      T('16 GB memorie, deri në 18 orë bateri. Tani në stok, me dërgesë falas.', '16 GB memory, up to 18 hours of battery. In stock with free delivery.')),
-    slide(2, 'cp-5090fe', T('E re', 'New'), T('GeForce RTX 5090 Founders Edition', 'GeForce RTX 5090 Founders Edition'),
-      T('32 GB GDDR7 dhe DLSS 4 për lojëra 4K dhe punë me AI.', '32 GB GDDR7 and DLSS 4 for 4K gaming and AI work.')),
-    slide(3, 'lp-proartp16', T('Për krijues', 'For creators'), T('ASUS ProArt P16', 'ASUS ProArt P16'),
-      T('Ekran 4K OLED 16" dhe grafikë NVIDIA RTX për video, foto dhe 3D.', '16" 4K OLED display and NVIDIA RTX graphics for video, photo and 3D.')),
+    slide(1, 'lp-mba13m4', T('Përzgjedhja ITCOM / Laptopë', 'ITCOM pick / Laptops'), T('Më shumë mundësi. Më pak peshë.', 'More capability. Less weight.'),
+      T('MacBook Air 13" M4 · 16 GB · 256 GB', 'MacBook Air 13" M4 · 16 GB · 256 GB')),
+    slide(2, 'cp-5090fe', T('Përzgjedhja ITCOM / Kartela grafike', 'ITCOM pick / Graphics cards'), T('Performancë 4K. Pa kompromis.', '4K performance. No compromise.'),
+      T('GeForce RTX 5090 Founders Edition · 32 GB GDDR7', 'GeForce RTX 5090 Founders Edition · 32 GB GDDR7')),
+    slide(3, 'lp-proartp16', T('Përzgjedhja ITCOM / Për krijues', 'ITCOM pick / For creators'), T('Ekran 4K OLED. Fuqi RTX.', '4K OLED display. RTX power.'),
+      T('ASUS ProArt P16 · AMD Ryzen AI 9', 'ASUS ProArt P16 · AMD Ryzen AI 9')),
   ];
 }
 

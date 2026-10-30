@@ -8,7 +8,7 @@ import {
 } from './itcom';
 
 /** Bump to force every browser to reload fresh demo data. */
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 /** Product photos, exposed in the CMS media library. */
 function buildMedia(productImages: string[], now: Date): MediaItem[] {

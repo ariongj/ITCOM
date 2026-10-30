@@ -75,7 +75,7 @@ const W = {
 
 window.PRODUCTS = [
   /* ------------------------------------------------------------ Laptopë */
-  { id: "lp-x1c12", img: "assets/products/photo/lp-x1c12.webp", name: "Lenovo ThinkPad X1 Carbon Gen 12", brand: "Lenovo", cat: "Laptopë", price: 2149, old: 2399, stock: 9, rating: 4.8, reviews: 214, badge: "Më i shituri",
+  { id: "lp-x1c12", img: "assets/products/photo/lp-x1c12.webp", name: "Lenovo ThinkPad X1 Carbon Gen 12", brand: "Lenovo", cat: "Laptopë", price: 2149, old: 2399, stock: 9, rating: 4.8, reviews: 214,
     art: { s: "laptop", c: "#232428", w: W.graphite },
     attrs: { type: "Biznes", cpu: "Intel Core Ultra 7", ram: 32, storage: 1000, screen: 14, gpu: "E integruar", os: "Windows 11 Pro" },
     specs: ["Ekran 14\" 2.8K OLED, 120 Hz", "Intel Core Ultra 7 155U", "32 GB LPDDR5X", "SSD 1 TB PCIe 4.0", "1,09 kg, MIL‑STD‑810H"],
@@ -196,7 +196,7 @@ window.PRODUCTS = [
 
 
   /* ------------------------------------------------------------ Procesorë */
-  { id: "cp-7800x3d", img: "assets/products/photo/cp-7800x3d.webp", name: "AMD Ryzen 7 7800X3D", brand: "AMD", cat: "Procesorë", price: 389, stock: 11, rating: 4.9, reviews: 498, badge: "Më i shituri",
+  { id: "cp-7800x3d", img: "assets/products/photo/cp-7800x3d.webp", name: "AMD Ryzen 7 7800X3D", brand: "AMD", cat: "Procesorë", price: 389, stock: 11, rating: 4.9, reviews: 498,
     art: { s: "cpu", c: "#c7c9cd", l: "RYZEN 7" },
     attrs: { socket: "AM5", cores: 8, series: "Ryzen 7000" },
     specs: ["8 bërthama / 16 fije", "Deri në 5,0 GHz", "96 MB L3 (3D V‑Cache)", "TDP 120 W", "Pa ftohës në paketë"],
@@ -347,7 +347,7 @@ window.PRODUCTS = [
  * ---------------------------------------------------------------------- */
 /* Pjesë që shiten vetëm brenda ndërtuesit të PC‑së (nuk shfaqen në katalog). */
 window.BUILDER_PARTS = [
-  { id: "st-990pro2", name: "Samsung 990 PRO 2 TB", brand: "Samsung", cat: "Ruajtja e të dhënave", price: 179, old: 219, stock: 60, rating: 4.9, reviews: 512, badge: "Më i shituri",
+  { id: "st-990pro2", name: "Samsung 990 PRO 2 TB", brand: "Samsung", cat: "Ruajtja e të dhënave", price: 179, old: 219, stock: 60, rating: 4.9, reviews: 512,
     art: { s: "m2", c: "#111214", l: "990 PRO" },
     attrs: { type: "SSD i brendshëm", capacity: 2000, interface: "NVMe PCIe 4.0" },
     specs: ["M.2 2280 NVMe", "Lexim 7.450 MB/s", "Shkrim 6.900 MB/s", "1.200 TBW", "Garanci 5 vjet"],
@@ -372,7 +372,7 @@ window.BUILDER_PARTS = [
     attrs: { type: "Memorie RAM", socket: "DDR5" },
     specs: ["2 × 16 GB", "DDR5‑6000 CL30", "Ndriçim RGB", "Intel XMP 3.0", "Ftohës alumini"],
     desc: "Memorie DDR5 e shpejtë me shirit RGB që përputhet me ndriçimin e PC‑së suaj." },
-  { id: "cs-o11evo", name: "Lian Li O11 Dynamic EVO", brand: "Lian Li", cat: "Komponentë", price: 179, stock: 7, rating: 4.8, reviews: 214, badge: "Më i shituri",
+  { id: "cs-o11evo", name: "Lian Li O11 Dynamic EVO", brand: "Lian Li", cat: "Komponentë", price: 179, stock: 7, rating: 4.8, reviews: 214,
     art: { s: "tower", c: "#1c1d21" },
     attrs: { type: "Kasë", socket: "ATX" },
     specs: ["Mid‑tower ATX, dy dhoma", "Xham i kalitur përpara dhe anash", "GPU deri në 422 mm", "Radiator deri në 360 mm", "E zezë ose e bardhë"],
@@ -412,7 +412,7 @@ window.BUILDER_PARTS = [
     attrs: { type: "Ftohës", socket: "AM5 / LGA1700" },
     specs: ["Ftohës ajri me dy kulla", "Ekran dixhital i temperaturës", "Ndriçim ARGB", "Lartësia 162 mm", "2 × 120 mm FDB"],
     desc: "Ftohës i fuqishëm me ekran që tregon temperaturën e procesorit në kohë reale." },
-  { id: "cl-lf3-360", name: "Arctic Liquid Freezer III 360 A‑RGB", brand: "Arctic", cat: "Komponentë", price: 119, stock: 12, rating: 4.8, reviews: 341, badge: "Zgjedhje e ekspertëve",
+  { id: "cl-lf3-360", name: "Arctic Liquid Freezer III 360 A‑RGB", brand: "Arctic", cat: "Komponentë", price: 119, stock: 12, rating: 4.8, reviews: 341,
     art: { s: "tower", c: "#1c1d21" },
     attrs: { type: "Ftohës", socket: "AM5 / LGA1700" },
     specs: ["Ftohje me lëng 360 mm", "3 × P12 PWM A‑RGB", "Ventilator VRM i integruar", "Garanci 6 vjet", "Ndriçim A‑RGB"],

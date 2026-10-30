@@ -13,6 +13,9 @@
         try { sessionStorage.setItem("itcom-cms-redirect", p + location.search + location.hash); } catch (e) {}
         location.replace("/ITCOM/admin/");
       }
+      // Produkte të shtuara në CMS pa faqe statike ende: hapen në dyqan.
+      var m = p.match(/^\/ITCOM\/p\/([^/]+)\/?$/);
+      if (m) location.replace("/ITCOM/#/p/" + m[1]);
     })();
   </script>
   <style>

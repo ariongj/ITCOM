@@ -45,6 +45,8 @@ const categories = [
 ];
 
 const BADGE = { 'Më i shituri': 'bestseller', 'I ri': 'new' };
+/** The curated home-page selection (report V01): the shop shows featured products there. */
+const PICKS = ['lp-mba13m4', 'lp-proartp16', 'cp-4070s', 'cp-7800x3d'];
 const COST = { 'cat-laptop': 0.82, 'cat-cpu': 0.8, 'cat-gpu': 0.84 };
 
 function ean13(n) {
@@ -73,7 +75,7 @@ function product(p, i, categoryId, builderOnly) {
     options: [],
     specs: p.specs.map((s) => ({ label: same(''), value: same(s) })),
     badges,
-    featured: !!p.badge,
+    featured: PICKS.includes(p.id),
     status: 'active',
     warrantyYears: 2,
     sold: Math.round((p.reviews || 0) * 1.6 + (builderOnly ? 6 : 3)),

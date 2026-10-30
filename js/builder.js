@@ -68,28 +68,30 @@
   // Only a power supply that is too weak is blocked; other clashes are fixed automatically.
   const blocked = (slot, id) => slot === "psu" && !!conflict(slot, id);
 
-  // After a change, swap any part that no longer fits, keeping the customer's latest choice.
-  function autoFix(changed) {
-    const swaps = [];
+  // After a change, find the parts that no longer fit and the closest replacements, keeping the
+  // customer's latest choice. Nothing changes until the customer confirms (planFix only proposes).
+  function planFix(parts, changed) {
+    const next = { ...parts }, swaps = [];
     for (let pass = 0; pass < 5; pass++) {
       let fixed = false;
-      for (const p of errors(st.parts)) {
+      for (const p of errors(next)) {
         const target = p.pair[0] === "psu" ? (changed === "psu" ? null : "psu") : p.pair.find((k) => k !== changed);
         if (!target) continue;
-        const cur = byId[st.parts[target]];
+        const cur = byId[next[target]];
         const ok = options(target)
-          .filter((id) => !errors({ ...st.parts, [target]: id }).some((q) => q.pair.includes(target)))
+          .filter((id) => !errors({ ...next, [target]: id }).some((q) => q.pair.includes(target)))
           .sort((x, y) => target === "psu" ? byId[x].price - byId[y].price : Math.abs(byId[x].price - (cur?.price || 0)) - Math.abs(byId[y].price - (cur?.price || 0)));
-        if (ok[0] && ok[0] !== st.parts[target]) {
-          st.parts[target] = ok[0];
-          swaps.push(`${SLOTS.find((s) => s.key === target).label}: ${byId[ok[0]].name}`);
+        if (ok[0] && ok[0] !== next[target]) {
+          const prev = swaps.find((w) => w.slot === target);
+          if (prev) prev.to = ok[0]; else swaps.push({ slot: target, from: next[target], to: ok[0], why: p.text });
+          next[target] = ok[0];
           fixed = true;
           break;
         }
       }
       if (!fixed) break;
     }
-    if (swaps.length) A.toast(`Përshtatëm pjesët që të përputhen — ${esc(swaps.join(" · "))}`);
+    return { parts: next, swaps };
   }
 
   const total = () => Object.values(st.parts).reduce((s, id) => s + (byId[id]?.price || 0), 0) + (st.assembly ? byId["srv-assembly"]?.price || 0 : 0);
@@ -124,7 +126,7 @@
           const delta = p && oid !== id ? o.price - p.price : 0;
           return `<button type="button" class="bopt ${oid === id ? "is-sel" : ""} ${stop ? "is-bad" : why ? "is-warn" : ""}" data-bpick="${s.key}|${oid}" ${stop ? 'aria-disabled="true"' : ""}>
             ${A.media(o)}
-            <span class="bopt__info"><b>${esc(o.name)}</b><small>${esc(shortSpecs(o))}</small>${why ? `<em>${esc(why)}${stop ? "" : " Do ta përshtatim automatikisht."}</em>` : ""}</span>
+            <span class="bopt__info"><b>${esc(o.name)}</b><small>${esc(shortSpecs(o))}</small>${why ? `<em>${esc(why)}${stop ? "" : " Do t’ju propozojmë pjesët që përputhen."}</em>` : ""}</span>
             <span class="bopt__price"><b>${fmt(o.price)}</b>${delta ? `<small class="${delta > 0 ? "up" : "down"}">${delta > 0 ? "+" : "−"}${fmt(Math.abs(delta))}</small>` : oid === id ? `<small class="sel">${svg('<path d="M20 6 9 17l-5-5"/>')} E zgjedhur</small>` : ""}</span>
           </button>`;
         }).join("")}</div>` : ""}
@@ -201,7 +203,7 @@
     A.closeModal();
     root.hidden = false;
     document.body.classList.add("builder-open");
-    if (location.hash !== "#builder") { try { history.replaceState(null, "", "#builder"); } catch { /* ignore */ } }
+    if (location.hash !== "#builder") { try { history.replaceState(null, "", location.pathname + location.search + "#builder"); } catch { /* ignore */ } }
     renderPresets();
     renderAll();
     load3d().then(() => { viewer?.resume(); update3d(); });
@@ -219,13 +221,54 @@
   /* ------------------------------------------------------------ actions */
   function pick(slot, id) {
     if (blocked(slot, id)) { A.toast("Ky furnizim është shumë i dobët për këtë konfigurim."); return; }
-    st.parts[slot] = id;
+    const plan = planFix({ ...st.parts, [slot]: id }, slot);
+    if (plan.swaps.length) { confirmSwaps(slot, id, plan); return; }
+    commit(slot, id, plan.parts);
+  }
+
+  function commit(slot, id, parts) {
+    st.parts = parts;
     if (slot === "case") st.color = 0;
-    autoFix(slot);
     const i = SLOTS.findIndex((s) => s.key === slot);
     st.open = SLOTS[i + 1]?.key || null;
     renderAll();
     root.querySelector(`[data-bslot="${slot}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
+  // Raporti V09: para se të ndryshojmë pjesë të tjera, tregojmë çfarë ndryshon dhe diferencën në çmim.
+  function confirmSwaps(slot, id, plan) {
+    const label = (k) => SLOTS.find((s) => s.key === k).label;
+    const before = total();
+    const after = Object.values(plan.parts).reduce((s, x) => s + (byId[x]?.price || 0), 0) + (st.assembly ? byId["srv-assembly"]?.price || 0 : 0);
+    const diff = after - before;
+    const signed = (d) => (d > 0 ? "+" : d < 0 ? "−" : "") + fmt(Math.abs(d));
+    A.openModal(`
+      <div class="bconfirm">
+        <h2>Duhet të ndryshojmë ${plan.swaps.length === 1 ? "një pjesë" : `${plan.swaps.length} pjesë`}</h2>
+        <p class="muted">Me <b>${esc(byId[id].name)}</b> si ${esc(label(slot).toLowerCase())}, këto pjesë nuk përputhen më. Ky është propozimi ynë:</p>
+        <ul class="bconfirm__list">${plan.swaps.map((w) => {
+          const d = (byId[w.to]?.price || 0) - (byId[w.from]?.price || 0);
+          return `<li>
+            <small>${esc(label(w.slot))}</small>
+            <span class="bconfirm__from">${w.from ? esc(byId[w.from].name) : "—"}</span>
+            <span class="bconfirm__to">${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}${esc(byId[w.to].name)}</span>
+            <b class="${d > 0 ? "up" : d < 0 ? "down" : ""}">${signed(d)}</b>
+            <em>${esc(w.why)}</em>
+          </li>`;
+        }).join("")}</ul>
+        <dl class="bconfirm__total"><dt>Totali tani</dt><dd>${fmt(before)}</dd><dt>Totali pas ndryshimit</dt><dd><b>${fmt(after)}</b> <span class="${diff > 0 ? "up" : diff < 0 ? "down" : ""}">(${signed(diff)})</span></dd></dl>
+        <div class="bconfirm__actions">
+          <button type="button" class="btn btn--cta btn--lg" id="bcYes">Po, ndrysho pjesët</button>
+          <button type="button" class="btn btn--ghost btn--lg" id="bcNo">Mbaj zgjedhjen e mëparshme</button>
+        </div>
+      </div>`, "modal--info");
+    $("#bcYes").focus();
+    $("#bcYes").addEventListener("click", () => {
+      A.closeModal();
+      commit(slot, id, plan.parts);
+      A.toast(`U ndryshuan: ${esc(plan.swaps.map((w) => `${label(w.slot)} → ${byId[w.to].name}`).join(" · "))}`);
+    });
+    $("#bcNo").addEventListener("click", () => A.closeModal());
   }
 
   function addAllToCart() {

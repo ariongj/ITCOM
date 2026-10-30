@@ -291,10 +291,9 @@
     }
    ],
    "badges": [
-    "bestseller",
     "sale"
    ],
-   "featured": true,
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 345,
@@ -321,7 +320,7 @@
     },
     "rating": 4.8,
     "reviews": 214,
-    "badge": "Më i shituri",
+    "badge": "",
     "art": {
      "s": "laptop",
      "c": "#232428",
@@ -1324,7 +1323,7 @@
     }
    ],
    "badges": [],
-   "featured": false,
+   "featured": true,
    "status": "active",
    "warrantyYears": 2,
    "sold": 3,
@@ -3228,9 +3227,7 @@
      }
     }
    ],
-   "badges": [
-    "bestseller"
-   ],
+   "badges": [],
    "featured": true,
    "status": "active",
    "warrantyYears": 2,
@@ -3254,7 +3251,7 @@
     },
     "rating": 4.9,
     "reviews": 498,
-    "badge": "Më i shituri",
+    "badge": "",
     "art": {
      "s": "cpu",
      "c": "#c7c9cd",
@@ -3355,7 +3352,7 @@
    "badges": [
     "new"
    ],
-   "featured": true,
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 3,
@@ -4211,7 +4208,7 @@
    "badges": [
     "sale"
    ],
-   "featured": false,
+   "featured": true,
    "status": "active",
    "warrantyYears": 2,
    "sold": 389,
@@ -4457,7 +4454,7 @@
    "badges": [
     "new"
    ],
-   "featured": true,
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 3,
@@ -4581,7 +4578,7 @@
    "badges": [
     "new"
    ],
-   "featured": true,
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 3,
@@ -6533,10 +6530,9 @@
     }
    ],
    "badges": [
-    "bestseller",
     "sale"
    ],
-   "featured": true,
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 825,
@@ -6561,7 +6557,7 @@
     },
     "rating": 4.9,
     "reviews": 512,
-    "badge": "Më i shituri",
+    "badge": "",
     "art": {
      "s": "m2",
      "c": "#111214",
@@ -7152,10 +7148,8 @@
      }
     }
    ],
-   "badges": [
-    "bestseller"
-   ],
-   "featured": true,
+   "badges": [],
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 348,
@@ -7179,7 +7173,7 @@
     },
     "rating": 4.8,
     "reviews": 214,
-    "badge": "Më i shituri",
+    "badge": "",
     "art": {
      "s": "tower",
      "c": "#1c1d21"
@@ -8133,7 +8127,7 @@
     }
    ],
    "badges": [],
-   "featured": true,
+   "featured": false,
    "status": "active",
    "warrantyYears": 2,
    "sold": 552,
@@ -8157,7 +8151,7 @@
     },
     "rating": 4.8,
     "reviews": 341,
-    "badge": "Zgjedhje e ekspertëve",
+    "badge": "",
     "art": {
      "s": "tower",
      "c": "#1c1d21"

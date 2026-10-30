@@ -78,7 +78,7 @@
       return { id: name, icon: orig ? orig[1] : "grid" };
     });
 
-    var shop = [], parts = [];
+    var shop = [], parts = [], featured = [];
     (db.products || []).forEach(function (p) {
       if (p.status !== "active" || (p.channels && p.channels.indexOf("online") < 0)) return;
       var builder = BUILDER_CATS.indexOf(p.categoryId) >= 0;
@@ -91,6 +91,7 @@
       var item = {
         id: p.id,
         img: p.images && p.images[0] ? localSrc(p.images[0]) : undefined,
+        imgs: (p.images || []).map(localSrc),
         name: sq(p.name),
         brand: p.vendor || base.brand || "",
         cat: builder ? base.cat || "Komponentë" : catName[p.categoryId],
@@ -106,9 +107,11 @@
         desc: sq(p.description),
       };
       if (p.slug && p.slug !== p.id) CMS.slugToId[p.slug] = p.id;
+      if (p.featured && !builder) featured.push(p.id);
       (builder ? parts : shop).push(item);
     });
 
+    CMS.featured = featured;
     window.CATEGORIES = categories;
     window.FACETS = facets;
     window.PRODUCTS = shop;
@@ -200,7 +203,7 @@
       var p = l.product;
       var service = /^srv-/.test(p.id);
       return {
-        productId: service ? "" : p.id, sku: p.id.toUpperCase(), name: p.name, image: p.img ? (/^(data:|https?:)/.test(p.img) ? p.img : new URL(p.img, location.href).pathname) : "",
+        productId: service ? "" : p.id, sku: p.id.toUpperCase(), name: p.name, image: p.img ? (/^(data:|https?:)/.test(p.img) ? p.img : new URL(p.img, document.baseURI).pathname) : "",
         unit: "kom", qty: l.qty, options: "", unitPrice: p.price, installation: false, installationPrice: 0,
         lineTotal: round2(p.price * l.qty), discount: 0, allocations: [], custom: service || undefined,
       };
@@ -238,19 +241,22 @@
   };
 
   /** Saves a business quote request in the CMS inbox. */
+  /** Saves a quote request or a product question in the CMS inbox. */
   CMS.saveInquiry = function (q) {
     return push("inquiry", {
       id: "inq_web_" + Date.now().toString(36),
       createdAt: new Date().toISOString(),
-      type: "quote",
-      name: q.name || q.email,
+      type: q.type || "quote",
+      name: q.name || q.email || "",
       phone: q.phone || "",
-      email: q.email,
+      email: q.email || undefined,
+      company: q.company || undefined,
+      productId: q.productId || undefined,
       message: q.message || "Kërkesë për ofertë nga seksioni ITCOM Business.",
       status: "new",
       seen: false,
       source: "web-form",
-      tags: ["b2b"],
+      tags: q.tags || ["b2b"],
     });
   };
 

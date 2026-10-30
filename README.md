@@ -6,26 +6,34 @@ The store's interface and product content are in **Albanian** (prices formatted 
 
 ## Features
 
-**Shopping**
-- Marketplace home page: hero slider, promo tiles, category and brand sidebar, shop by category, deals (shown once there are at least 4 discounted products), top brands
-- Mega menu ("Categories") with quick links such as *Laptops → 2‑in‑1* or *Graphics cards → AMD Radeon*
-- Instant search suggestions with highlighted matches, category shortcuts and keyboard navigation (press `/` to focus)
-- Product page with buy box, instalment price, delivery date estimate, specification table and similar products
-- Compare up to 4 products from the same category side by side, with "only show differences"
+**Shopping** (layout from the visual report of 30 October 2026, "Round 01")
+- Home page in a fixed order: one hero item at a time (slider kept) with two side promos, a 4‑item service strip, "Gjej kategorinë tënde", a curated row ("Përzgjedhje që ia vlen t’i shohësh", the CMS's *featured* products), the PC builder and "Cili laptop të përshtatet?" blocks, brands, ITCOM Business and the footer
+- One product card everywhere: square photo, 2‑line title, short specs, price, old price only when the discount is real, stock, one button; no stars
+- Every view has its own address: catalogue `#/kategoria/laptope`, `#/produktet`, `#/ofertat`, search `#/kerko/<term>`, cart `#/shporta`, checkout `#/porosia`, confirmation `#/konfirmimi/<no>`; each product has a real page at **`/ITCOM/p/<id>/`**
+- Product page: gallery, H1, tabs (Specifikimet / Përshkrimi / Dërgesa & garancia), "Pyet për produktin" (goes to the CMS inbox), sticky add‑to‑cart bar on phones
+- Cart page and checkout in three steps (Shporta / Të dhënat / Konfirmimi), guest checkout, errors next to each field, order summary always visible
+- Catalogue states: loading skeleton, "nothing matches" with "Pastro filtrat", load error with retry; the result count is announced to screen readers
+- Compare up to 4 products from the same category: sticky header (photo, name, price, button), grouped rows, horizontal scroll on phones, "only show differences"
+- ITCOM Business: a quote request form (company, contact, items prefilled from the cart) that lands in the CMS inbox
 - Wishlist, cart drawer with stock limits and undo, free‑delivery meter, VAT breakdown
-- Checkout with validation, delivery options (standard, express, store pickup) and payment choice
 
 **Advanced filtering (Gjirafa50‑style)**
 - Filters change with the category: Laptops get Type, Processor, RAM, Storage, Screen size, Graphics and OS; Processors get Series, Socket and Cores; Graphics cards get Chip, Series and Memory
 - Live counts next to every option, recalculated against all other active filters; options with no results are greyed out
 - Price range with min/max inputs, a dual slider and quick presets
 - Brand filter with search, "show all" for long lists, collapsible groups (remembered)
-- Availability (in stock, on sale) and customer rating filters
+- Availability (in stock, on sale)
 - Active filter chips with one‑click removal and "Clear all"
-- Sort (recommended, price, biggest discount, rating, most reviewed, name), 12/24/48 per page, grid or list view, pagination
+- Sort (recommended, price, biggest discount, name), pagination
 - On phones, filters open in a drawer with a "Show N results" button
 
-Responsive down to small phones, keyboard accessible, respects reduced motion.
+**Honest data and SEO**
+- No ratings or review counts anywhere, including structured data, until real reviews exist
+- Laptops whose RAM/SSD depend on the configuration say so; the placeholder phone number is never shown as real; the footer marks the shop as a demo
+- Static product pages (`p/<id>/index.html`) with their own title, description, canonical URL, Open Graph tags and `Product` + `BreadcrumbList` JSON‑LD, readable without JavaScript; `sitemap.xml` lists them. Regenerate both after changing products: `node scripts/build-pages.mjs`
+- Products added later in the CMS (no static page yet) still open: `404.html` sends `/ITCOM/p/<id>/` to the shop
+
+Responsive from 360 px phones to wide screens with no sideways scrolling, keyboard accessible (visible focus, the slider pauses on hover and focus), respects reduced motion.
 
 > Checkout is a front‑end demo: no order is sent and no payment is taken. Connect it to a backend or a platform (Shopify, WooCommerce, a payment provider) to take real orders.
 
@@ -33,9 +41,9 @@ Responsive down to small phones, keyboard accessible, respects reduced motion.
 
 A 3D configurator at `#builder` (menu button **Ndërto PC**, home banner, or `index.html#builder`).
 
-- **Live 3D model** (three.js, `js/pc3d.js`), shown in a dark studio with a reflective floor, soft shadows, ambient occlusion (desktop), soft bloom on the RGB lighting and ACES tone mapping. Parts are modelled in detail: finned VRM and M.2 heatsinks, chokes, RAM heat spreaders, a flow-through GPU with visible fin stack and backplate, and braided 24-pin, CPU and GPU power cables in the case colour: the case with glass side panel, motherboard, RAM, graphics card, air or liquid CPU cooler, fans and PSU shroud. Drag to rotate, scroll or pinch to zoom, optional auto-rotate. Four case styles (mesh, glass, wood, perforated), case colour, and an RGB lighting colour that lights fans, RAM, pump and GPU.
+- **Live 3D model** (three.js, `js/pc3d.js`), shown in a dark studio with a reflective floor, soft shadows, ambient occlusion (desktop), soft bloom on the RGB lighting and ACES tone mapping. Parts are modelled in detail: finned VRM and M.2 heatsinks, chokes, RAM heat spreaders, a flow-through GPU with visible fin stack and backplate, and braided 24-pin, CPU and GPU power cables in the case colour: the case with glass side panel, motherboard, RAM, graphics card, air or liquid CPU cooler, fans and PSU shroud. Drag to rotate, scroll or pinch to zoom, optional auto-rotate. The view is labelled as orientative: real parts can differ in shape and colour. Four case styles (mesh, glass, wood, perforated), case colour, and an RGB lighting colour that lights fans, RAM, pump and GPU.
 - **Parts**: CPU, motherboard, RAM, GPU, cooler, SSD, PSU, case, from the real catalogue (`window.BUILD_SPECS` in `js/products.js` holds the technical data: socket, RAM type, GPU length, cooler height, radiator sizes, wattage).
-- **Compatibility checks**: CPU/motherboard socket, RAM type, GPU length vs case, cooler height or radiator size vs case, PSU wattage (estimated draw × 1.2 minimum, × 1.4 recommended). When a choice clashes, the other part is swapped automatically for the closest-priced one that fits; PSUs that are too weak are blocked.
+- **Compatibility checks**: CPU/motherboard socket, RAM type, GPU length vs case, cooler height or radiator size vs case, PSU wattage (estimated draw × 1.2 minimum, × 1.4 recommended). When a choice clashes, the builder proposes the closest-priced part that fits and shows the change and the price difference in a confirmation panel; nothing changes until the customer confirms. PSUs that are too weak are blocked.
 - **Presets**: Gaming 1080p, Gaming 1440p, 4K dhe krijues.
 - **Totals**: price, instalments, power meter, optional assembly service (`srv-assembly` in `window.SERVICES`, 39 €), one click to add the whole PC to the cart.
 - **Accounts**: sign up / sign in from the header, save builds (with a snapshot of the 3D view), reopen them or add them to the cart later. Checkout is pre-filled from the account. **Demo only**: accounts live in the browser's `localStorage`, passwords are stored as SHA-256 hashes, there is no server.
@@ -98,9 +106,9 @@ To host on **GitHub Pages**: Settings → Pages → Deploy from branch → choos
 
 ## Products, images and logos
 
-All products live in `js/products.js`. Each product has a price, optional old price (shows as a discount), stock, rating, specs and an `attrs` object that feeds the filters. Filters per category are defined in `FACETS` in the same file.
+All products live in `js/products.js`. Each product has a price, optional old price (shows as a discount), stock, specs and an `attrs` object that feeds the filters. Filters per category are defined in `FACETS` in the same file.
 
-**Product images**: every product in the shop has an official manufacturer photo in `assets/products/photo/` (sources and edits in `assets/products/photo/SOURCES.md`; dark promotional NVIDIA shots are in `photo/dark/`). Laptop photos show the model; RAM/SSD depend on the configuration. Products with `reviews: 0` show “Ende pa vlerësime” instead of stars. Parts that only exist in the PC builder (motherboards, RAM, coolers, SSDs, power supplies, cases) are in `window.BUILDER_PARTS` and keep their 3D renders in `assets/products/<id>.webp`; they are not listed in the shop.
+**Product images**: every product in the shop has an official manufacturer photo in `assets/products/photo/` (sources and edits in `assets/products/photo/SOURCES.md`; dark promotional NVIDIA shots are in `photo/dark/`). Laptop photos show the model; RAM/SSD depend on the configuration. Parts that only exist in the PC builder (motherboards, RAM, coolers, SSDs, power supplies, cases) are in `window.BUILDER_PARTS` and keep their 3D renders in `assets/products/<id>.webp`; they are not listed in the shop.
 
 ```js
 { id: "lp-x1c12", name: "Lenovo ThinkPad X1 Carbon Gen 12", img: "assets/products/lp-x1c12.jpg", ... }
@@ -117,7 +125,8 @@ Photos on a white or transparent background look best. If an image is missing, t
 | Products, prices, stock, specs, photos | `js/products.js` (`PRODUCTS`) |
 | Filters shown per category | `js/products.js` (`FACETS`) |
 | Currency, VAT, delivery fees, instalments, phone | `window.STORE` in `js/products.js` |
-| Hero slides and promo tiles | `SLIDES` / `renderHero()` in `js/app.js` |
+| Hero slides and promo tiles | CMS → Online Store → Slides, or `SLIDES` / `renderHero()` in `js/app.js` |
+| Static product pages + sitemap | `node scripts/build-pages.mjs` (after product changes) |
 | Colours, fonts, radii (light and dark) | tokens at the top of `css/styles.css` |
 | Logo / favicon | `assets/favicon.svg` |
 

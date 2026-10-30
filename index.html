@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>
+    // Faqet e produkteve kanë adresën e tyre (/ITCOM/p/<id>/): skedarët relativë lexohen gjithmonë nga rrënja e dyqanit.
+    (function () { var p = location.pathname, i = p.indexOf("/p/"), b = document.createElement("base"); b.href = i >= 0 ? p.slice(0, i + 1) : p.replace(/[^/]*$/, ""); document.head.appendChild(b); })();
+  </script>
   <title>ITCOM Store</title>
   <meta name="description" content="ITCOM — laptopë, procesorë, kartela grafike dhe PC të ndërtuara sipas porosisë, për biznese dhe shtëpi." />
   <meta name="theme-color" content="#0b0c0f" />
@@ -24,21 +28,18 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <a class="skip-link" href="#catalog">Kalo te produktet</a>
+  <a class="skip-link" href="#main">Kalo te përmbajtja</a>
 
   <div class="utility">
     <div class="container utility__inner">
-      <span class="utility__perks">
-        <span>Dërgesë falas mbi 300 €</span>
-        <span>Pagesë në dorëzim</span>
-        <span>Me këste deri në 12 muaj</span>
-      </span>
-      <nav class="utility__links" aria-label="Ndihmë">
-        <button type="button" data-info="business">ITCOM Business</button>
+      <nav class="utility__links" aria-label="Ndihmë për blerjen">
         <button type="button" data-info="delivery">Dërgesa</button>
+        <button type="button" data-info="installments">Pagesat</button>
         <button type="button" data-info="warranty">Garancia</button>
+      </nav>
+      <nav class="utility__links" aria-label="Kompania">
+        <button type="button" data-business>ITCOM Business</button>
         <button type="button" data-info="contact">Kontakti</button>
-        <span class="utility__phone"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><b id="phoneText"></b></span>
       </nav>
     </div>
   </div>
@@ -46,7 +47,7 @@
   <header class="header" id="top">
     <div class="header__main">
       <div class="container header__inner">
-        <a class="logo" href="#top" aria-label="ITCOM, faqja kryesore">
+        <a class="logo" href="#/" aria-label="ITCOM, ballina">
           <span class="logo__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></span>
           <span class="logo__word">ITCOM</span>
         </a>
@@ -68,12 +69,10 @@
           </button>
           <button class="hbtn" id="compareBtn" aria-label="Krahaso produktet">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 3 8l4 4M3 8h14M17 12l4 4-4 4M21 16H7"/></svg>
-            <span class="hbtn__label">Krahaso</span>
             <span class="badge" id="cmpCount" hidden>0</span>
           </button>
-          <button class="hbtn" id="wishlistBtn" aria-label="Lista e dëshirave">
+          <button class="hbtn" id="wishlistBtn" aria-label="Të ruajturat">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-            <span class="hbtn__label">Të preferuarat</span>
             <span class="badge" id="wishCount" hidden>0</span>
           </button>
           <button class="hbtn hbtn--cart" id="cartBtn" aria-label="Hap shportën">
@@ -89,17 +88,11 @@
       <div class="container navbar__inner">
         <button class="navbar__all" id="megaBtn" aria-expanded="false" aria-controls="mega">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-          <span>Të gjitha kategoritë</span>
+          <span>Kategoritë</span>
         </button>
         <ul id="catNav"></ul>
-        <button class="navbar__builder" data-builder>
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 6h6M9 9h6"/><circle cx="12" cy="16" r="2"/></svg>
-          Ndërto PC
-        </button>
-        <button class="navbar__deals" data-deals>
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
-          Ofertat
-        </button>
+        <a class="navbar__link" href="#builder" data-builder>Ndërto PC</a>
+        <a class="navbar__link" href="#/ofertat">Ofertat</a>
       </div>
     </nav>
 
@@ -108,89 +101,95 @@
     </div>
   </header>
 
-  <main>
-    <section class="container top" aria-label="Kategoritë dhe ofertat">
-      <aside class="side-cats" aria-label="Kategoritë">
-        <h2 class="side-cats__title">Kategoritë</h2>
-        <ul id="sideCats"></ul>
-        <h2 class="side-cats__title">Markat</h2>
-        <ul id="sideBrands"></ul>
-        <button type="button" class="side-cats__cta" data-builder><b>Ndërto PC‑në tënde</b><span>Zgjidh pjesët dhe shihe në 3D</span></button>
-      </aside>
-      <div class="slider" id="slider" aria-roledescription="carousel" aria-label="Ofertat kryesore">
-        <div class="slider__track" id="slides"></div>
-        <button class="slider__arrow slider__arrow--prev" data-slide-dir="-1" aria-label="Banneri i mëparshëm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-        <button class="slider__arrow slider__arrow--next" data-slide-dir="1" aria-label="Banneri tjetër"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-        <div class="slider__dots" id="dots" role="tablist" aria-label="Zgjidhni bannerin"></div>
-      </div>
-      <div class="side-banners" id="promos"></div>
-    </section>
-
-    <section class="container" aria-label="Pse ITCOM">
-      <ul class="trust">
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><div><b>Dërgesë 24–48 orë</b><span>Në gjithë Kosovën</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><div><b>Garanci 24 muaj</b><span>Për çdo produkt</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg><div><b>Pagesë me këste</b><span>Deri në 12 muaj</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><div><b>Kthim 14 ditë</b><span>Pa pyetje</span></div></li>
-        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 4.5 3h15L21 9M3 9v12h18V9M3 9h18M9 21v-6h6v6"/></svg><div><b>Marrje në dyqan</b><span>Falas, gati për 2 orë</span></div></li>
-      </ul>
-    </section>
-
-    <section class="container" aria-labelledby="pcbTitle">
-      <div class="pcb-banner">
-        <picture class="pcb-banner__photo">
-          <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 1400px" />
-          <img src="assets/photos/gaming-1600.jpg" alt="Kompjuter gaming me monitor dhe ndriçim RGB" width="1600" height="1065" loading="lazy" decoding="async" />
-        </picture>
-        <div class="pcb-banner__copy">
-          <span class="pcb-banner__tag">E re · Konfiguruesi 3D</span>
-          <h2 id="pcbTitle">Ndërto PC‑në tënde dhe shikoje në 3D</h2>
-          <p>Zgjidh procesorin, kartelën grafike, ftohësin, kasën dhe ngjyrën e ndriçimit RGB. Kontrollojmë përputhshmërinë dhe fuqinë automatikisht, dhe ta montojmë ne.</p>
-          <ul class="pcb-banner__points">
-            <li>Pamje 3D që rrotullohet</li><li>Kontroll i përputhshmërisë</li><li>Ruaje te llogaria jote</li>
-          </ul>
-          <button class="btn btn--cta btn--lg" data-builder>Fillo ndërtimin</button>
+  <main id="main" tabindex="-1">
+    <!-- BALLINA -->
+    <div class="view" id="viewHome" data-view="home">
+      <h1 class="sr-only">ITCOM — laptopë, procesorë dhe kartela grafike</h1>
+      <section class="container top" aria-label="Përzgjedhja kryesore">
+        <aside class="side-nav" aria-label="Kategoritë dhe markat">
+          <h2>Kategoritë</h2>
+          <ul id="sideCats"></ul>
+          <h2>Markat</h2>
+          <ul id="sideBrands"></ul>
+        </aside>
+        <div class="slider" id="slider" aria-roledescription="carousel" aria-label="Përzgjedhja ITCOM">
+          <div class="slider__track" id="slides"></div>
+          <button class="slider__arrow slider__arrow--prev" data-slide-dir="-1" aria-label="Artikulli i mëparshëm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button class="slider__arrow slider__arrow--next" data-slide-dir="1" aria-label="Artikulli tjetër"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+          <div class="slider__dots" id="dots" role="tablist" aria-label="Zgjidhni artikullin"></div>
         </div>
-      </div>
-    </section>
+        <div class="side-promos" id="promos"></div>
+      </section>
 
-    <section class="container shelf shelf--deals" id="deals" aria-labelledby="dealsTitle">
-      <div class="shelf__head">
-        <h2 id="dealsTitle">Në zbritje</h2>
-        <span class="shelf__pill">Çmime të ulura këtë javë</span>
-        <button class="shelf__all" data-deals>Shiko të gjitha ofertat</button>
-        <div class="shelf__nav">
-          <button class="icon-btn" data-rail="dealsRail" data-dir="-1" aria-label="Lëviz majtas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-          <button class="icon-btn" data-rail="dealsRail" data-dir="1" aria-label="Lëviz djathtas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      <section class="container" aria-label="Shërbimet">
+        <ul class="svc" id="services"></ul>
+      </section>
+
+      <section class="container home-sec" aria-labelledby="catTitle">
+        <h2 class="home-sec__title" id="catTitle">Gjej kategorinë tënde</h2>
+        <div class="cat-tiles" id="catTiles"></div>
+      </section>
+
+      <section class="container home-sec" aria-labelledby="picksTitle">
+        <div class="home-sec__head"><h2 class="home-sec__title" id="picksTitle">Përzgjedhje që ia vlen t’i shohësh</h2><a class="home-sec__link" href="#/ofertat">Shiko ofertat</a></div>
+        <div class="pgrid" id="picks"></div>
+      </section>
+
+      <section class="container duo" aria-label="Ndihmë në zgjedhje">
+        <div class="duo__builder">
+          <div class="duo__copy">
+            <span class="eyebrow">Ndërto PC</span>
+            <h2>Ndërtuar për mënyrën si luan dhe punon.</h2>
+            <button type="button" class="btn btn--cta" data-builder>Hap konfiguruesin 3D</button>
+          </div>
+          <picture class="duo__photo">
+            <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 480px" />
+            <img src="assets/photos/gaming-1600.jpg" alt="Kompjuter gaming me ndriçim RGB (foto ambienti)" width="1600" height="1065" loading="lazy" decoding="async" />
+          </picture>
         </div>
-      </div>
-      <div class="rail" id="dealsRail"></div>
-    </section>
+        <div class="duo__help">
+          <span class="eyebrow">Zgjedh me qartësi</span>
+          <h2>Cili laptop të përshtatet?</h2>
+          <p>Krahaso specifikat, pastaj vendos.</p>
+          <a class="home-sec__link" href="#/kategoria/laptope">Shfleto laptopët</a>
+        </div>
+      </section>
 
-    <div id="shelves"></div>
+      <section class="container" aria-label="Markat">
+        <ul class="brands-row" id="brandRow"></ul>
+      </section>
+    </div>
 
-    <section class="container shelf" aria-labelledby="catTitle">
-      <div class="shelf__head"><h2 id="catTitle">Blini sipas kategorisë</h2></div>
-      <div class="cat-grid" id="catTiles"></div>
-    </section>
-
-    <section class="container shelf" aria-labelledby="brandTitle">
-      <div class="shelf__head"><h2 id="brandTitle">Markat</h2><button class="shelf__all" data-all-brands>Të gjitha markat</button></div>
-      <div class="brand-grid" id="brandRail"></div>
-    </section>
-
-    <section class="container shelf" id="recentBlock" aria-labelledby="recentTitle" hidden>
-      <div class="shelf__head"><h2 id="recentTitle">Shikuar së fundmi</h2><button class="shelf__all" id="recentClear">Pastro historikun</button></div>
-      <div class="rail" id="recentRail"></div>
-    </section>
-
-    <section class="container catalog" id="catalog" aria-labelledby="resultsTitle">
+    <!-- KATALOGU -->
+    <section class="view container catalog" id="viewCatalog" data-view="catalog" hidden aria-labelledby="resultsTitle">
       <nav class="crumbs" id="crumbs" aria-label="Navigimi"></nav>
+      <div class="catalog__head">
+        <div>
+          <h1 id="resultsTitle">Të gjitha produktet</h1>
+          <p class="muted" id="resultsCount" aria-live="polite"></p>
+        </div>
+        <div class="toolbar__controls">
+          <button class="btn btn--ghost filters__open" id="openFilters">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M7 12h10M10 18h4"/></svg>
+            Filtro <span class="pill" id="filterCount" hidden></span>
+          </button>
+          <label class="select">
+            <span class="select__label">Rendit sipas:</span>
+            <select id="sort">
+              <option value="featured">Të rekomanduarat</option>
+              <option value="price-asc">Çmimi: nga më i ulëti</option>
+              <option value="price-desc">Çmimi: nga më i larti</option>
+              <option value="discount">Zbritja më e madhe</option>
+              <option value="name">Emri A–Z</option>
+            </select>
+          </label>
+        </div>
+      </div>
       <div class="catalog__layout">
         <aside class="filters" id="filters" aria-label="Filtrat">
           <div class="filters__head">
             <h2>Filtrat</h2>
-            <button class="link-btn" id="resetFilters">Pastro të gjitha</button>
+            <button class="link-btn" id="resetFilters">Pastro</button>
             <button class="icon-btn filters__x" id="closeFilters" aria-label="Mbyll filtrat">
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
@@ -202,72 +201,43 @@
         </aside>
 
         <div class="results">
-          <div class="toolbar">
-            <div class="toolbar__title">
-              <h2 id="resultsTitle">Të gjitha produktet</h2>
-              <span class="muted" id="resultsCount"></span>
-            </div>
-            <div class="toolbar__controls">
-              <button class="btn btn--ghost filters__open" id="openFilters">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M7 12h10M10 18h4"/></svg>
-                Filtrat <span class="pill" id="filterCount" hidden></span>
-              </button>
-              <label class="select">
-                <span class="sr-only">Rendit sipas</span>
-                <select id="sort">
-                  <option value="featured">Të rekomanduarat</option>
-                  <option value="price-asc">Çmimi: nga më i ulëti</option>
-                  <option value="price-desc">Çmimi: nga më i larti</option>
-                  <option value="discount">Zbritja më e madhe</option>
-                  <option value="rating">Më të vlerësuarat</option>
-                  <option value="reviews">Më të komentuarat</option>
-                  <option value="name">Emri A–Z</option>
-                </select>
-              </label>
-              <label class="select select--sm">
-                <span class="sr-only">Produkte për faqe</span>
-                <select id="perPage">
-                  <option value="12">12 për faqe</option>
-                  <option value="24" selected>24 për faqe</option>
-                  <option value="48">48 për faqe</option>
-                </select>
-              </label>
-              <div class="seg" role="group" aria-label="Pamja">
-                <button id="viewGrid" aria-pressed="true" aria-label="Pamje rrjetë"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
-                <button id="viewList" aria-pressed="false" aria-label="Pamje listë"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
-              </div>
-            </div>
-          </div>
-
           <div class="chips" id="chips"></div>
-          <div class="grid" id="grid" aria-live="polite"></div>
-          <div class="empty" id="empty" hidden>
+          <div class="pgrid pgrid--catalog" id="grid"></div>
+          <div class="state" id="empty" hidden>
             <svg class="icon icon--xl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <h3>Asnjë produkt nuk përputhet me këta filtra</h3>
-            <p class="muted">Hiqni një filtër ose provoni një kërkim tjetër.</p>
+            <h2>Asnjë produkt nuk përputhet</h2>
+            <p class="muted">Pastro filtrat ose ndrysho termin e kërkimit.</p>
             <button class="btn btn--primary" id="emptyReset">Pastro filtrat</button>
+          </div>
+          <div class="state" id="loadError" hidden>
+            <h2>Produktet nuk u shfaqën</h2>
+            <p class="muted">Diçka nuk shkoi gjatë ngarkimit. Provo përsëri.</p>
+            <button class="btn btn--primary" id="retryResults">Provo përsëri</button>
           </div>
           <nav class="pager" id="pager" aria-label="Faqet"></nav>
         </div>
       </div>
     </section>
 
-    <section class="container b2b" aria-labelledby="b2bTitle">
-      <div class="b2b__card">
-        <picture class="b2b__photo">
-          <source type="image/webp" srcset="assets/photos/workspace-800.webp 800w, assets/photos/workspace-1600.webp 1600w" sizes="(max-width: 1024px) 100vw, 560px" />
-          <img src="assets/photos/workspace-1600.jpg" alt="Hapësirë pune me laptop dhe tavolinë ergonomike" width="1600" height="1067" loading="lazy" decoding="async" />
-        </picture>
-        <div class="b2b__copy">
-          <span class="b2b__eyebrow">ITCOM Business</span>
-          <h2 id="b2bTitle">Blerje për kompani dhe institucione</h2>
-          <p>Çmime për sasi, faturë me TVSH, pagesë me transfertë dhe instalim në vend. Merrni ofertë brenda një dite pune.</p>
-        <form class="b2b__form" id="b2bForm" novalidate>
-          <label class="sr-only" for="b2bEmail">Email-i i punës</label>
-          <input id="b2bEmail" type="email" placeholder="ju@kompania.com" required />
-          <button class="btn btn--cta" type="submit">Kërkoni ofertë</button>
-        </form>
-        </div>
+    <!-- PRODUKTI -->
+    <section class="view container" id="viewProduct" data-view="product" hidden></section>
+
+    <!-- SHPORTA, POROSIA, KONFIRMIMI -->
+    <section class="view container" id="viewCart" data-view="cart" hidden></section>
+    <section class="view container" id="viewCheckout" data-view="checkout" hidden></section>
+    <section class="view container" id="viewDone" data-view="done" hidden></section>
+
+    <!-- ITCOM BUSINESS (në ballinë) -->
+    <section class="container biz" id="business" aria-labelledby="bizTitle">
+      <picture class="biz__photo">
+        <source type="image/webp" srcset="assets/photos/workspace-800.webp 800w, assets/photos/workspace-1600.webp 1600w" sizes="(max-width: 1024px) 100vw, 560px" />
+        <img src="assets/photos/workspace-1600.jpg" alt="Hapësirë pune me laptop dhe tavolinë ergonomike" width="1600" height="1067" loading="lazy" decoding="async" />
+      </picture>
+      <div class="biz__copy">
+        <span class="eyebrow">ITCOM Business</span>
+        <h2 id="bizTitle">Pajisje për ekipin.<br />Zgjidhje e menduar.</h2>
+        <p>Zgjidh artikujt ose trego çfarë i duhet kompanisë. Kërkesa për ofertë shkon te ekipi ITCOM, i cili të kthen përgjigje brenda një dite pune.</p>
+        <button type="button" class="btn btn--cta btn--lg" data-business>Kërko ofertë për biznes</button>
       </div>
     </section>
   </main>
@@ -275,36 +245,39 @@
   <footer class="footer">
     <div class="container footer__grid">
       <div>
-        <a class="logo logo--footer" href="#top"><span class="logo__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></span><span class="logo__word">ITCOM</span></a>
-        <p class="muted">Pajisje IT për biznese dhe shtëpi, me garanci zyrtare dhe dërgesë në gjithë Kosovën.</p>
+        <a class="logo logo--footer" href="#/"><span class="logo__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></span><span class="logo__word">ITCOM</span></a>
+        <p class="footer__tag">Pajisje IT për biznese dhe shtëpi.<br />Përzgjedhje me qartësi.</p>
       </div>
       <div>
-        <h4>Dyqani</h4>
-        <ul id="footerCats"></ul>
+        <h2>Dyqani</h2>
+        <ul>
+          <li><a href="#/produktet">Kategoritë</a></li>
+          <li><a href="#/ofertat">Ofertat</a></li>
+          <li><a href="#builder" data-builder>Ndërto PC</a></li>
+        </ul>
       </div>
       <div>
-        <h4>Ndihmë</h4>
+        <h2>Ndihmë</h2>
         <ul>
           <li><button type="button" data-info="delivery">Dërgesa</button></li>
           <li><button type="button" data-info="returns">Kthimi i produkteve</button></li>
           <li><button type="button" data-info="warranty">Garancia dhe servisi</button></li>
-          <li><button type="button" data-info="installments">Pagesa me këste</button></li>
-          <li><button type="button" data-info="contact">Kontakti</button></li>
+          <li><button type="button" data-info="installments">Pagesat</button></li>
         </ul>
       </div>
       <div>
-        <h4>Kompania</h4>
+        <h2>Kompania</h2>
         <ul>
           <li><button type="button" data-info="about">Rreth ITCOM</button></li>
-          <li><button type="button" data-info="business">Llogari biznesi</button></li>
+          <li><button type="button" data-business>ITCOM Business</button></li>
+          <li><button type="button" data-info="contact">Kontakti</button></li>
           <li><button type="button" data-info="careers">Karriera</button></li>
-          <li><button type="button" data-info="privacy">Politika e privatësisë</button></li>
         </ul>
       </div>
     </div>
     <div class="container footer__bottom">
-      <span>© <span id="year"></span> ITCOM. Të gjitha të drejtat e rezervuara. <span class="credits">Foto banerësh: ELLA DON, User_Pascal, ergonofis / Unsplash.</span> <a class="credits" href="admin/">Hyrje për stafin</a></span>
-      <span class="pay"><span>VISA</span><span>Mastercard</span><span>Transfertë</span><span>Pagesë në dorëzim</span><span>Këste</span></span>
+      <span>© <span id="year"></span> ITCOM · <button type="button" data-info="privacy">Privatësia</button> · <button type="button" data-info="terms">Kushtet e blerjes</button> · <a href="admin/">Hyrje për stafin</a></span>
+      <span class="footer__demo">Dyqan demonstrativ: porositë dhe pagesat ende nuk përpunohen automatikisht. Foto banerësh: ELLA DON, User_Pascal, ergonofis / Unsplash.</span>
     </div>
   </footer>
 
@@ -323,7 +296,7 @@
           <button class="icon-btn" id="bSpin" aria-pressed="false" aria-label="Rrotullim automatik"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
           <button class="icon-btn" id="bReset" aria-label="Kthe pamjen fillestare"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/><circle cx="12" cy="12" r="4"/></svg></button>
         </div>
-        <p class="builder__hint">Tërhiqeni për ta rrotulluar · rrotëza ose dy gishta për zmadhim</p>
+        <p class="builder__hint">Pamje orientuese 3D: forma dhe ngjyrat e pjesëve reale mund të ndryshojnë · tërhiqeni për ta rrotulluar</p>
         <div class="builder__look">
           <div><span class="builder__lookt">Ngjyra e kasës</span><div class="swatches" id="bColors"></div></div>
           <div><span class="builder__lookt">Ndriçimi RGB</span><div class="swatches" id="bRgb"></div></div>
@@ -375,7 +348,8 @@
     </div>
     <div class="drawer__foot" id="cartFoot">
       <dl class="totals" id="cartTotals"></dl>
-      <button class="btn btn--primary btn--block btn--lg" id="checkoutBtn">Vazhdo te porosia</button>
+      <button class="btn btn--cta btn--block btn--lg" id="checkoutBtn">Vazhdo te porosia</button>
+      <button class="btn btn--ghost btn--block" id="cartPageBtn">Shiko shportën</button>
     </div>
   </aside>
 
@@ -387,6 +361,7 @@
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="sr-only" id="announce" aria-live="polite"></div>
 
   <script src="js/products.js"></script>
   <script src="js/cms-bridge.js"></script>
