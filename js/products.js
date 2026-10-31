@@ -26,6 +26,8 @@ window.STORE = {
   whatsapp: "",
   email: "",
   siteUrl: "https://ariongj.github.io/ITCOM/",
+  // Zonat e dërgesës (CMS → Konfigurimet i zëvendëson): kosto dhe afat sipas qytetit.
+  zones: [{ name: "Gjithë Kosova", fee: 3, days: "1–2", cities: ["Prishtinë", "Fushë Kosovë", "Obiliq", "Lipjan", "Podujevë", "Drenas", "Mitrovicë", "Vushtrri", "Pejë", "Prizren", "Gjakovë", "Ferizaj", "Gjilan", "Suharekë", "Rahovec", "Kamenicë", "Viti", "Istog", "Klinë", "Deçan", "Skenderaj", "Malishevë"] }],
 };
 
 window.CATEGORIES = [

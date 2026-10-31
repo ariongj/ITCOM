@@ -20,7 +20,7 @@ import { useDb } from '@/store/db';
 import { useCan, useSettings } from '@/store/hooks';
 import { offerState, placementState } from '@/lib/offers';
 import { date } from '@/lib/format';
-import type { L10n, Lang, Offer, PlacementKind, PlacementPosition } from '@/lib/types';
+import type { L10n, Lang, Offer, Placement, PlacementKind, PlacementPosition } from '@/lib/types';
 import { cn, uid } from '@/lib/utils';
 import { SD, SE } from '@/admin/components/store/i18n';
 import { FieldLabel, Notice, Segmented, SelectBox, StatePill, Tip, ctl } from '@/admin/components/store/parts';
@@ -334,6 +334,19 @@ function Editor({ base, isNew }: { base: PlacementX; isNew: boolean }) {
                 hint={showErrors && titleMissing ? <span className="font-medium text-red-600">{t('needTitle')}</span> : isBar ? t('f_message_h') : t('f_title_h')}
                 required
               />
+              {kind === 'slide' && (
+                <div>
+                  <FieldLabel htmlFor="pl-type">{t('f_slideType')}</FieldLabel>
+                  <SelectBox id="pl-type" value={draft.slideType ?? 'product'} onChange={(e) => set({ slideType: e.target.value as NonNullable<Placement['slideType']> })}>
+                    {(['product', 'launch', 'collection', 'offer'] as const).map((v) => (
+                      <option key={v} value={v}>
+                        {t(`st_${v}`)}
+                      </option>
+                    ))}
+                  </SelectBox>
+                  <p className="mt-1.5 text-xs text-muted">{t(`st_${draft.slideType ?? 'product'}_h`)}</p>
+                </div>
+              )}
               {!isBar && (
                 <>
                   <L10nInput label={t('f_eyebrow')} value={draft.eyebrow} onChange={(v) => set({ eyebrow: v })} />

@@ -137,6 +137,7 @@
     S.whatsapp = String(s.whatsapp || "").replace(/\D/g, "") || S.whatsapp;
     if (typeof s.vatRate === "number") S.vatRate = s.vatRate / 100;
     if (typeof s.freeShippingThreshold === "number") S.freeShippingFrom = s.freeShippingThreshold;
+    if ((s.shippingZones || []).length) S.zones = s.shippingZones;
     var zone = (s.shippingZones || [])[0];
     if (zone && typeof zone.fee === "number") S.shippingFee = zone.fee;
 
@@ -155,15 +156,16 @@
         var target = String((pl.cta && pl.cta.href) || "").replace(/^.*#/, "");
         return {
           id: target,
+          type: pl.slideType || "",
           label: sq(pl.eyebrow),
           title: sq(pl.title),
           text: sq(pl.subtitle),
           img: pl.image ? localSrc(pl.image) : "",
           href: (pl.cta && pl.cta.href) || "",
           cta: sq(pl.cta && pl.cta.label),
+          caption: pl.slideType === "launch" ? sq(pl.alt) : "",
         };
       });
-    if (slides.length) CMS.slides = slides;
 
     /* ---- Moduli i marketingut dhe përmbajtjes ---- */
     var live = function (x) {
@@ -222,7 +224,7 @@
     }
     var colById = {};
     (db.collections || []).forEach(function (c) {
-      var item = { id: c.id, slug: c.slug, title: sq(c.title), description: sq(c.description), image: c.image ? localSrc(c.image) : "", productIds: members(c), published: !!c.published };
+      var item = { id: c.id, slug: c.slug, title: sq(c.title), tagline: sq(c.tagline), description: sq(c.description), guide: sq(c.guide), image: c.image ? localSrc(c.image) : "", productIds: members(c), published: !!c.published };
       colById[c.id] = item;
       if (c.published || CMS.preview) CMS.collections.push(item);
     });
@@ -280,6 +282,12 @@
       if (o.placements.indexOf("home-block") >= 0) CMS.banners.push({ title: o.title, text: o.text, eyebrow: o.badge, image: o.image, href: "#/oferta/" + o.slug, cta: "Shiko ofertën", order: 99, position: "home-banner" });
     });
     CMS.banners.sort(function (a, b) { return a.order - b.order; });
+    // Ofertat me vendin "hero" bëhen slajde me kushtet dhe afatin e tyre (lloji "offer").
+    CMS.offers.forEach(function (o) {
+      if (o.placements.indexOf("hero") < 0) return;
+      slides.push({ type: "offer", label: o.badge || "Ofertë", title: o.title, text: o.text, img: o.image, href: "#/oferta/" + o.slug, cta: "Shiko ofertën", ends: o.endsAt, code: o.code });
+    });
+    if (slides.length) CMS.slides = slides;
 
     // Blogu (Këshilla)
     CMS.posts = (db.posts || []).filter(function (p) { return (p.published && Date.parse(p.publishedAt) <= now) || CMS.preview; })
@@ -314,6 +322,27 @@
       CMS.menus = CMS.menus || {};
       CMS.menus[m.handle] = mapItems(m.items);
     });
+    // Menuja "Kategoritë": grupe (lidhje #/kategoria/<grupi>) me nënkategori (kategori produktesh ose lidhje).
+    var catMenu = (db.menus || []).find(function (m) { return m.handle === "categories"; });
+    if (catMenu && catMenu.items && catMenu.items.length) {
+      var defaults = {};
+      (window.CATEGORY_GROUPS || []).forEach(function (g) { defaults[g.slug] = g; g.subs.forEach(function (x) { defaults["sub:" + x.slug] = x; }); });
+      var slugOf = function (it) {
+        if (it.type === "category" && catName[it.target]) return slugify(catName[it.target]);
+        var m2 = String(it.target || "").match(/#\/kategoria\/([^/?]+)/);
+        return m2 ? m2[1] : slugify(sq(it.label));
+      };
+      CMS.categoryGroups = catMenu.items.map(function (g) {
+        var slug = slugOf(g), d = defaults[slug] || {};
+        return {
+          slug: slug, name: sq(g.label), nav: d.nav, icon: d.icon || "layers",
+          subs: (g.children || []).map(function (c) {
+            var cs = slugOf(c), dd = defaults["sub:" + cs] || {};
+            return { slug: cs, name: sq(c.label), cat: c.type === "category" ? catName[c.target] : undefined, builder: !!dd.builder };
+          }),
+        };
+      });
+    }
     CMS.active = true;
   }
 

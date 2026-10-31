@@ -24,7 +24,24 @@ export function buildItcomCollections(now: Date): Collection[] {
       id: 'col-studente',
       slug: 'per-studente',
       title: T('Për studentë', 'For students'),
+      tagline: T('Mëso. Krijo. Vazhdo.', 'Learn. Create. Keep going.'),
       description: T('Laptopë nën 1.000 € për mësim, projekte dhe shumë orë bateri.', 'Laptops under €1,000 for study, projects and long battery life.'),
+      guide: T(
+        `Përzgjedhja përfshin laptopët e katalogut nën 1.000 €, të renditur nga më i liri.
+
+- Ekran 14–16" dhe peshë e lehtë për ta mbajtur çdo ditë.
+- Procesorë të kursyer në energji, për bateri gjatë gjithë ditës së mësimit.
+- RAM dhe ruajtje sipas variantit: verifikohen sipas kodit të artikullit.
+
+Lista ndryshon vetë kur ndryshon çmimi.`,
+        `The selection includes the catalogue's laptops under €1,000, cheapest first.
+
+- 14–16" screens and a light weight for carrying every day.
+- Power-efficient processors for battery through a whole school day.
+- RAM and storage per variant: checked against the item code.
+
+The list updates itself when prices change.`,
+      ),
       image: pic('/assets/products/photo/lp-zb14amd.webp'),
       kind: 'smart',
       rules: [{ field: 'category', op: 'eq', value: 'cat-laptop' }, { field: 'price', op: 'lt', value: '1000' }],
@@ -35,7 +52,24 @@ export function buildItcomCollections(now: Date): Collection[] {
       id: 'col-kreatore',
       slug: 'per-krijues',
       title: T('Për krijues', 'For creators'),
+      tagline: T('Hapësirë për idetë e tua.', 'Room for your ideas.'),
       description: T('Ekrane OLED, grafikë RTX dhe procesorë me shumë bërthama për video, foto dhe 3D.', 'OLED screens, RTX graphics and many-core processors for video, photo and 3D.'),
+      guide: T(
+        `Zgjedhur për punë me video, foto dhe 3D:
+
+- **Laptopë ProArt dhe MacBook Pro** me ekrane me ngjyra të sakta.
+- **Ryzen 9 9950X** me 16 bërthama për renderim dhe kompresim.
+- **GeForce RTX 5080** për efekte, AI dhe përshpejtim në programet e montazhit.
+
+Na tregoni programet që përdorni dhe ju ndihmojmë me konfigurimin.`,
+        `Picked for video, photo and 3D work:
+
+- **ProArt laptops and MacBook Pro** with colour-accurate screens.
+- **Ryzen 9 9950X** with 16 cores for rendering and encoding.
+- **GeForce RTX 5080** for effects, AI and acceleration in editing apps.
+
+Tell us the apps you use and we will help with the configuration.`,
+      ),
       image: pic('/assets/products/photo/lp-proartp16.webp'),
       kind: 'manual',
       productIds: ['lp-proartp16', 'lp-proartp14', 'lp-proartpx13', 'lp-mbp14m4p', 'lp-zbduo25', 'cp-9950x', 'cp-5080fe'],
@@ -45,8 +79,25 @@ export function buildItcomCollections(now: Date): Collection[] {
       id: 'col-gaming',
       slug: 'gaming',
       title: T('Gaming', 'Gaming'),
+      tagline: T('Ndërto për lojën tënde.', 'Build for your game.'),
       description: T('Kartela grafike RTX dhe Radeon, procesorë X3D dhe laptopë gaming.', 'RTX and Radeon graphics cards, X3D processors and gaming laptops.'),
-      image: pic('/assets/products/photo/cp-4070s.webp'),
+      guide: T(
+        `Pjesët që kërkohen më shumë për lojëra:
+
+- **Procesorë X3D** (Ryzen 7 7800X3D, 9800X3D), të fortë në lojëra.
+- **Kartela grafike** nga RTX 4070 SUPER deri te RX 9070 XT dhe RTX 5080.
+- **Laptop gaming** për kur luani edhe jashtë shtëpisë.
+
+Përputhshmëria e pjesëve kontrollohet te konfiguruesi 3D; performancën në lojëra e konfirmojmë vetëm me test.`,
+        `The most requested parts for gaming:
+
+- **X3D processors** (Ryzen 7 7800X3D, 9800X3D), strong in games.
+- **Graphics cards** from RTX 4070 SUPER to RX 9070 XT and RTX 5080.
+- **A gaming laptop** for playing away from home.
+
+Part compatibility is checked in the 3D configurator; we confirm game performance only with a test.`,
+      ),
+      image: pic('/assets/photos/gaming-1600.webp'),
       kind: 'manual',
       productIds: ['cp-5070fe', 'cp-rx9070xt', 'cp-4070s', 'cp-9800x3d', 'cp-7800x3d', 'cp-rx9060xt', 'cp-5080fe', 'lp-g16'],
       sort: 'manual',
@@ -55,8 +106,25 @@ export function buildItcomCollections(now: Date): Collection[] {
       id: 'col-biznes',
       slug: 'per-biznes',
       title: T('Për biznes', 'For business'),
+      tagline: T('Një ekip. Pajisjet e duhura.', 'One team. The right equipment.'),
       description: T('Laptopë të lehtë dhe të sigurt për ekipe, me Windows 11 Pro ose macOS.', 'Light, secure laptops for teams, with Windows 11 Pro or macOS.'),
-      image: pic('/assets/products/photo/lp-x1c12.webp'),
+      guide: T(
+        `Për zyra dhe ekipe që punojnë edhe jashtë saj:
+
+- **ThinkPad X1 Carbon** me Windows 11 Pro.
+- **Dell XPS, Zenbook S dhe Surface** për punë të përditshme dhe udhëtim.
+- **MacBook Pro** për ekipe që punojnë në macOS.
+
+Për sasi, faturë me TVSH ose konfigurime të njëjta për gjithë ekipin, kërkoni ofertë: ekipi i shitjes ju kthen përgjigje.`,
+        `For offices and teams that also work on the move:
+
+- **ThinkPad X1 Carbon** with Windows 11 Pro.
+- **Dell XPS, Zenbook S and Surface** for everyday work and travel.
+- **MacBook Pro** for teams on macOS.
+
+For quantities, a VAT invoice or identical configurations for the whole team, request a quote: the sales team will reply.`,
+      ),
+      image: pic('/assets/photos/workspace-1600.webp'),
       kind: 'manual',
       productIds: ['lp-x1c12', 'lp-xps13', 'lp-mbp14m4p', 'lp-zbs14', 'lp-sl7', 'lp-omniflip14'],
       sort: 'manual',
@@ -352,6 +420,39 @@ The ITCOM 3D configurator does this for you and warns you when the power supply 
 /* ------------------------------------------------------------------ */
 /* Menus — header links and footer columns of the shop                  */
 /* ------------------------------------------------------------------ */
+/** Catalogue architecture (Round 02 report, p. 06): group → subcategories. A subcategory with a product category id
+ *  opens the catalogue; the others open their own page with a quote request (shop: js/categories.js). */
+const CATEGORY_TREE: [string, string, string, [string, string, string, string?][]][] = [
+  ['laptope-kompjutere', 'Laptopë & kompjuterë', 'Laptops & computers', [
+    ['laptope', 'Laptopë', 'Laptops', 'cat-laptop'], ['desktop', 'Desktop', 'Desktop'], ['all-in-one', 'All-in-One', 'All-in-One'],
+    ['mini-pc', 'Mini PC', 'Mini PC'], ['workstation', 'Workstation', 'Workstation'], ['pc-gaming', 'PC gaming', 'Gaming PC']]],
+  ['komponente-pc', 'Komponentë PC', 'PC components', [
+    ['procesore', 'Procesorë', 'Processors', 'cat-cpu'], ['kartela-grafike', 'Kartela grafike', 'Graphics cards', 'cat-gpu'],
+    ['pllaka-ame', 'Pllaka amë', 'Motherboards'], ['ram', 'RAM', 'RAM'], ['ssd', 'SSD', 'SSD'], ['hdd', 'HDD', 'HDD'],
+    ['furnizues-rryme', 'Furnizues rryme (PSU)', 'Power supplies'], ['kasa', 'Kasa', 'Cases'], ['ftohje-ventilatore', 'Ftohje & ventilatorë', 'Cooling & fans']]],
+  ['monitore-imazh', 'Monitorë & imazh', 'Monitors & display', [
+    ['monitore', 'Monitorë', 'Monitors'], ['mbajtese-monitori', 'Mbajtëse', 'Mounts'], ['projektore', 'Projektorë', 'Projectors'],
+    ['ekrane-prezantimi', 'Ekrane prezantimi', 'Presentation screens'], ['aksesore-monitori', 'Aksesorë monitori', 'Monitor accessories']]],
+  ['periferike-gaming', 'Periferikë & gaming', 'Peripherals & gaming', [
+    ['maus', 'Maus', 'Mice'], ['tastiera', 'Tastiera', 'Keyboards'], ['mousepad', 'Mousepad', 'Mouse pads'], ['kontrollues', 'Kontrollues', 'Controllers'],
+    ['volante', 'Volantë', 'Racing wheels'], ['karrige-tavolina-gaming', 'Karrige & tavolina gaming', 'Gaming chairs & desks']]],
+  ['audio-video', 'Audio & video', 'Audio & video', [
+    ['kufje', 'Kufje', 'Headphones'], ['altoparlante', 'Altoparlantë', 'Speakers'], ['mikrofone', 'Mikrofonë', 'Microphones'],
+    ['webcam', 'Webcam', 'Webcams'], ['pajisje-streaming', 'Pajisje streaming', 'Streaming gear']]],
+  ['rrjet-ruajtje', 'Rrjet & ruajtje', 'Networking & storage', [
+    ['routere', 'Routerë', 'Routers'], ['switch', 'Switch', 'Switches'], ['access-point', 'Access point', 'Access points'], ['rrjet-mesh', 'Rrjet mesh', 'Mesh Wi-Fi'],
+    ['nas', 'NAS', 'NAS'], ['disqe-te-jashtme', 'Disqe të jashtme', 'External drives'], ['usb', 'USB', 'USB drives']]],
+  ['printim-zyre', 'Printim & zyrë', 'Printing & office', [
+    ['printere', 'Printerë', 'Printers'], ['skanere', 'Skanerë', 'Scanners'], ['multifunksionale', 'Multifunksionale', 'All-in-one printers'],
+    ['toner-boje', 'Toner & bojë', 'Toner & ink'], ['leter-aksesore', 'Letër & aksesorë', 'Paper & supplies']]],
+  ['telefona-tablete', 'Telefona & tabletë', 'Phones & tablets', [
+    ['telefona', 'Telefona', 'Phones'], ['tablete', 'Tabletë', 'Tablets'], ['ore-te-mencura', 'Orë të mençura', 'Smartwatches'],
+    ['mbeshtjellese', 'Mbështjellëse', 'Cases'], ['mbrojtese-ekrani', 'Mbrojtëse ekrani', 'Screen protectors']]],
+  ['aksesore-energji', 'Aksesorë & energji', 'Accessories & power', [
+    ['kabllo', 'Kabllo', 'Cables'], ['adaptere', 'Adapterë', 'Adapters'], ['hub-dock', 'Hub & dock', 'Hubs & docks'], ['karikues', 'Karikues', 'Chargers'],
+    ['power-bank', 'Power bank', 'Power banks'], ['ups', 'UPS', 'UPS'], ['canta', 'Çanta', 'Bags'], ['pastrim', 'Pastrim', 'Cleaning']]],
+];
+
 export function buildItcomMenus(): Menu[] {
   const url = (id: string, label: L10n, target: string, children?: MenuItem[]): MenuItem => ({ id, label, type: 'url', target, ...(children ? { children } : {}) });
   const cat = (id: string, label: L10n, target: string): MenuItem => ({ id, label, type: 'category', target });
@@ -361,13 +462,21 @@ export function buildItcomMenus(): Menu[] {
     {
       id: 'menu-main',
       handle: 'main',
-      title: 'Menyja kryesore',
+      title: 'Menuja kryesore',
       items: [
+        url('mi-laptops', T('Laptopë & PC', 'Laptops & PCs'), '#/kategoria/laptope-kompjutere'),
+        url('mi-components', T('Komponentë', 'Components'), '#/kategoria/komponente-pc'),
+        url('mi-accessories', T('Aksesorë', 'Accessories'), '#/kategoria/aksesore-energji'),
         url('mi-builder', T('Ndërto PC', 'Build a PC'), '#builder'),
-        url('mi-service', T('Servisi', 'Service'), '#/servisi'),
-        url('mi-blog', T('Këshilla', 'Advice'), '#/blog'),
         url('mi-offers', T('Ofertat', 'Offers'), '#/ofertat'),
       ],
+    },
+    {
+      id: 'menu-categories',
+      handle: 'categories',
+      title: 'Kategoritë',
+      items: CATEGORY_TREE.map(([gslug, gsq, gen, subs]) => url(`mc-${gslug}`, T(gsq, gen), `#/kategoria/${gslug}`, subs.map(([slug, sq2, en2, catId]) =>
+        catId ? cat(`mc-${slug}`, T(sq2, en2), catId) : url(`mc-${slug}`, T(sq2, en2), `#/kategoria/${slug}`)))),
     },
     {
       id: 'menu-footer',

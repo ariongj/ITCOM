@@ -491,7 +491,11 @@ export interface Collection {
   id: string;
   slug: string;
   title: L10n;
+  /** ITCOM: short line on the collection card, e.g. "Mëso. Krijo. Vazhdo." */
+  tagline?: L10n;
   description: L10n;
+  /** ITCOM: why these products (markdown), shown under the products with a help button */
+  guide?: L10n;
   image: string;
   /** manual = hand-picked productIds; smart = membership follows `rules` dynamically */
   kind: 'manual' | 'smart';
@@ -637,6 +641,8 @@ export interface Placement {
   endsAt?: string;
   status: 'active' | 'draft';
   order: number;
+  /** ITCOM hero slides: product (model + price), launch (no price, dark), collection (ambient photo), offer (terms + dates) */
+  slideType?: 'product' | 'launch' | 'collection' | 'offer';
 }
 
 /* ---------------- Staff, roles ---------------- */
@@ -816,7 +822,8 @@ export interface MenuItem {
 }
 export interface Menu {
   id: string;
-  handle: 'main' | 'footer';
+  /** main = header links, footer = footer columns, categories = ITCOM catalogue tree (groups → subcategories) */
+  handle: 'main' | 'footer' | 'categories';
   title: string;
   items: MenuItem[];
 }

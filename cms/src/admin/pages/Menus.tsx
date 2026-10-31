@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
-import { ExternalLink, GripVertical, ListTree, Lock, PanelBottom, PanelTop, Plus, UserRound } from 'lucide-react';
+import { ExternalLink, GripVertical, LayoutGrid, ListTree, Lock, PanelBottom, PanelTop, Plus, UserRound } from 'lucide-react';
 import { PageHeader, Card, SaveBar, confirmDialog } from '@/admin/components/kit';
 import { Notice } from '@/admin/components/editorial/ui';
 import { useSaveKeyLabel, useSaveShortcut, useUnsavedGuard } from '@/admin/components/editorial/hooks';
@@ -25,7 +25,7 @@ import type { Menu, MenuItem } from '@/lib/types';
 import { href } from '@/lib/paths';
 import { cn, uid } from '@/lib/utils';
 
-const ORDER: Record<string, number> = { main: 0, footer: 1 };
+const ORDER: Record<string, number> = { main: 0, categories: 1, footer: 2 };
 
 interface EditorState {
   open: boolean;
@@ -111,8 +111,8 @@ export default function Menus() {
 
   const items = itemsOf(active);
   const errors = showErrors ? menuErrors(items) : new Map();
-  const menuName = (m: Menu) => (m.handle === 'main' ? t('main') : m.handle === 'footer' ? t('footer') : m.title);
-  const menuWhere = (m: Menu) => (m.handle === 'main' ? t('mainWhere') : t('footerWhere'));
+  const menuName = (m: Menu) => (m.handle === 'main' ? t('main') : m.handle === 'footer' ? t('footer') : m.handle === 'categories' ? t('catMenu') : m.title);
+  const menuWhere = (m: Menu) => (m.handle === 'main' ? t('mainWhere') : m.handle === 'categories' ? t('categoriesWhere') : t('footerWhere'));
 
   /* ---- link editor ---- */
   const openEdit = (id: string) => {
@@ -190,7 +190,7 @@ export default function Menus() {
           const list = itemsOf(m);
           const visible = liveTree(list, src).reduce((n, x) => n + 1 + x.children.length, 0);
           const total = countItems(list);
-          const Icon = m.handle === 'main' ? PanelTop : PanelBottom;
+          const Icon = m.handle === 'main' ? PanelTop : m.handle === 'categories' ? LayoutGrid : PanelBottom;
           const unsaved = dirtyIds.includes(m.id);
           return (
             <button

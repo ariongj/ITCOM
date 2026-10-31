@@ -8,7 +8,6 @@ import { DEFAULT_SETTINGS } from './content';
 
 // L10n order is (me, sq, en). The third storefront language slot ("me") is off; it carries the English copy.
 const T = (sq: string, en: string): L10n => ({ me: en, sq, en });
-const S = (v: string): L10n => ({ me: v, sq: v, en: v });
 const DAY = 86400000;
 const iso = (now: Date, days: number, hours = 0) => new Date(now.getTime() + days * DAY + hours * 3600000).toISOString();
 
@@ -243,31 +242,43 @@ If you would like to work with us in sales, service or logistics, get in touch a
 /* Home-page slides (the shop's hero banner reads these)               */
 /* ------------------------------------------------------------------ */
 export function buildItcomSlides(products: Product[]): Placement[] {
+  const BASE = import.meta.env.BASE_URL || '/';
   const img = (id: string) => products.find((p) => p.id === id)?.images[0] ?? '';
-  const slide = (order: number, id: string, eyebrow: L10n, title: L10n, subtitle: L10n): Placement => ({
+  // Round 02 (p. 04): three visual languages — product (model + price → product), launch (no price → series),
+  // collection (ambient photo → collection). Each slide has its own CTA and destination.
+  const slide = (order: number, slideType: NonNullable<Placement['slideType']>, x: { eyebrow: L10n; title: L10n; subtitle: L10n; cta: L10n; href: string; image: string; alt: L10n }): Placement => ({
     id: `pl-hero-${order}`,
     kind: 'slide',
     position: 'home-hero',
-    name: `Banner — ${title.sq}`,
-    eyebrow,
-    title,
-    subtitle,
-    cta: { label: T('Shiko produktin', 'View product'), href: `#${id}` },
-    secondary: { label: T('Shiko detajet', 'View details'), href: `#${id}` },
-    image: img(id),
-    alt: S(title.sq),
+    name: `Banner — ${x.title.sq}`,
+    eyebrow: x.eyebrow,
+    title: x.title,
+    subtitle: x.subtitle,
+    cta: { label: x.cta, href: x.href },
+    image: x.image,
+    alt: x.alt,
     textAlign: 'left',
     overlay: 0,
     status: 'active',
     order,
+    slideType,
   });
   return [
-    slide(1, 'lp-mba13m4', T('Përzgjedhja ITCOM / Laptopë', 'ITCOM pick / Laptops'), T('Më shumë mundësi. Më pak peshë.', 'More capability. Less weight.'),
-      T('MacBook Air 13" M4 · 16 GB · 256 GB', 'MacBook Air 13" M4 · 16 GB · 256 GB')),
-    slide(2, 'cp-5090fe', T('Përzgjedhja ITCOM / Kartela grafike', 'ITCOM pick / Graphics cards'), T('Performancë 4K. Pa kompromis.', '4K performance. No compromise.'),
-      T('GeForce RTX 5090 Founders Edition · 32 GB GDDR7', 'GeForce RTX 5090 Founders Edition · 32 GB GDDR7')),
-    slide(3, 'lp-proartp16', T('Përzgjedhja ITCOM / Për krijues', 'ITCOM pick / For creators'), T('Ekran 4K OLED. Fuqi RTX.', '4K OLED display. RTX power.'),
-      T('ASUS ProArt P16 · AMD Ryzen AI 9', 'ASUS ProArt P16 · AMD Ryzen AI 9')),
+    slide(1, 'product', {
+      eyebrow: T('Laptopë / Përzgjedhja ITCOM', 'Laptops / ITCOM pick'), title: T('Më shumë mundësi. Më pak peshë.', 'More capability. Less weight.'),
+      subtitle: T('MacBook Air 13" M4 · 16 GB · 256 GB', 'MacBook Air 13" M4 · 16 GB · 256 GB'), cta: T('Shiko produktin', 'View product'),
+      href: '#lp-mba13m4', image: img('lp-mba13m4'), alt: T('MacBook Air 13" M4', 'MacBook Air 13" M4'),
+    }),
+    slide(2, 'launch', {
+      eyebrow: T('Në fokus / Gjenerata RTX 50', 'In focus / RTX 50 generation'), title: T('Fuqia merr një dimension të ri.', 'Power takes on a new dimension.'),
+      subtitle: T('Zbulo GeForce RTX 5090.', 'Discover GeForce RTX 5090.'), cta: T('Eksploro serinë RTX 50', 'Explore the RTX 50 series'),
+      href: '#/kategoria/kartela-grafike?series=RTX%2050', image: img('cp-5090fe'), alt: T('GeForce RTX 5090 · Founders Edition', 'GeForce RTX 5090 · Founders Edition'),
+    }),
+    slide(3, 'collection', {
+      eyebrow: T('Koleksioni Gaming', 'Gaming collection'), title: T('Nga konfigurimi te loja jote.', 'From the configuration to your game.'),
+      subtitle: T('Kartela grafike, procesorë X3D dhe PC të montuara te ne.', 'Graphics cards, X3D processors and PCs assembled in-store.'), cta: T('Shiko koleksionin', 'View the collection'),
+      href: '#/koleksioni/gaming', image: `${BASE}assets/photos/gaming-1600.webp`, alt: T('Kompjuter gaming me ndriçim RGB', 'Gaming PC with RGB lighting'),
+    }),
   ];
 }
 

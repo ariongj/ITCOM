@@ -53,7 +53,7 @@ export function MenuPreview({ handle, items, src }: { handle: Menu['handle']; it
         <div style={storeVars(settings.brandColor)}>
           {nodes.length === 0 ? (
             <div className="rounded-lg border border-dashed border-line px-4 py-10 text-center text-[13px] text-muted">{t('fallbackNote')}</div>
-          ) : handle === 'footer' ? (
+          ) : handle === 'footer' || handle === 'categories' ? (
             <FooterPreview nodes={nodes} />
           ) : mode === 'desktop' ? (
             <DesktopPreview key={nodes.map((n) => n.id).join()} nodes={nodes} />

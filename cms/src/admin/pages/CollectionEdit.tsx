@@ -318,7 +318,9 @@ function Editor({ source }: { source?: Collection }) {
                     />
                     <FieldError>{errors.title}</FieldError>
                   </div>
+                  <L10nInput label={t('f_tagline')} value={form.tagline ?? { me: '', sq: '', en: '' }} onChange={(tagline) => set({ tagline })} hint={t('f_tagline_h')} />
                   <L10nInput label={t('f_desc')} multiline rows={3} value={form.description} onChange={(description) => set({ description })} hint={t('f_desc_h')} />
+                  <L10nInput label={t('f_guide')} multiline rows={5} value={form.guide ?? { me: '', sq: '', en: '' }} onChange={(guide) => set({ guide })} hint={t('f_guide_h')} />
                 </div>
               </Card>
             </div>

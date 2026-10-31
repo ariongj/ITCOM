@@ -17,6 +17,15 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - ITCOM Business: a quote request form (company, contact, items prefilled from the cart) that lands in the CMS inbox
 - Wishlist, cart drawer with stock limits and undo, free‑delivery meter, VAT breakdown
 
+**Catalogue, banners and collections** (visual report "Raundi 02", 30 October 2026)
+- Full catalogue architecture: nine groups (Laptopë & kompjuterë, Komponentë PC, Monitorë & imazh, Periferikë & gaming, Audio & video, Rrjet & ruajtje, Printim & zyrë, Telefona & tabletë, Aksesorë & energji) with their subcategories, in `js/categories.js` or managed in the CMS (Përmbajtja → Menutë → **Kategoritë**)
+- Every category has a destination: categories with products open the catalogue (group pages combine them, with subcategory links); the others open their own page with a quote request and, for PC parts, the 3D configurator. Nothing shows products that ITCOM does not list yet
+- Mega-menu "Të gjitha kategoritë" (click, keyboard focus, Escape) with an accordion on phones; dark category bar (Laptopë & PC, Komponentë, Aksesorë, Ndërto PC, Ofertat); swipeable category strip with arrows and a progress bar; `#/kategorite` lists everything
+- Hero without the sidebar: wider slide, GPU and ITCOM Business boxes kept. Slides by purpose: **product** (model, configuration, price), **launch** (no price, e.g. RTX 50 → filtered series), **collection** (ambient photo), **offer** (real terms and end date); pause button, swipe, arrows, reduced motion
+- Collections by use (students, creators, gaming, business): cards with context photo and tagline; the collection page has an intro, the products with filters, "Si i zgjodhëm" and a help button
+- Product details: "Konfigurimi në një vështrim" tiles, specifications in groups with "show all", a short description with key points, delivery cost and time by city, and "Para se të porosisësh" with "Pyet për produktin"; accessible tabs (arrow keys)
+- Icons: Lucide (ISC), one family, 1.8 px stroke (`js/icons.js`)
+
 **Advanced filtering (Gjirafa50‑style)**
 - Filters change with the category: Laptops get Type, Processor, RAM, Storage, Screen size, Graphics and OS; Processors get Series, Socket and Cores; Graphics cards get Chip, Series and Memory
 - Live counts next to every option, recalculated against all other active filters; options with no results are greyed out
