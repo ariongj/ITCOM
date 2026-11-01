@@ -12,7 +12,7 @@ import {
 } from './itcom';
 
 /** Bump to force every browser to reload fresh demo data. */
-export const DB_VERSION = 4;
+export const DB_VERSION = 5;
 
 /** Product photos, exposed in the CMS media library. */
 function buildMedia(productImages: string[], now: Date): MediaItem[] {

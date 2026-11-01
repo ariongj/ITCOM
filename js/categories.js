@@ -1,7 +1,7 @@
 /* Arkitektura e katalogut (raporti Raundi 02, f. 06–08): grupe → nënkategori.
  *
  * Kjo është struktura bazë; CMS-i mund ta zëvendësojë me menunë "Kategoritë" (Përmbajtja → Menutë).
- * Çdo nënkategori ka një destinacion: kur ka produkte (`cat` = kategoria e dyqanit), hap katalogun; kur ende nuk
+ * Çdo nënkategori ka një destinacion: kur ka produkte (kategoria e dyqanit me të njëjtin emër), hap katalogun; kur ende nuk
  * ka, hap faqen e saj me kërkesë për ofertë dhe lidhjet e grupit — asnjë kategori pa destinacion.
  * `builder: true` = pjesë që zgjidhen në konfiguruesin 3D të PC‑së.
  */
@@ -23,10 +23,10 @@ window.CATEGORY_GROUPS = [
       { slug: "procesore", name: "Procesorë", cat: "Procesorë" },
       { slug: "kartela-grafike", name: "Kartela grafike", cat: "Kartela grafike" },
       { slug: "pllaka-ame", name: "Pllaka amë", builder: true },
-      { slug: "ram", name: "RAM", builder: true },
+      { slug: "ram", name: "Memorie RAM", builder: true },
       { slug: "ssd", name: "SSD", builder: true },
       { slug: "hdd", name: "HDD" },
-      { slug: "furnizues-rryme", name: "Furnizues rryme (PSU)", builder: true },
+      { slug: "furnizues-rryme", name: "Furnizues rryme", builder: true },
       { slug: "kasa", name: "Kasa", builder: true },
       { slug: "ftohje-ventilatore", name: "Ftohje & ventilatorë", builder: true },
     ],
@@ -60,6 +60,7 @@ window.CATEGORY_GROUPS = [
       { slug: "mikrofone", name: "Mikrofonë" },
       { slug: "webcam", name: "Webcam" },
       { slug: "pajisje-streaming", name: "Pajisje streaming" },
+      { slug: "kamera-sigurie", name: "Kamera sigurie" },
     ],
   },
   {
@@ -112,7 +113,7 @@ window.CATEGORY_GROUPS = [
 /* Shiriti "Gjej kategorinë tënde" (f. 08): hyrje të shpejta, të renditura sipas kërkesës. */
 window.CATEGORY_STRIP = [
   { name: "Laptopë", icon: "laptop", href: "#/kategoria/laptope" },
-  { name: "Kompjuterë", icon: "pc-case", href: "#/kategoria/desktop" },
+  { name: "Kompjuterë", icon: "pc-case", href: "#/kategoria/pc-gaming" },
   { name: "Monitorë", icon: "monitor", href: "#/kategoria/monitore-imazh" },
   { name: "Komponentë PC", icon: "cpu", href: "#/kategoria/komponente-pc" },
   { name: "Maus & tastiera", icon: "keyboard", href: "#/kategoria/periferike-gaming" },

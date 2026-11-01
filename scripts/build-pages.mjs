@@ -10,6 +10,8 @@ import vm from 'node:vm';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const ctx = { window: {} };
 vm.runInNewContext(readFileSync(root + 'js/products.js', 'utf8'), ctx);
+// Produktet me foto reale (pa çmim të ITCOM ende): faqe pa çmim dhe pa Offer në të dhënat e strukturuara.
+vm.runInNewContext(readFileSync(root + 'js/products-real.js', 'utf8'), ctx);
 const { PRODUCTS, STORE: S, FACETS } = ctx.window;
 const template = readFileSync(root + 'index.html', 'utf8');
 
@@ -34,7 +36,10 @@ function page(p) {
   const specs = keySpecs(p);
   const short = specs.slice(0, 3).map(([, v]) => v).join(' · ') || p.specs.slice(0, 2).join(' · ');
   const title = `${p.name} · ITCOM`;
-  const desc = `${p.name}: ${short}. ${fmt(p.price)} me TVSH, garanci 24 muaj, dërgesë në gjithë Kosovën.`;
+  const quote = !!p.quote || !(p.price > 0);
+  const desc = quote
+    ? `${p.name}: ${short}. Kërkoni ofertë nga ITCOM për çmimin dhe afatin e dorëzimit.`
+    : `${p.name}: ${short}. ${fmt(p.price)} me TVSH, garanci 24 muaj, dërgesë në gjithë Kosovën.`;
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -45,15 +50,17 @@ function page(p) {
     image: [image],
     description: p.desc || p.specs.join(' · '),
     url,
-    offers: {
-      '@type': 'Offer',
-      url,
-      price: p.price.toFixed(2),
-      priceCurrency: S.currency,
-      availability: p.stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      itemCondition: 'https://schema.org/NewCondition',
-      seller: { '@type': 'Organization', name: 'ITCOM' },
-    },
+    ...(quote ? {} : {
+      offers: {
+        '@type': 'Offer',
+        url,
+        price: p.price.toFixed(2),
+        priceCurrency: S.currency,
+        availability: p.stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@type': 'Organization', name: 'ITCOM' },
+      },
+    }),
   };
   const crumbsLd = {
     '@context': 'https://schema.org',
@@ -74,9 +81,9 @@ function page(p) {
           <h1>${esc(p.name)}</h1>
           <p class="pp__sub">${esc(short)}</p>
           <p class="pp__sku">Kodi i artikullit: <span class="mono">${esc(p.id.toUpperCase())}</span></p>
-          <div class="pp__price"><span class="price">${fmt(p.price)}</span>${p.old > p.price ? `<span class="price-old">${fmt(p.old)}</span>` : ''}</div>
-          <p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%.</p>
-          <p>${p.stock ? 'Në stok' : 'Jashtë stokut'}</p>
+          <div class="pp__price">${quote ? '<span class="price price--quote">Çmimi me ofertë</span>' : `<span class="price">${fmt(p.price)}</span>${p.old > p.price ? `<span class="price-old">${fmt(p.old)}</span>` : ''}`}</div>
+          ${quote ? '' : `<p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%.</p>`}
+          <p>${quote ? 'Me porosi · çmimi me ofertë' : p.stock ? 'Në stok' : 'Jashtë stokut'}</p>
         </div>
       </div>
       <div class="pp__details"><div>

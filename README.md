@@ -1,13 +1,13 @@
 # ITCOM — IT Equipment Store
 
-A fast, dependency‑free storefront for IT equipment: 50 laptops, processors and graphics cards, every one shown with an official manufacturer photo, plus a 3D PC builder.
+A fast, dependency‑free storefront for IT equipment: about 145 products (laptops, PC parts, monitors, peripherals, networking, printers, phones and more), every one shown with a manufacturer photo, plus a 3D PC builder.
 
 The store's interface and product content are in **Albanian** (prices formatted as `1.199,00 €`, dates in Albanian). The layout follows big electronics retailers (Best Buy, Gjirafa50, Foleja): store header with a category search bar, category sidebar beside a banner carousel, deal and product shelves, a brand grid and a footer. The finish is quiet and premium: neutral greys and near-black, one blue accent (`#0a6cdf`), the Manrope typeface, borderless cards with soft shadows, monochrome brand logos and a dark studio for the PC builder.
 
 ## Features
 
 **Shopping** (layout from the visual report of 30 October 2026, "Round 01")
-- Home page in a fixed order: one hero item at a time (slider kept) with two side promos, a 4‑item service strip, "Gjej kategorinë tënde", a curated row ("Përzgjedhje që ia vlen t’i shohësh", the CMS's *featured* products), the PC builder and "Cili laptop të përshtatet?" blocks, brands, ITCOM Business and the footer
+- Home page in a fixed order (updated in Round 03, below)
 - One product card everywhere: square photo, 2‑line title, short specs, price, old price only when the discount is real, stock, one button; no stars
 - Every view has its own address: catalogue `#/kategoria/laptope`, `#/produktet`, `#/ofertat`, search `#/kerko/<term>`, cart `#/shporta`, checkout `#/porosia`, confirmation `#/konfirmimi/<no>`; each product has a real page at **`/ITCOM/p/<id>/`**
 - Product page: gallery, H1, tabs (Specifikimet / Përshkrimi / Dërgesa & garancia), "Pyet për produktin" (goes to the CMS inbox), sticky add‑to‑cart bar on phones
@@ -25,6 +25,13 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Collections by use (students, creators, gaming, business): cards with context photo and tagline; the collection page has an intro, the products with filters, "Si i zgjodhëm" and a help button
 - Product details: "Konfigurimi në një vështrim" tiles, specifications in groups with "show all", a short description with key points, delivery cost and time by city, and "Para se të porosisësh" with "Pyet për produktin"; accessible tabs (arrow keys)
 - Icons: Lucide (ISC), one family, 1.8 px stroke (`js/icons.js`)
+
+**Hot Deals, product grid and phones** (visual report "Raundi 03", 1 November 2026)
+- Home order: hero with two promos → dark service boxes → "Gjej kategorinë tënde" → **Hot Deals** → brands → **Eksploro produktet** → compact collections → PC builder and "Këshilla para blerjes" → banner and footer
+- **Hot Deals are calculated, not labelled**: only products with a price, a real old price above it and stock. They are sorted by discount % (full value), then € saved, then SKU, and at most 4 are shown. With no real offers the row becomes "Produkte të përzgjedhura". No discount is ever invented, so today it shows the two real offers
+- **Eksploro produktet**: 12 products (4×3 on desktop, 2 columns on phones) with quick filters Të gjitha / Laptopë / Komponentë / Aksesorë. "Shiko më shumë" adds 12 without moving the page and shows a loading state and "X nga N produkte"; at the end it says "Të gjitha produktet u shfaqën", and on error it offers a retry. Images load lazily. Catalogue pages use the same "Shiko më shumë"
+- Phones: 16 px body and form fields, 24 px titles, 20 px card prices, 44 px buttons (cards, Filtro/Rendit, sticky product CTA), the two promos side by side, services in a 2×2 grid, 2‑line card names
+- **Price on request** (`quote: true` or price 0): the card and product page say "Çmimi me ofertë" and offer "Kërko ofertë" instead of "Shto në shportë"; the request (quantity, contact) lands in the CMS inbox as a quote. These products cannot be added to the cart, are sorted after priced ones and have no `Offer` in their structured data
 
 **Advanced filtering (Gjirafa50‑style)**
 - Filters change with the category: Laptops get Type, Processor, RAM, Storage, Screen size, Graphics and OS; Processors get Series, Socket and Cores; Graphics cards get Chip, Series and Memory
@@ -109,10 +116,10 @@ Banner photos in `assets/photos/` are real photographs from Unsplash (Unsplash L
 The store is published with GitHub Pages at **https://ariongj.github.io/ITCOM/** from the `gh-pages` branch. To update the live site, push the latest commit to `gh-pages`:
 
 ```bash
-git push origin HEAD:gh-pages
+git push origin HEAD:refs/heads/gh-pages
 ```
 
-Every product and info page has its own shareable link, for example `#lp-x1c12` (a product) or `#info-delivery` (delivery terms).
+Every product has its own page, for example `/ITCOM/p/lp-x1c12/`; info pages open as `#info-delivery` (delivery terms).
 
 ## Taking real orders with WhatsApp
 
@@ -143,7 +150,11 @@ To host on **GitHub Pages**: Settings → Pages → Deploy from branch → choos
 
 All products live in `js/products.js`. Each product has a price, optional old price (shows as a discount), stock, specs and an `attrs` object that feeds the filters. Filters per category are defined in `FACETS` in the same file.
 
-**Product images**: every product in the shop has an official manufacturer photo in `assets/products/photo/` (sources and edits in `assets/products/photo/SOURCES.md`; dark promotional NVIDIA shots are in `photo/dark/`). Laptop photos show the model; RAM/SSD depend on the configuration. Parts that only exist in the PC builder (motherboards, RAM, coolers, SSDs, power supplies, cases) are in `window.BUILDER_PARTS` and keep their 3D renders in `assets/products/<id>.webp`; they are not listed in the shop.
+**Product images**: every product in the shop has an official manufacturer photo in `assets/products/photo/` (sources and edits in `assets/products/photo/SOURCES.md`; dark promotional NVIDIA shots are in `photo/dark/`). Laptop photos show the model; RAM/SSD depend on the configuration. PC builder parts (motherboards, RAM, coolers, SSDs, power supplies, cases) are in `window.BUILDER_PARTS` with their 3D renders in `assets/products/<id>.webp`; their categories are shared with the shop.
+
+**Imported product pack** (`js/products-real.js`, 97 products): imported from the 100‑product photo pack with `python3 -I scripts/import-real.py <pack folder>`. The script maps each item to a shop category, reads filter attributes from the name and converts the photos to `assets/products/real/<id>.webp` (sources in `assets/products/real/SOURCES.md`). Three items already in the catalogue were skipped (Ryzen 9 9900X3D, a second Logitech G Pro X Superlight 2, a second Fitbit). The prices in the pack come from other shops, so **none are shown**: every imported product is **price on request**, with stock 0. The reference prices stay staff‑only in the CMS (`cms/scripts/real-refs.json` → product page note) and are removed from the published snapshot. **Confirm photo rights before launch.**
+
+To start selling an imported product: CMS → Produktet → open it → set ITCOM's price and stock → switch the template from "Kërkesë oferte" to "Produkt standard" → Publikimi → Publiko tani.
 
 ```js
 { id: "lp-x1c12", name: "Lenovo ThinkPad X1 Carbon Gen 12", img: "assets/products/lp-x1c12.jpg", ... }

@@ -77,26 +77,34 @@
     var staticById = {};
     (window.PRODUCTS || []).concat(window.BUILDER_PARTS || []).forEach(function (p) { staticById[p.id] = p; });
 
-    // Kategoritë e dyqanit (pjesët e ndërtuesit qëndrojnë jashtë katalogut)
-    var cats = (db.categories || []).filter(function (c) { return BUILDER_CATS.indexOf(c.id) < 0; }).sort(function (a, b) { return a.order - b.order; });
+    // Pjesët e ndërtuesit 3D (etiketa "ndërtuesi") qëndrojnë jashtë katalogut; kategoritë e tyre (pllaka amë, RAM …)
+    // shfaqen në dyqan kur kanë produkte të tjera.
+    var isBuilderPart = function (p) { return (p.tags || []).indexOf("ndërtuesi") >= 0 || (BUILDER_CATS.indexOf(p.categoryId) >= 0 && !(p.tags || []).length && /^(mb|cl|st|ps|cs)-|^cp-(furyb32|veng32|tz5rgb32)$/.test(p.id)); };
+    var shopCatIds = {};
+    (db.products || []).forEach(function (p) { if (!isBuilderPart(p) && p.status === "active") shopCatIds[p.categoryId] = true; });
+    var cats = (db.categories || []).filter(function (c) { return shopCatIds[c.id]; }).sort(function (a, b) { return a.order - b.order; });
     var catName = {};
     var facets = {};
     var categories = cats.map(function (c) {
       var name = sq(c.name) || c.id;
       catName[c.id] = name;
       var orig = SHOP_CATS[c.id];
-      facets[name] = (orig && window.FACETS && window.FACETS[orig[0]]) || [];
-      return { id: name, icon: orig ? orig[1] : "grid" };
+      // Filtrat sipas emrit të kategorisë (js/products.js); kategoritë e reja pa filtra të përcaktuar marrin vetëm markën/çmimin.
+      var staticCat = (window.CATEGORIES || []).find(function (x) { return x.id === name || (orig && x.id === orig[0]); });
+      facets[name] = (window.FACETS && (window.FACETS[name] || (orig && window.FACETS[orig[0]]))) || [];
+      return { id: name, icon: orig ? orig[1] : staticCat ? staticCat.icon : "grid" };
     });
 
     var shop = [], parts = [], featured = [];
     (db.products || []).forEach(function (p) {
       if (p.status !== "active" || (p.channels && p.channels.indexOf("online") < 0)) return;
-      var builder = BUILDER_CATS.indexOf(p.categoryId) >= 0;
+      var builder = isBuilderPart(p);
       if (!builder && !catName[p.categoryId]) return;
       var x = p.itcom || {};
       var base = staticById[p.id] || {};
-      var sale = p.salePrice != null && p.salePrice < p.price;
+      var sale = p.salePrice != null && p.salePrice < p.price && p.salePrice > 0;
+      // Çmimi 0 = pa çmim të ITCOM ende: dyqani tregon "Çmimi me ofertë" dhe "Kërko ofertë".
+      var quote = !!p.quoteOnly || !(p.price > 0);
       var fromBadges = (p.badges || []).map(function (b) { return BADGE[b]; }).filter(Boolean)[0] || "";
       var badge = fromBadges || (x.badge && KNOWN_BADGES.indexOf(x.badge) < 0 ? x.badge : "");
       var item = {
@@ -112,6 +120,7 @@
         rating: x.rating || 0,
         reviews: x.reviews || 0,
         badge: badge || undefined,
+        quote: quote || undefined,
         art: x.art || base.art || { s: builder ? "box" : p.categoryId === "cat-gpu" ? "gpu" : p.categoryId === "cat-cpu" ? "cpu" : "laptop", c: "#2b2d31" },
         attrs: x.attrs || base.attrs || {},
         specs: (p.specs || []).map(function (s) { var l = sq(s.label), v = sq(s.value); return l ? l + ": " + v : v; }).filter(Boolean),

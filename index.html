@@ -141,19 +141,41 @@
         <div class="cat-strip__bar" aria-hidden="true"><i id="stripBar"></i></div>
       </section>
 
+      <!-- Raundi 03 (f. 04): kategoritë → Hot Deals → markat + produktet → koleksione kompakte → konfiguruesi + këshilla -->
+      <section class="container home-sec" id="hotSec" aria-labelledby="hotTitle">
+        <div class="home-sec__head">
+          <div><h2 class="home-sec__title" id="hotTitle">Hot Deals</h2><p class="home-sec__sub" id="hotSub">Zbritjet më të larta</p></div>
+          <a class="home-sec__link" href="#/ofertat" id="hotAll">Shiko të gjitha ofertat</a>
+        </div>
+        <div class="pgrid" id="hotDeals"></div>
+        <a class="btn btn--dark btn--block btn--lg hot-all-m" href="#/ofertat" id="hotAllM">Shiko të gjitha ofertat</a>
+      </section>
+
+      <section class="container brands-band" aria-labelledby="brandsTitle">
+        <h2 class="brands-band__title" id="brandsTitle">Markat që njeh</h2>
+        <ul class="brands-row" id="brandRow"></ul>
+      </section>
+
+      <section class="container home-sec" id="exploreSec" aria-labelledby="exploreTitle">
+        <div class="home-sec__head">
+          <h2 class="home-sec__title" id="exploreTitle">Eksploro produktet</h2>
+        </div>
+        <div class="explore-tabs" role="group" aria-label="Filtro produktet" id="exploreTabs"></div>
+        <div class="pgrid" id="explore" aria-live="polite"></div>
+        <div class="explore-more">
+          <button type="button" class="btn btn--cta btn--lg" id="exploreMore">Shiko më shumë produkte</button>
+          <p class="muted" id="exploreCount"></p>
+        </div>
+      </section>
+
       <section class="container home-sec" id="colSec" aria-labelledby="colTitle" hidden>
         <div class="home-sec__head"><h2 class="home-sec__title" id="colTitle">Zgjidh sipas përdorimit</h2></div>
         <div class="col-tiles" id="colTiles"></div>
       </section>
 
-      <section class="container home-sec" aria-labelledby="picksTitle">
-        <div class="home-sec__head"><h2 class="home-sec__title" id="picksTitle">Përzgjedhje që ia vlen t’i shohësh</h2><a class="home-sec__link" href="#/ofertat">Shiko ofertat</a></div>
-        <div class="pgrid" id="picks"></div>
-      </section>
-
       <section class="container home-banner" id="homeBanner" aria-label="Oferta" hidden></section>
 
-      <section class="container duo" aria-label="Ndihmë në zgjedhje">
+      <section class="container builder-band" aria-label="Ndërto PC">
         <div class="duo__builder">
           <div class="duo__copy">
             <span class="eyebrow">Ndërto PC</span>
@@ -161,20 +183,10 @@
             <button type="button" class="btn btn--cta" data-builder>Hap konfiguruesin 3D</button>
           </div>
           <picture class="duo__photo">
-            <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 480px" />
+            <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" />
             <img src="assets/photos/gaming-1600.jpg" alt="Kompjuter gaming me ndriçim RGB (foto ambienti)" width="1600" height="1065" loading="lazy" decoding="async" />
           </picture>
         </div>
-        <div class="duo__help">
-          <span class="eyebrow">Zgjedh me qartësi</span>
-          <h2>Cili laptop të përshtatet?</h2>
-          <p>Krahaso specifikat, pastaj vendos.</p>
-          <a class="home-sec__link" href="#/kategoria/laptope">Shfleto laptopët</a>
-        </div>
-      </section>
-
-      <section class="container" aria-label="Markat">
-        <ul class="brands-row" id="brandRow"></ul>
       </section>
 
       <section class="container home-sec" id="blogSec" aria-labelledby="blogTitle" hidden>
@@ -268,7 +280,10 @@
         <span class="eyebrow">ITCOM Business</span>
         <h2 id="bizTitle">Pajisje për ekipin.<br />Zgjidhje e menduar.</h2>
         <p>Zgjidh artikujt ose trego çfarë i duhet kompanisë. Kërkesa për ofertë shkon te ekipi ITCOM, i cili të kthen përgjigje brenda një dite pune.</p>
-        <button type="button" class="btn btn--cta btn--lg" data-business>Kërko ofertë për biznes</button>
+        <div class="biz__cta">
+          <button type="button" class="btn btn--cta btn--lg" data-business>Kërko ofertë për biznes</button>
+          <button type="button" class="btn btn--ghost btn--lg" data-info="contact">Kontakto ekipin</button>
+        </div>
       </div>
     </section>
   </main>
@@ -395,6 +410,7 @@
   <div class="sr-only" id="announce" aria-live="polite"></div>
 
   <script src="js/products.js"></script>
+  <script src="js/products-real.js"></script>
   <script src="js/categories.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/cms-data.js"></script>

@@ -1,0 +1,875 @@
+{
+ "dell-inspiron-3505-15-6-fhd": {
+  "packId": "itcom-real-001",
+  "refPrice": 739.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/laptop/laptop/dell-inspiron-3505-15-6-fhd-black-amd-ryzen-7-3700u-8gb-ddr4-512gb-ssd-backlit-keyboard-windows-10-home-de-layout/",
+  "sku": "NBB00485",
+  "captured": "2026-11-01"
+ },
+ "apple-macbook-air-15-3": {
+  "packId": "itcom-real-002",
+  "refPrice": 1570.0,
+  "refOld": null,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/laptop-apple-macbook-air-15-inch-apple-m5-chip-with-10-core-cpu-and-10-core-gpu-16gb-2",
+  "sku": "492793",
+  "captured": "2026-11-01"
+ },
+ "hp-victus-15-fa2013-gaming-15-6": {
+  "packId": "itcom-real-003",
+  "refPrice": 669.0,
+  "refOld": 720.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/laptop-hp-victus-15-fa2013-gaming-15-6-inch-144hz-core-i5-13420h-rtx-3050-6gb-8gb-ram",
+  "sku": "1271751",
+  "captured": "2026-11-01"
+ },
+ "lenovo-thinkpad-e16-gen-2": {
+  "packId": "itcom-real-004",
+  "refPrice": 1031.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/laptop/laptop/lenovo-thinkpad-e16-gen-2-amd-amd-ryzen-5-7535u-laptop-40-6-cm-16-wuxga-8-gb-ddr5-sdram-256-gb-ssd-wi-fi-6e-802-11ax-windows-11-pro-english-black-new-repack-repacked/",
+  "sku": "MOBLEVNOTMBUC",
+  "captured": "2026-11-01"
+ },
+ "apple-macbook-pro-16-2-mini-led": {
+  "packId": "itcom-real-005",
+  "refPrice": 2999.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/apple-products/mac/apple-macbook-pro-16apple-m1-pro-10-cores-arm-lcd-16-2-apple-m1-pro-16-cores-ram-32gbssd-5/",
+  "sku": "NBB00510",
+  "captured": "2026-11-01"
+ },
+ "apple-macbook-air-13-6-m5": {
+  "packId": "itcom-real-006",
+  "refPrice": 1705.0,
+  "refOld": null,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/laptop-apple-macbook-air-13-6-inch-m5-10-core-cpu-10-core-gpu-16gb-ram-512gb-ssd-sky-blue",
+  "sku": "EX11",
+  "captured": "2026-11-01"
+ },
+ "apple-macbook-air-15-3-m5": {
+  "packId": "itcom-real-007",
+  "refPrice": 2630.0,
+  "refOld": null,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/laptop-apple-macbook-air-15-3-inch-m5-10-core-cpu-10-core-gpu-32gb-ram-1tb-ssd-starlight",
+  "sku": "EX44",
+  "captured": "2026-11-01"
+ },
+ "dell-vostro-3520-15-6-fhd": {
+  "packId": "itcom-real-008",
+  "refPrice": 849.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/laptop/laptop/dell-vostro-3520-15-6-fhd-120hz-intel-core-i7-1255u-16gb-ram-512gb-ssd-iris-xe-backlit-keyboard-clone/",
+  "sku": "NBB21970",
+  "captured": "2026-11-01"
+ },
+ "apple-macbook-air-13-6-inch-m5": {
+  "packId": "itcom-real-009",
+  "refPrice": 1265.0,
+  "refOld": null,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/laptop-apple-macbook-air-13-6-inch-m5-10-core-cpu-8-core-gpu-16gb-ram-512gb-ssd-silver-de",
+  "sku": "1325410",
+  "captured": "2026-11-01"
+ },
+ "dell-vostro-3530-15-6-fhd": {
+  "packId": "itcom-real-010",
+  "refPrice": 969.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/laptop/laptop/dell-vostro-3530-15-6-fhd-120hz-intel-core-i7-1355u-8gb-ram-512gb-ssd-iris-xe/",
+  "sku": "NBB22747",
+  "captured": "2026-11-01"
+ },
+ "lg-34wr50qk-b": {
+  "packId": "itcom-real-011",
+  "refPrice": 319.9,
+  "refOld": 399.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/monitor-lg-34wr50qk-b-34-wqhd-va-100hz-5ms-hdmidp-zez",
+  "sku": "99056627",
+  "captured": "2026-11-01"
+ },
+ "aoc-q27g4zd-27": {
+  "packId": "itcom-real-012",
+  "refPrice": 685.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-monitors/monitor-aoc-q27g4zd-27-qhd-280hz-qd-oled/",
+  "sku": "MON03660",
+  "captured": "2026-11-01"
+ },
+ "lg-34u511a-b-34-wfhd-ips-5": {
+  "packId": "itcom-real-013",
+  "refPrice": 255.0,
+  "refOld": 320.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/monitor-lg-34u511a-b-34-wfhd-ips-5-ms-100-hz-hdmi-displayport-vesa-black-1195462",
+  "sku": "1195462",
+  "captured": "2026-11-01"
+ },
+ "dell-aw3225dm-31-5": {
+  "packId": "itcom-real-014",
+  "refPrice": 569.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-monitors/monitor-dell-aw3225dm-31-5-qhd-180hz/",
+  "sku": "MON03158",
+  "captured": "2026-11-01"
+ },
+ "dell-gaming-alienware-aw2525hm-24-5-inch": {
+  "packId": "itcom-real-015",
+  "refPrice": 230.0,
+  "refOld": 275.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/monitor-dell-gaming-alienware-aw2525hm-24-5-inch-fhd-320hz-0-5ms-gtg-fast-ips-displayport",
+  "sku": "SBAI11001",
+  "captured": "2026-11-01"
+ },
+ "asrock-challenger-cl25ffa": {
+  "packId": "itcom-real-016",
+  "refPrice": 123.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/monitor/monitor/asrock-challenger-cl25ffa-24-5-19201080-fullhd-100hz-black-4710483949395/",
+  "sku": "MON00350",
+  "captured": "2026-11-01"
+ },
+ "aoc-24g4zr-23-8": {
+  "packId": "itcom-real-017",
+  "refPrice": 223.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-monitors/monitor-aoc-24g4zr-23-8-full-hd-260hz-i-zi-me-te-kuqe/",
+  "sku": "MON03658",
+  "captured": "2026-11-01"
+ },
+ "aoc-g4-cu34g4z": {
+  "packId": "itcom-real-018",
+  "refPrice": 489.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-monitors/monitor-aoc-g4-cu34g4z-34-wqhd-240hz-i-zi/",
+  "sku": "MON03403",
+  "captured": "2026-11-01"
+ },
+ "amd-ryzen-9-9950x3d2-oem": {
+  "packId": "itcom-real-020",
+  "refPrice": 1172.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/procesor-cpu/amd-ryzen-9-9950x3d2-processor-tray/",
+  "sku": "PROAMDRYZ0365",
+  "captured": "2026-11-01"
+ },
+ "amd-ryzen-9-9950x3d2-box": {
+  "packId": "itcom-real-021",
+  "refPrice": 1308.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/procesor-cpu/amd-ryzen-9-9950x3d2-dual-edition-processor-4-3-ghz-192-mb-l3-box/",
+  "sku": "PROAMDRYZ0364",
+  "captured": "2026-11-01"
+ },
+ "amd-ryzen-5-pro-8500g-oem": {
+  "packId": "itcom-real-022",
+  "refPrice": 173.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/procesor-cpu/amd-ryzen-5-pro-8500g-processor-3-5-ghz-16-mb-l3/",
+  "sku": "PROAMDRYZ0351",
+  "captured": "2026-11-01"
+ },
+ "amd-ryzen-3-3200g-box": {
+  "packId": "itcom-real-023",
+  "refPrice": 63.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/procesor-cpu/amd-ryzen-3-3200g-processor-3-6-ghz-4-mb-l3-tray/",
+  "sku": "PROAMDRYZ0247",
+  "captured": "2026-11-01"
+ },
+ "amd-epyc-9354p-oem": {
+  "packId": "itcom-real-024",
+  "refPrice": 1924.75,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/procesor-cpu/amd-epyc-32core-model-9354p-sp5-tray/",
+  "sku": "21231442",
+  "captured": "2026-11-01"
+ },
+ "zotac-nvidia-geforce-rtx-5060-ti": {
+  "packId": "itcom-real-025",
+  "refPrice": 599.9,
+  "refOld": 699.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/kartel-grafike-nvidia-geforce-rtx-5060-ti-8gb-gddr7-zotac-gaming-twin-edge-oc",
+  "sku": "17017058",
+  "captured": "2026-11-01"
+ },
+ "nvidia-msi-geforce-rtx-5060-ventus-2x": {
+  "packId": "itcom-real-026",
+  "refPrice": 499.9,
+  "refOld": 599.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/kartel-grafike-nvidia-msi-geforce-rtx-5060-ventus-2x-oc-8gb-gddr7-128-bit-pcie-50-3xdp-hdmi-21b",
+  "sku": "99054168",
+  "captured": "2026-11-01"
+ },
+ "gigabyte-amd-radeon-rx-9070-xt": {
+  "packId": "itcom-real-027",
+  "refPrice": 939.9,
+  "refOld": 1099.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/kartel-grafike-amd-radeon-rx-9070-xt-16gb-gigabyte-gaming-gddr6-3-fan-zez",
+  "sku": "55000797",
+  "captured": "2026-11-01"
+ },
+ "gigabyte-amd-radeon-rx-9060-xt": {
+  "packId": "itcom-real-028",
+  "refPrice": 749.9,
+  "refOld": null,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/kartel-grafike-amd-radeon-rx-9060-xt-16gb-gigabyte-gaming-oc-gddr6-3-fan-zez",
+  "sku": "55000796",
+  "captured": "2026-11-01"
+ },
+ "asus-geforce-gt-710-evo": {
+  "packId": "itcom-real-029",
+  "refPrice": 78.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kartela-grafike/asus-gt710-sl-2gd5-brk-evo-nvidia-geforce-gt-710-2-gb-gddr5/",
+  "sku": "VGAASUNVD0895",
+  "captured": "2026-11-01"
+ },
+ "biostar-geforce-gtx1050": {
+  "packId": "itcom-real-030",
+  "refPrice": 180.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kartela-grafike/biostar-geforce-gtx1050-nvidia-geforce-gtx-1050-4-gb-gddr5/",
+  "sku": "VGABIONVD0015",
+  "captured": "2026-11-01"
+ },
+ "asus-prime-geforce-rtx-5060-ti-16gb": {
+  "packId": "itcom-real-031",
+  "refPrice": 1176.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kartela-grafike/asus-prime-geforce-rtx-5060-ti-oc-16-gb-graphics-card/",
+  "sku": "VGAASUNVD0920",
+  "captured": "2026-11-01"
+ },
+ "biostar-geforce-210": {
+  "packId": "itcom-real-032",
+  "refPrice": 52.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kartela-grafike/biostar-geforce-210-nvidia-1-gb-gddr3/",
+  "sku": "VGABIONVD0010",
+  "captured": "2026-11-01"
+ },
+ "corsair-vengeance-lpx": {
+  "packId": "itcom-real-033",
+  "refPrice": 137.83,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/memorje-ram/3000-8gb-corsair-vengeance-lpx/",
+  "sku": "108745",
+  "captured": "2026-11-01"
+ },
+ "corsair-vengeance-ddr5": {
+  "packId": "itcom-real-034",
+  "refPrice": 511.56,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/memorje-ram/24gb-corsair-vengeance-so-pc-4800-cl40-retail/",
+  "sku": "21329305",
+  "captured": "2026-11-01"
+ },
+ "kingston-ddr4-module": {
+  "packId": "itcom-real-035",
+  "refPrice": 1775.41,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/memorje-ram/3200-32gb-kingston-kcp432nd8-32-cl22-1-2v/",
+  "sku": "125445",
+  "captured": "2026-11-01"
+ },
+ "crucial-pro-overclocking-edition": {
+  "packId": "itcom-real-036",
+  "refPrice": 849.15,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/memorje-ram/crucial-32gb-pc-6000-kit-2x16gb-pro-overclocking/",
+  "sku": "21286898",
+  "captured": "2026-11-01"
+ },
+ "goodram-irdm-ddr5": {
+  "packId": "itcom-real-037",
+  "refPrice": 419.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/memorje-ram/goodram-irdm-ddr5-ir-7200d564l34s-16g-memory-module-16-gb-1-x-16-gb/",
+  "sku": "PAMGORDR50044",
+  "captured": "2026-11-01"
+ },
+ "g-skill-ripjaws-m5-rgb": {
+  "packId": "itcom-real-038",
+  "refPrice": 1836.81,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/memorje-ram/32gb-pc-6000-cl30-g-skill-2x16gb-30-m5-rgb-rm5rw/",
+  "sku": "21287391",
+  "captured": "2026-11-01"
+ },
+ "asrock-b760-pro-rs": {
+  "packId": "itcom-real-039",
+  "refPrice": 162.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/asrock-b760-pro-rs-intel-b760-lga-1700-atx/",
+  "sku": "PLYASR1700080",
+  "captured": "2026-11-01"
+ },
+ "asus-b850-max-gaming-wifi": {
+  "packId": "itcom-real-040",
+  "refPrice": 242.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/asus-b850-max-gaming-wifi-amd-b850-socket-am5-atx/",
+  "sku": "PLYASUAM50079",
+  "captured": "2026-11-01"
+ },
+ "asus-prime-a520m-r": {
+  "packId": "itcom-real-041",
+  "refPrice": 76.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/asus-prime-a520m-r-amd-a520-socket-am4-micro-atx/",
+  "sku": "PLYASUAM40085",
+  "captured": "2026-11-01"
+ },
+ "asus-prime-b850m-a-wifi": {
+  "packId": "itcom-real-042",
+  "refPrice": 249.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/asus-prime-b850m-a-wifi-amd-b850-socket-am5-micro-atx/",
+  "sku": "PLYASUAM50067",
+  "captured": "2026-11-01"
+ },
+ "asus-pro-h610m-c-csm": {
+  "packId": "itcom-real-043",
+  "refPrice": 158.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/asus-pro-h610m-c-csm-intel-h610-lga-1700-micro-atx/",
+  "sku": "PLYASU1700109",
+  "captured": "2026-11-01"
+ },
+ "gigabyte-a520m-k-v2": {
+  "packId": "itcom-real-044",
+  "refPrice": 95.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/gigabyte-a520m-k-v2-amd-micro-atx-socket-am4-pllake-ame/",
+  "sku": "MBO206313",
+  "captured": "2026-11-01"
+ },
+ "gigabyte-b760-gaming-x": {
+  "packId": "itcom-real-045",
+  "refPrice": 229.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/gigabyte-b760-gaming-x-lga-1700-pllake-ame/",
+  "sku": "MBO204564",
+  "captured": "2026-11-01"
+ },
+ "asrock-b760m-hdv": {
+  "packId": "itcom-real-046",
+  "refPrice": 116.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/pllaka-ame/asrock-b760m-hdv-m-2-d4-intel-b760-lga-1700-micro-atx/",
+  "sku": "PLYASR1700048",
+  "captured": "2026-11-01"
+ },
+ "qnap-ts-i410x-8g": {
+  "packId": "itcom-real-047",
+  "refPrice": 1499.9,
+  "refOld": 1814.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/qnap-ts-i410x-8g-nas-intel-atom-x6425e-8gb-ddr4-4-bay-sata-25-2-10gbe-tower-zez",
+  "sku": "26031700",
+  "captured": "2026-11-01"
+ },
+ "asustor-flashstor-6-gen2-fs6806x": {
+  "packId": "itcom-real-048",
+  "refPrice": 1099.9,
+  "refOld": 1335.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/asustor-flashstor-6-gen2-fs6806xnas-6-m2-nvme-ryzen-v3c14-8gb-ddr5-10gbe-2-usb4-zez",
+  "sku": "26031704",
+  "captured": "2026-11-01"
+ },
+ "synology-rackstation-rs1226rp": {
+  "packId": "itcom-real-049",
+  "refPrice": 2312.9,
+  "refOld": 2751.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/synology-rackstation-rs1226rp-nas-amd-ryzen-v1500b-4gb-ddr4-ecc-8-bay-2-25gbe-2u-rackmount-psu-redundant-zez",
+  "sku": "26031740",
+  "captured": "2026-11-01"
+ },
+ "intenso-top-performance": {
+  "packId": "itcom-real-050",
+  "refPrice": 164.49,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/hard-disqe-ssd/solid-state-drive-ssd/m-2-1tb-intenso-top-performance/",
+  "sku": "110587",
+  "captured": "2026-11-01"
+ },
+ "lacie-rugged-mini": {
+  "packId": "itcom-real-051",
+  "refPrice": 491.42,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/hard-disqe-ssd/per-kompjuter/lacie-rugged-mini-drive-4tb-shock-rain-pressure-resistant-usb3-0-6-4cm-2-5zoll-orange/",
+  "sku": "21320894",
+  "captured": "2026-11-01"
+ },
+ "adata-ultimate-su630": {
+  "packId": "itcom-real-052",
+  "refPrice": 335.48,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/hard-disqe-ssd/solid-state-drive-ssd/adata-su630-1-9-tb-schwarz-sata-6-gb-s-2-5/",
+  "sku": "21320907",
+  "captured": "2026-11-01"
+ },
+ "sandisk-optimus-gx-pro-8100": {
+  "packId": "itcom-real-053",
+  "refPrice": 857.48,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/hard-disqe-ssd/solid-state-drive-ssd/2tb-sandisk-optimus-gx-pro-8100-pcie-5-nvme/",
+  "sku": "21329316",
+  "captured": "2026-11-01"
+ },
+ "crucial-bx500-ssd": {
+  "packId": "itcom-real-054",
+  "refPrice": 492.83,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/hard-disqe-ssd/solid-state-drive-ssd/2-5-crucial-bx500-2-tb-2-5-in-6-4-cm-sata-6gb-s/",
+  "sku": "21310104",
+  "captured": "2026-11-01"
+ },
+ "logitech-mx-master-4-business": {
+  "packId": "itcom-real-055",
+  "refPrice": 119.0,
+  "refOld": 169.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/maus-logitech-mx-master-4-business-wireless-mouse-bluetooth-graphite-14222587",
+  "sku": "14222587",
+  "captured": "2026-11-01"
+ },
+ "logitech-g-pro-x-superlight-2-lightspeed": {
+  "packId": "itcom-real-056",
+  "refPrice": 109.9,
+  "refOld": 159.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/maus-gaming-logitech-g-pro-x-superlight-2-lightspeed-bardh",
+  "sku": "99056525",
+  "captured": "2026-11-01"
+ },
+ "gembird-kbs-wps-01-slim-pro-business": {
+  "packId": "itcom-real-057",
+  "refPrice": 15.0,
+  "refOld": null,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/tastiere-dhe-maus-gembird-kbs-wps-01-slim-pro-business-wireless-desktop-set-white-us",
+  "sku": "8716309137027",
+  "captured": "2026-11-01"
+ },
+ "logitech-g-pro-x-superlight-2": {
+  "packId": "itcom-real-058",
+  "refPrice": 110.0,
+  "refOld": 125.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/maus-logitech-g-pro-x-superlight-2-black-2",
+  "sku": "119839",
+  "captured": "2026-11-01"
+ },
+ "lenovo-thinkpad-essential": {
+  "packId": "itcom-real-059",
+  "refPrice": 33.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/periferike/maus/maus-lenovo-thinkpad-essential-wireless-i-zi/",
+  "sku": "MOU00318",
+  "captured": "2026-11-01"
+ },
+ "hyperx-alloy-core": {
+  "packId": "itcom-real-061",
+  "refPrice": 79.5,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-keyboard/hyperx-alloy-core-rgb-keyboard-membrane-rgb-black/",
+  "sku": "KYBHYX015",
+  "captured": "2026-11-01"
+ },
+ "razer-blackwidow-v3-tkl": {
+  "packId": "itcom-real-062",
+  "refPrice": 136.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-keyboard/razer-blackwidow-v3-tenkeyless-rgb-chroma-usb-mechanical-gaming-keyboard/",
+  "sku": "KYB00269",
+  "captured": "2026-11-01"
+ },
+ "hp-poly-blackwire-3320-stereo-usb-c": {
+  "packId": "itcom-real-063",
+  "refPrice": 35.0,
+  "refOld": 40.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/kufje-hp-poly-blackwire-3320-stereo-usb-c-headset-black",
+  "sku": "22480",
+  "captured": "2026-11-01"
+ },
+ "poly-headset-blackwire-3220-black-stereo-usb": {
+  "packId": "itcom-real-064",
+  "refPrice": 39.5,
+  "refOld": 45.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/kufje-poly-headset-blackwire-3220-black-stereo-usb-c-a-adapter-black",
+  "sku": "1203193",
+  "captured": "2026-11-01"
+ },
+ "hyperx-cloud-iii": {
+  "packId": "itcom-real-065",
+  "refPrice": 69.0,
+  "refOld": 89.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/kufje-hyperx-cloud-iii-727a9aa-black",
+  "sku": "119843",
+  "captured": "2026-11-01"
+ },
+ "hyperx-cloud-alpha": {
+  "packId": "itcom-real-066",
+  "refPrice": 59.0,
+  "refOld": 69.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/kufje-hyperx-cloud-alpha-black",
+  "sku": "119838",
+  "captured": "2026-11-01"
+ },
+ "hyperx-cloud-iii-2": {
+  "packId": "itcom-real-067",
+  "refPrice": 149.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-headphones/kufje-gaming-hyperx-cloud-iii-usb-3-5mm-te-zeza-197029008220/",
+  "sku": "SPK00220",
+  "captured": "2026-11-01"
+ },
+ "razer-kraken-x-lite": {
+  "packId": "itcom-real-068",
+  "refPrice": 75.5,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-headphones/kufje-gaming-razer-kraken-x-lite-te-zeza/",
+  "sku": "SPK00255",
+  "captured": "2026-11-01"
+ },
+ "mikrotik-l009uigs-2haxd-in": {
+  "packId": "itcom-real-069",
+  "refPrice": 134.9,
+  "refOld": 160.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/mikrotik-l009uigs-2haxd-in-wireless-router",
+  "sku": "26028723",
+  "captured": "2026-11-01"
+ },
+ "huawei-ekitoptix-fg630g05": {
+  "packId": "itcom-real-070",
+  "refPrice": 64.9,
+  "refOld": 86.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/broadband-network-terminal-fg630g05-ekitoptix-fg630-edge-ont-terminal-european-standard-adapter-white-shell-english",
+  "sku": "26027858",
+  "captured": "2026-11-01"
+ },
+ "d-link-m95": {
+  "packId": "itcom-real-071",
+  "refPrice": 279.9,
+  "refOld": 334.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/d-link-m95e-aquila-pro-ai-be9500-wi-fi-7-smart-mesh-router",
+  "sku": "26027268",
+  "captured": "2026-11-01"
+ },
+ "switch-mikrotik-crs326-24g-2s-in": {
+  "packId": "itcom-real-072",
+  "refPrice": 229.9,
+  "refOld": 279.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/switch-mikrotik-crs326-24g-2sin-24-gigabit-ethernet-rj45-2-sfp-10g-managed-routerosswos-bardh",
+  "sku": "26029299",
+  "captured": "2026-11-01"
+ },
+ "unitek-usb-c-hub": {
+  "packId": "itcom-real-073",
+  "refPrice": 11.0,
+  "refOld": null,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/konvertor-unitek-usb-c-hub-1-usb-a-5gbps-3-usb-a-2-0",
+  "sku": "1195486",
+  "captured": "2026-11-01"
+ },
+ "apple-20w-usb-c-power-adapter": {
+  "packId": "itcom-real-074",
+  "refPrice": 35.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/apple-products/apple-20w-usb-c-power-adapter/",
+  "sku": "ADA00090",
+  "captured": "2026-11-01"
+ },
+ "apple-usb-c-charge-cable": {
+  "packId": "itcom-real-075",
+  "refPrice": 31.5,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/apple-products/accesories/apple-usb-c-charge-cable-usb-cable-2m-en/",
+  "sku": "CBL525146",
+  "captured": "2026-11-01"
+ },
+ "apple-usb-c-to-lightning-cable": {
+  "packId": "itcom-real-076",
+  "refPrice": 26.9,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/apple-products/accesories/apple-usb-c-to-lightning-cable-lightning-cable-lightning-usb-1-m-clone/",
+  "sku": "CBL129428",
+  "captured": "2026-11-01"
+ },
+ "ocom-80mm-me-preres-automatik": {
+  "packId": "itcom-real-077",
+  "refPrice": 69.9,
+  "refOld": 119.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/printer-termik-ocom-80mm-me-prers-automatik-usb-lan-zez",
+  "sku": "99056626",
+  "captured": "2026-11-01"
+ },
+ "xerox-workcentre-3025v-bi-multifunction-printer": {
+  "packId": "itcom-real-078",
+  "refPrice": 159.0,
+  "refOld": 211.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/printer-xerox-workcentre-3025v-bi-multifunction-printer",
+  "sku": "30309",
+  "captured": "2026-11-01"
+ },
+ "xerox-workcentre-3025v-ni": {
+  "packId": "itcom-real-079",
+  "refPrice": 219.0,
+  "refOld": 289.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/printer-xerox-workcentre-3025v-ni-multifunction-printer",
+  "sku": "30308",
+  "captured": "2026-11-01"
+ },
+ "hp-printer-deskjet-2320": {
+  "packId": "itcom-real-080",
+  "refPrice": 75.5,
+  "refOld": 100.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/printer-hp-printer-deskjet-2320-copier-scanner-white",
+  "sku": "SCDA5093",
+  "captured": "2026-11-01"
+ },
+ "motorola-moto-g37": {
+  "packId": "itcom-real-081",
+  "refPrice": 265.9,
+  "refOld": 315.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/motorola-moto-g37-4ram-128-gb-nautical-blue-21348305",
+  "sku": "12002258",
+  "captured": "2026-11-01"
+ },
+ "google-fitbit-air": {
+  "packId": "itcom-real-082",
+  "refPrice": 169.9,
+  "refOld": 239.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/google-fitbit-air-fitness-tracker-pa-ekran-bluetooth-50-le-monitorim-pulsispogjumi-5-atm-deri-7-dit-obsidian-2",
+  "sku": "99057195",
+  "captured": "2026-11-01"
+ },
+ "apple-ipad-a16": {
+  "packId": "itcom-real-083",
+  "refPrice": 489.0,
+  "refOld": 529.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/tablet-apple-ipad-a16-11-inch-11th-gen-wi-fi-128gb-blue-20w-adapter",
+  "sku": "30432",
+  "captured": "2026-11-01"
+ },
+ "ibesky-rripa-per-fitbit-air": {
+  "packId": "itcom-real-085",
+  "refPrice": 55.0,
+  "refOld": 79.0,
+  "site": "Macintoks",
+  "url": "https://www.macintoks.com/product/rripa-per-fitbit-air-ibesky-performance-band-3-pack-compatible-with-google-fitbit-air",
+  "sku": "119561",
+  "captured": "2026-11-01"
+ },
+ "deepcool-le360-v2": {
+  "packId": "itcom-real-086",
+  "refPrice": 69.9,
+  "refOld": 119.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/ftohs-pr-procesor-deepcool-le360-v2-360mm-aio-3x120mm-argb-pwm-zez-2",
+  "sku": "99055654",
+  "captured": "2026-11-01"
+ },
+ "inter-tech-mini-itx-psu-200w-nas": {
+  "packId": "itcom-real-087",
+  "refPrice": 33.3,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/furnizues-i-rrymes/200w-inter-tech-mini-itx-psu-200w-nas-dc-dc/",
+  "sku": "21336258",
+  "captured": "2026-11-01"
+ },
+ "msi-mag-a750gl-pcie5": {
+  "packId": "itcom-real-088",
+  "refPrice": 157.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/furnizues-i-rrymes/power-supply-msi-mag-a750gl-pcie5-750w-80-plus-gold/",
+  "sku": "PSU02399",
+  "captured": "2026-11-01"
+ },
+ "thermaltake-view-380-xl-tg-argb-bumblebee": {
+  "packId": "itcom-real-089",
+  "refPrice": 199.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kase-per-kompjuter/thermaltake-view-380-xl-tg-argb-bumblebee-ca-11e-00m4wn-00-kase-kompjuteri-e-verdhe/",
+  "sku": "CAS00304",
+  "captured": "2026-11-01"
+ },
+ "cooler-master-elite-690-wood": {
+  "packId": "itcom-real-090",
+  "refPrice": 119.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kase-per-kompjuter/cooler-master-elite-690-wood-e690-khnn-s00-mid-tower-black/",
+  "sku": "CAS02892",
+  "captured": "2026-11-01"
+ },
+ "cooler-master-elite-681": {
+  "packId": "itcom-real-091",
+  "refPrice": 119.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/pjese-per-kompjuter/kase-per-kompjuter/cooler-master-elite-681-e681-khnn-s00-mid-tower-black/",
+  "sku": "CAS02889",
+  "captured": "2026-11-01"
+ },
+ "actina-5901443418535-pc-amd-ryzen-5-7500f": {
+  "packId": "itcom-real-092",
+  "refPrice": 2660.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-desktops/actina-5901443418535-pc-amd-ryzen-5-7500f-32-gb-ddr5-sdram-1-tb-ssd-nvidia-geforce-rtx-5060-ti-midi-tower-black/",
+  "sku": "KOMACNGIP0344",
+  "captured": "2026-11-01"
+ },
+ "actina-5901443440123-pc-amd-ryzen-7-5700x": {
+  "packId": "itcom-real-093",
+  "refPrice": 2067.0,
+  "refOld": null,
+  "site": "Buton",
+  "url": "https://butonks.com/gaming/gaming-desktops/actina-5901443440123-pc-amd-ryzen-7-5700x-16-gb-ddr4-sdram-1-tb-ssd-amd-radeon-rx-9060-xt-midi-tower-black/",
+  "sku": "KOMACNGIP0596",
+  "captured": "2026-11-01"
+ },
+ "reolink-nvs8-8mb4-4k-8mp": {
+  "packId": "itcom-real-094",
+  "refPrice": 673.9,
+  "refOld": 801.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/reolink-nvs8-8mb4-video-surveillance-kit-252073",
+  "sku": "11006248",
+  "captured": "2026-11-01"
+ },
+ "ubiquiti-unifi-g5-flex": {
+  "packId": "itcom-real-095",
+  "refPrice": 221.9,
+  "refOld": 263.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/ubiquiti-g5-flex-131322",
+  "sku": "11006262",
+  "captured": "2026-11-01"
+ },
+ "ubiquiti-unifi-g5-turret-ultra": {
+  "packId": "itcom-real-096",
+  "refPrice": 149.9,
+  "refOld": 177.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/ubiquiti-g5-turret-ultra-136448",
+  "sku": "11005917",
+  "captured": "2026-11-01"
+ },
+ "ubiquiti-unifi-g6-ptz": {
+  "packId": "itcom-real-097",
+  "refPrice": 529.9,
+  "refOld": 662.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/ubiquiti-g6-ptz-21311937",
+  "sku": "11006635",
+  "captured": "2026-11-01"
+ },
+ "tp-link-tapo-tc70-1080p": {
+  "packId": "itcom-real-098",
+  "refPrice": 71.9,
+  "refOld": 85.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/tp-link-tapo-tc70-security-camera-21236059",
+  "sku": "11006048",
+  "captured": "2026-11-01"
+ },
+ "tp-link-tapo-c420s1-4mp-2k": {
+  "packId": "itcom-real-099",
+  "refPrice": 142.9,
+  "refOld": 169.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/tp-link-tapo-c420s1-4mp-2k-wireless-battery-camera-full-color-night-vision-ai-h200-hub-ip65",
+  "sku": "11006342",
+  "captured": "2026-11-01"
+ },
+ "tp-link-tapo-c465-8mp-4k": {
+  "packId": "itcom-real-100",
+  "refPrice": 229.9,
+  "refOld": 273.9,
+  "site": "Startech24",
+  "url": "https://startech24.com/produkti/tp-link-tapo-c465-8mp-4k-ai-solar-camera-starlight-color-night-vision-wi-fi-dual-band-ip65",
+  "sku": "11006400",
+  "captured": "2026-11-01"
+ }
+}

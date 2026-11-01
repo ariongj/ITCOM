@@ -99,7 +99,13 @@ export interface Product {
   /** Channels the product is published to (default: online) */
   channels?: SalesChannel[];
   /** ITCOM storefront data kept with the product: filter values, rating, badge text, drawing fallback */
-  itcom?: { attrs: Record<string, string | number>; rating: number; reviews: number; badge: string; art: unknown };
+  itcom?: {
+    attrs: Record<string, string | number>; rating: number; reviews: number; badge: string; art: unknown;
+    /** Imported without an ITCOM price: the shop shows "Çmimi me ofertë" until `price` is set (> 0) */
+    quote?: boolean;
+    /** Market reference from the photo pack (source shop price on the capture date) — internal, never published */
+    ref?: { packId: string; refPrice: number; refOld: number | null; site: string; url: string; sku?: string | null; captured?: string } | null;
+  };
 }
 
 export interface CartItem {

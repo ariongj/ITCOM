@@ -44,7 +44,8 @@ The list updates itself when prices change.`,
       ),
       image: pic('/assets/products/photo/lp-zb14amd.webp'),
       kind: 'smart',
-      rules: [{ field: 'category', op: 'eq', value: 'cat-laptop' }, { field: 'price', op: 'lt', value: '1000' }],
+      // Only laptops with an ITCOM price: products still on request (tag me-oferte) have price 0.
+      rules: [{ field: 'category', op: 'eq', value: 'cat-laptop' }, { field: 'price', op: 'lt', value: '1000' }, { field: 'price', op: 'gt', value: '0' }],
       sort: 'price-asc',
       seo: { title: 'Laptopë për studentë — ITCOM', description: 'Laptopë nën 1.000 € për mësim dhe projekte, me dërgesë në gjithë Kosovën.' },
     }),
@@ -425,31 +426,31 @@ The ITCOM 3D configurator does this for you and warns you when the power supply 
 const CATEGORY_TREE: [string, string, string, [string, string, string, string?][]][] = [
   ['laptope-kompjutere', 'Laptopë & kompjuterë', 'Laptops & computers', [
     ['laptope', 'Laptopë', 'Laptops', 'cat-laptop'], ['desktop', 'Desktop', 'Desktop'], ['all-in-one', 'All-in-One', 'All-in-One'],
-    ['mini-pc', 'Mini PC', 'Mini PC'], ['workstation', 'Workstation', 'Workstation'], ['pc-gaming', 'PC gaming', 'Gaming PC']]],
+    ['mini-pc', 'Mini PC', 'Mini PC'], ['workstation', 'Workstation', 'Workstation'], ['pc-gaming', 'PC gaming', 'Gaming PC', 'cat-pc-gaming']]],
   ['komponente-pc', 'Komponentë PC', 'PC components', [
     ['procesore', 'Procesorë', 'Processors', 'cat-cpu'], ['kartela-grafike', 'Kartela grafike', 'Graphics cards', 'cat-gpu'],
-    ['pllaka-ame', 'Pllaka amë', 'Motherboards'], ['ram', 'RAM', 'RAM'], ['ssd', 'SSD', 'SSD'], ['hdd', 'HDD', 'HDD'],
-    ['furnizues-rryme', 'Furnizues rryme (PSU)', 'Power supplies'], ['kasa', 'Kasa', 'Cases'], ['ftohje-ventilatore', 'Ftohje & ventilatorë', 'Cooling & fans']]],
+    ['pllaka-ame', 'Pllaka amë', 'Motherboards', 'cat-mb'], ['ram', 'Memorie RAM', 'Memory', 'cat-ram'], ['ssd', 'SSD', 'SSD', 'cat-ssd'], ['hdd', 'HDD', 'HDD'],
+    ['furnizues-rryme', 'Furnizues rryme', 'Power supplies', 'cat-psu'], ['kasa', 'Kasa', 'Cases', 'cat-case'], ['ftohje-ventilatore', 'Ftohje & ventilatorë', 'Cooling & fans', 'cat-cooler']]],
   ['monitore-imazh', 'Monitorë & imazh', 'Monitors & display', [
-    ['monitore', 'Monitorë', 'Monitors'], ['mbajtese-monitori', 'Mbajtëse', 'Mounts'], ['projektore', 'Projektorë', 'Projectors'],
+    ['monitore', 'Monitorë', 'Monitors', 'cat-monitor'], ['mbajtese-monitori', 'Mbajtëse', 'Mounts'], ['projektore', 'Projektorë', 'Projectors'],
     ['ekrane-prezantimi', 'Ekrane prezantimi', 'Presentation screens'], ['aksesore-monitori', 'Aksesorë monitori', 'Monitor accessories']]],
   ['periferike-gaming', 'Periferikë & gaming', 'Peripherals & gaming', [
-    ['maus', 'Maus', 'Mice'], ['tastiera', 'Tastiera', 'Keyboards'], ['mousepad', 'Mousepad', 'Mouse pads'], ['kontrollues', 'Kontrollues', 'Controllers'],
+    ['maus', 'Maus', 'Mice', 'cat-mouse'], ['tastiera', 'Tastiera', 'Keyboards', 'cat-keyboard'], ['mousepad', 'Mousepad', 'Mouse pads'], ['kontrollues', 'Kontrollues', 'Controllers'],
     ['volante', 'Volantë', 'Racing wheels'], ['karrige-tavolina-gaming', 'Karrige & tavolina gaming', 'Gaming chairs & desks']]],
   ['audio-video', 'Audio & video', 'Audio & video', [
-    ['kufje', 'Kufje', 'Headphones'], ['altoparlante', 'Altoparlantë', 'Speakers'], ['mikrofone', 'Mikrofonë', 'Microphones'],
-    ['webcam', 'Webcam', 'Webcams'], ['pajisje-streaming', 'Pajisje streaming', 'Streaming gear']]],
+    ['kufje', 'Kufje', 'Headphones', 'cat-headset'], ['altoparlante', 'Altoparlantë', 'Speakers'], ['mikrofone', 'Mikrofonë', 'Microphones'],
+    ['webcam', 'Webcam', 'Webcams'], ['pajisje-streaming', 'Pajisje streaming', 'Streaming gear'], ['kamera-sigurie', 'Kamera sigurie', 'Security cameras', 'cat-camera']]],
   ['rrjet-ruajtje', 'Rrjet & ruajtje', 'Networking & storage', [
-    ['routere', 'Routerë', 'Routers'], ['switch', 'Switch', 'Switches'], ['access-point', 'Access point', 'Access points'], ['rrjet-mesh', 'Rrjet mesh', 'Mesh Wi-Fi'],
-    ['nas', 'NAS', 'NAS'], ['disqe-te-jashtme', 'Disqe të jashtme', 'External drives'], ['usb', 'USB', 'USB drives']]],
+    ['routere', 'Routerë', 'Routers', 'cat-router'], ['switch', 'Switch', 'Switches', 'cat-switch'], ['access-point', 'Access point', 'Access points'], ['rrjet-mesh', 'Rrjet mesh', 'Mesh Wi-Fi', 'cat-mesh'],
+    ['nas', 'NAS', 'NAS', 'cat-nas'], ['disqe-te-jashtme', 'Disqe të jashtme', 'External drives', 'cat-extdrive'], ['usb', 'USB', 'USB drives']]],
   ['printim-zyre', 'Printim & zyrë', 'Printing & office', [
-    ['printere', 'Printerë', 'Printers'], ['skanere', 'Skanerë', 'Scanners'], ['multifunksionale', 'Multifunksionale', 'All-in-one printers'],
+    ['printere', 'Printerë', 'Printers', 'cat-printer'], ['skanere', 'Skanerë', 'Scanners'], ['multifunksionale', 'Multifunksionale', 'All-in-one printers', 'cat-mfp'],
     ['toner-boje', 'Toner & bojë', 'Toner & ink'], ['leter-aksesore', 'Letër & aksesorë', 'Paper & supplies']]],
   ['telefona-tablete', 'Telefona & tabletë', 'Phones & tablets', [
-    ['telefona', 'Telefona', 'Phones'], ['tablete', 'Tabletë', 'Tablets'], ['ore-te-mencura', 'Orë të mençura', 'Smartwatches'],
+    ['telefona', 'Telefona', 'Phones', 'cat-phone'], ['tablete', 'Tabletë', 'Tablets', 'cat-tablet'], ['ore-te-mencura', 'Orë të mençura', 'Smartwatches', 'cat-watch'],
     ['mbeshtjellese', 'Mbështjellëse', 'Cases'], ['mbrojtese-ekrani', 'Mbrojtëse ekrani', 'Screen protectors']]],
   ['aksesore-energji', 'Aksesorë & energji', 'Accessories & power', [
-    ['kabllo', 'Kabllo', 'Cables'], ['adaptere', 'Adapterë', 'Adapters'], ['hub-dock', 'Hub & dock', 'Hubs & docks'], ['karikues', 'Karikues', 'Chargers'],
+    ['kabllo', 'Kabllo', 'Cables', 'cat-cable'], ['adaptere', 'Adapterë', 'Adapters'], ['hub-dock', 'Hub & dock', 'Hubs & docks', 'cat-hub'], ['karikues', 'Karikues', 'Chargers', 'cat-charger'],
     ['power-bank', 'Power bank', 'Power banks'], ['ups', 'UPS', 'UPS'], ['canta', 'Çanta', 'Bags'], ['pastrim', 'Pastrim', 'Cleaning']]],
 ];
 

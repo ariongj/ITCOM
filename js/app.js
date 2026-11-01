@@ -74,13 +74,18 @@
   // katalogun kur ka produkte, ose faqen e saj me kërkesë për ofertë kur ende nuk ka.
   const GROUPS = (window.CMS?.categoryGroups || window.CATEGORY_GROUPS || []).map((g) => ({
     ...g,
-    subs: g.subs.map((x) => ({ ...x, count: x.cat ? PRODUCTS.filter((p) => p.cat === x.cat).length : 0 })),
+    // Nënkategoria lidhet me kategorinë e dyqanit me të njëjtin emër (ose me `cat` të dhënë shprehimisht).
+    subs: g.subs.map((x) => {
+      const cat = x.cat || (PRODUCTS.some((p) => p.cat === x.name) ? x.name : undefined);
+      return { ...x, cat, count: cat ? PRODUCTS.filter((p) => p.cat === cat).length : 0 };
+    }),
   }));
   GROUPS.forEach((g) => { g.cats = g.subs.filter((x) => x.count).map((x) => x.cat); g.count = g.subs.reduce((n, x) => n + x.count, 0); });
   const groupBySlug = (slug) => GROUPS.find((g) => g.slug === slug);
   const subBySlug = (slug) => { for (const g of GROUPS) { const x = g.subs.find((y) => y.slug === slug); if (x) return { g, x }; } return null; };
   const groupOfCat = (cat) => GROUPS.find((g) => g.cats.includes(cat));
-  const subHref = (x) => `#/kategoria/${x.slug}`;
+  // Nënkategoria me produkte hap katalogun e kategorisë së dyqanit; pa produkte, faqen e saj me kërkesë.
+  const subHref = (x) => `#/kategoria/${x.cat ? catSlug(x.cat) : x.slug}`;
 
   /* ================================================================ ndihmës për produktet */
   const imgSrc = (p) => p.img || `assets/products/${p.id}.webp`;
@@ -97,14 +102,18 @@
   const brandMark = (name) => `<span class="bmark ${LOGOS[name] ? "" : "bmark--text"}">${logoSvg(name)}<span>${esc(name)}</span></span>`;
 
 
+  // Produkt pa çmim të ITCOM ende (paketa me foto reale): shitet me ofertë, jo nga shporta.
+  const isQuote = (p) => !!p.quote || !(p.price > 0);
   const stockLabel = (p) => {
+    if (isQuote(p)) return '<span class="stock stock--quote">Me porosi · çmimi me ofertë</span>';
     if (!p.stock) return '<span class="stock stock--out">Jashtë stokut</span>';
     if (p.stock <= 5) return `<span class="stock stock--low">Vetëm ${p.stock} copë në stok</span>`;
     return '<span class="stock stock--in">Në stok</span>';
   };
 
-  const priceHTML = (p) =>
-    `<span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span>${p.old ? `<span class="price-old">${fmt(p.old)}</span>` : ""}`;
+  const priceHTML = (p) => (isQuote(p) ? `<span class="price price--quote">Çmimi me ofertë</span>` :
+    `<span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span>${p.old ? `<span class="price-old">${fmt(p.old)}</span>` : ""}`);
+  const priceText = (p) => (isQuote(p) ? "Çmimi me ofertë" : fmt(p.price));
 
   const inst = (p) => `ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj`;
 
@@ -168,9 +177,9 @@
 
   const CAT_ORDER = (p) => window.CATEGORIES.findIndex((c) => c.id === p.cat);
   const SORTS = {
-    featured: (a, b) => (b.stock > 0) - (a.stock > 0) || (b.old ? 1 : 0) - (a.old ? 1 : 0) || CAT_ORDER(a) - CAT_ORDER(b) || b.price - a.price,
-    "price-asc": (a, b) => a.price - b.price,
-    "price-desc": (a, b) => b.price - a.price,
+    featured: (a, b) => isQuote(a) - isQuote(b) || (b.stock > 0) - (a.stock > 0) || (b.old ? 1 : 0) - (a.old ? 1 : 0) || CAT_ORDER(a) - CAT_ORDER(b) || b.price - a.price,
+    "price-asc": (a, b) => isQuote(a) - isQuote(b) || a.price - b.price,
+    "price-desc": (a, b) => isQuote(a) - isQuote(b) || b.price - a.price,
     discount: (a, b) => discount(b) - discount(a) || b.price - a.price,
     name: (a, b) => a.name.localeCompare(b.name, "sq"),
   };
@@ -260,7 +269,8 @@
       const label = a === 0 ? `Deri në ${fmt0(b)}` : b === Infinity || b >= max ? `Mbi ${fmt0(a)}` : `${group(String(a))}–${fmt0(b)}`;
       return `<button type="button" data-preset="${a}-${hi}" aria-pressed="${state.min === a && state.max === hi}">${label}</button>`;
     }).join("");
-    groups.push(facetGroup("price", "Çmimi", `
+    // Kategori vetëm me produkte me ofertë: pa filtër çmimi (nuk ka çmime për të filtruar).
+    if (max > 0) groups.push(facetGroup("price", "Çmimi", `
       <div class="price-inputs">
         <label><input type="number" id="pmin" inputmode="numeric" min="0" max="${max}" value="${state.min}" aria-label="Çmimi minimal në euro" /></label>
         <span class="muted">–</span>
@@ -317,7 +327,11 @@
   }
 
   /* ================================================================ rezultatet */
-  const addLabel = (p, inCart) => (!p.stock ? "Jashtë stokut" : inCart ? "Në shportë" : "Shto në shportë");
+  const addLabel = (p, inCart) => (isQuote(p) ? "Kërko ofertë" : !p.stock ? "Jashtë stokut" : inCart ? "Në shportë" : "Shto në shportë");
+  // Butoni i kartës: shporta, ose kërkesa për ofertë kur çmimi i ITCOM ende nuk është caktuar.
+  const cardCta = (p, inCart, cls = "btn btn--cta btn--block add") => (isQuote(p)
+    ? `<button type="button" class="${cls.replace(" add", "")} btn--quote" data-quote="${p.id}" aria-label="Kërko ofertë: ${esc(p.name)}">Kërko ofertë</button>`
+    : `<button type="button" class="${cls} ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="${esc(addLabel(p, inCart))}: ${esc(p.name)}">${addLabel(p, inCart)}</button>`);
   // Etiketa vetëm kur ka arsye reale: zbritje e vërtetë ose produkt i ri.
   const cardTag = (p, pick) => {
     const d = discount(p);
@@ -346,8 +360,8 @@
           <h3 class="pcard__title"><a href="${productHref(p.id)}">${esc(p.name)}</a></h3>
           <p class="pcard__specs">${esc(shortSpecs(p))}</p>
           <div class="pcard__price">${priceHTML(p)}</div>
-          <p class="pcard__stock">${stockLabel(p)}${p.stock ? `<span class="pcard__ship">${ship}</span>` : ""}</p>
-          <button type="button" class="btn btn--cta btn--block add ${inCart ? "added" : ""}" data-add="${p.id}" ${p.stock ? "" : "disabled"} aria-label="${esc(addLabel(p, inCart))}: ${esc(p.name)}">${addLabel(p, inCart)}</button>
+          <p class="pcard__stock">${stockLabel(p)}${p.stock && !isQuote(p) ? `<span class="pcard__ship">${ship}</span>` : ""}</p>
+          ${cardCta(p, inCart)}
         </div>
       </article>`;
   }
@@ -390,7 +404,8 @@
       const list = PRODUCTS.filter((p) => matches(p)).sort(SORTS[state.sort]);
       const pages = Math.max(1, Math.ceil(list.length / state.per));
       state.page = Math.min(state.page, pages);
-      const slice = list.slice((state.page - 1) * state.per, state.page * state.per);
+      // "Shiko më shumë" (Raundi 03, f. 14): faqet shtohen poshtë njëra-tjetrës; filtrat mbeten aktivë.
+      const slice = list.slice(0, state.page * state.per);
       $("#loadError").hidden = true;
       grid.innerHTML = slice.map((p) => card(p)).join("");
       $("#empty").hidden = list.length > 0;
@@ -403,8 +418,7 @@
       $("#catBanner").hidden = !cb || !!state.col;
       $("#catBanner").innerHTML = cb ? bannerHTML(cb, "banner--catalog") : "";
       $("#resultsTitle").textContent = title;
-      const from = list.length ? (state.page - 1) * state.per + 1 : 0;
-      const countText = list.length > state.per ? `${from}–${from + slice.length - 1} nga ${list.length} produkte` : plural(list.length, "produkt", "produkte");
+      const countText = plural(list.length, "produkt", "produkte");
       $("#resultsCount").textContent = countText;
       if (view === "catalog") document.title = `${title} · ITCOM`;
 
@@ -425,17 +439,9 @@
       pill.hidden = !act.length;
 
       const pager = $("#pager");
-      if (pages <= 1) pager.innerHTML = "";
-      else {
-        const nums = [];
-        for (let i = 1; i <= pages; i++) {
-          if (i === 1 || i === pages || Math.abs(i - state.page) <= 1) nums.push(i);
-          else if (nums[nums.length - 1] !== "…") nums.push("…");
-        }
-        pager.innerHTML = `<button type="button" data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""} aria-label="Faqja e mëparshme">‹</button>` +
-          nums.map((n) => (n === "…" ? `<button type="button" disabled>…</button>` : `<button type="button" data-page="${n}" ${n === state.page ? 'aria-current="page"' : ""}>${n}</button>`)).join("") +
-          `<button type="button" data-page="${state.page + 1}" ${state.page === pages ? "disabled" : ""} aria-label="Faqja tjetër">›</button>`;
-      }
+      pager.innerHTML = slice.length < list.length
+        ? `<button type="button" class="btn btn--cta btn--lg" data-page="${state.page + 1}">Shiko më shumë</button><p class="muted">${slice.length} nga ${list.length} produkte</p>`
+        : list.length > state.per ? `<p class="muted">Të gjitha produktet u shfaqën (${list.length}).</p>` : "";
       $("#sort").value = state.sort;
       $("#applyFilters").textContent = `Shfaq ${plural(list.length, "rezultat", "rezultate")}`;
     } catch (err) {
@@ -558,6 +564,65 @@
   ];
 
   // Shiriti i kategorive (f. 08): lëviz anash me swipe ose shigjeta, me tregues progresi; pa scroll të faqes.
+  /* Hot Deals (Raundi 03, f. 08): nga të dhënat, jo nga etiketa. Kualifikohen: çmim pozitiv, çmimi i vjetër më i madh,
+     produkt në stok. Renditja: përqindja e plotë (zbritëse), pastaj kursimi në euro, pastaj kodi. Deri në 4; nëse ka
+     vetëm dy, shfaqen vetëm dy. Pa oferta aktive: "Produkte të përzgjedhura". */
+  const hotDeals = () => PRODUCTS
+    .filter((p) => !isQuote(p) && p.price > 0 && p.old > p.price && p.stock > 0)
+    .map((p) => ({ p, pct: ((p.old - p.price) / p.old) * 100, save: p.old - p.price }))
+    .sort((a, b) => b.pct - a.pct || b.save - a.save || a.p.id.localeCompare(b.p.id))
+    .slice(0, 4)
+    .map((x) => x.p);
+  let HOT = [];
+  function renderHotDeals() {
+    HOT = hotDeals();
+    const deals = HOT.length > 0;
+    const cmsPicks = window.CMS?.featured?.filter((id) => byId[id] && PRODUCTS.includes(byId[id]));
+    const list = deals ? HOT : (cmsPicks?.length ? cmsPicks : PICKS).map((id) => byId[id]).filter((p) => p && !isQuote(p)).slice(0, 4);
+    $("#hotTitle").textContent = deals ? "Hot Deals" : "Produkte të përzgjedhura";
+    $("#hotSub").textContent = deals ? "Zbritjet më të larta" : "Përzgjedhja e ekipit ITCOM";
+    $("#hotAll").hidden = !deals;
+    $("#hotAllM").hidden = !deals;
+    $("#hotDeals").classList.toggle("pgrid--few", list.length < 4);
+    $("#hotDeals").innerHTML = list.map((p) => card(p, { pick: !deals })).join("");
+  }
+
+  /* Eksploro produktet (f. 09–11): 12 produkte (4 × 3), "Shiko më shumë" shton 12 të tjera pa lëvizur faqen,
+     filtrat e shpejtë e kthejnë listën në fillim; Hot Deals nuk përsëriten kur ka mjaft produkte. */
+  const EXPLORE_STEP = 12;
+  const EXPLORE_TABS = [
+    ["all", "Të gjitha", null],
+    ["laptops", "Laptopë", ["laptope-kompjutere"]],
+    ["components", "Komponentë", ["komponente-pc"]],
+    ["accessories", "Aksesorë", ["periferike-gaming", "audio-video", "aksesore-energji", "monitore-imazh"]],
+  ];
+  const explore = { tab: "all", shown: EXPLORE_STEP };
+  function exploreList() {
+    const tab = EXPLORE_TABS.find((t) => t[0] === explore.tab);
+    const cats = tab[2] ? new Set(tab[2].flatMap((slug) => groupBySlug(slug)?.cats || [])) : null;
+    let list = PRODUCTS.filter((p) => !cats || cats.has(p.cat)).sort(SORTS.featured);
+    const noHot = list.filter((p) => !HOT.includes(p));
+    if (noHot.length >= EXPLORE_STEP) list = noHot;
+    return list;
+  }
+  function renderExplore(reset = false) {
+    if (reset) explore.shown = EXPLORE_STEP;
+    $("#exploreTabs").innerHTML = EXPLORE_TABS.map(([k, label]) => `<button type="button" class="explore-tab" data-explore="${k}" aria-pressed="${explore.tab === k}">${label}</button>`).join("");
+    const list = exploreList();
+    const grid = $("#explore");
+    const have = grid.children.length;
+    const show = list.slice(0, explore.shown);
+    // Shtojmë vetëm kartat e reja: faqja mbetet ku ishte dhe fokusi nuk humbet.
+    if (!reset && have && have < show.length) grid.insertAdjacentHTML("beforeend", show.slice(have).map((p) => card(p)).join(""));
+    else grid.innerHTML = show.map((p) => card(p)).join("");
+    const done = show.length >= list.length;
+    const more = $("#exploreMore");
+    more.hidden = done;
+    more.disabled = false;
+    more.textContent = "Shiko më shumë produkte";
+    $("#exploreCount").textContent = done ? (list.length > EXPLORE_STEP ? `Të gjitha produktet u shfaqën (${list.length}).` : plural(list.length, "produkt", "produkte")) : `${show.length} nga ${list.length} produkte`;
+  }
+
   function renderStrip() {
     const items = window.CATEGORY_STRIP || GROUPS.map((g) => ({ name: g.nav || g.name, icon: g.icon, href: `#/kategoria/${g.slug}` }));
     const countOf = (href) => {
@@ -593,9 +658,8 @@
       `<li><button type="button" data-info="${info}"><span class="svc__icon">${lucide(icon)}</span><span><b>${t}</b><small>${sub}</small></span></button></li>`).join("");
     renderStrip();
 
-    const cmsPicks = window.CMS?.featured?.filter((id) => byId[id] && PRODUCTS.includes(byId[id]));
-    const picks = (cmsPicks?.length ? cmsPicks : PICKS).map((id) => byId[id]).filter(Boolean).slice(0, 4);
-    $("#picks").innerHTML = picks.map((p) => card(p, { pick: true })).join("");
+    renderHotDeals();
+    renderExplore(true);
 
     $("#brandRow").innerHTML = brands.map(([b]) => `<li><button type="button" data-brand="${esc(b)}">${logoSvg(b, "icon")}<span>${esc(b)}</span></button></li>`).join("");
     $("#year").textContent = new Date().getFullYear();
@@ -657,7 +721,7 @@
     box.innerHTML = hits.length
       ? `${Object.keys(cats).length > 1 ? `<div class="suggest__label">Kategoritë</div><div class="suggest__cats">${Object.entries(cats).map(([c, n]) => `<button type="button" data-sgcat="${esc(c)}">${esc(c)} (${n})</button>`).join("")}</div>` : ""}
          <div class="suggest__label">Produktet</div>
-         ${hits.slice(0, 6).map((p) => `<button type="button" class="sg-item" role="option" data-open="${p.id}">${media(p)}<span><b>${highlight(p.name, q)}</b><small>${esc(p.cat)} · ${stockLabel(p).replace(/<[^>]+>/g, "")}</small></span><span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span></button>`).join("")}
+         ${hits.slice(0, 6).map((p) => `<button type="button" class="sg-item" role="option" data-open="${p.id}">${media(p)}<span><b>${highlight(p.name, q)}</b><small>${esc(p.cat)} · ${stockLabel(p).replace(/<[^>]+>/g, "")}</small></span>${isQuote(p) ? `<span class="price price--quote">Me ofertë</span>` : `<span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span>`}</button>`).join("")}
          <button type="button" class="suggest__all" data-sgall>Shiko të gjitha rezultatet (${hits.length}) për “${esc(q)}”</button>`
       : `<div class="suggest__none">Nuk u gjet asnjë produkt për “${esc(q)}”. Provoni një markë, model ose specifikë, p.sh. “Wi‑Fi 7” ose “32 GB”.</div>`;
     box.hidden = false;
@@ -678,7 +742,7 @@
 
   function addToCart(id, qty = 1, quiet = false) {
     const p = byId[id];
-    if (!p || !p.stock) return false;
+    if (!p || !p.stock || isQuote(p)) return false;
     const line = cart.find((l) => l.id === id);
     const cur = line ? line.qty : 0;
     const next = Math.min(p.stock, cur + qty);
@@ -883,7 +947,11 @@
       if (state.grp !== g || state.cat !== "All" || state.q || state.onSale || state.col) { resetFilters(); state.grp = g; }
       showView("catalog"); render(); scrollTop(); return;
     }
-    if (parts[0] === "kategoria" && subBySlug(parts[1])) { const { g, x } = subBySlug(parts[1]); renderOnRequest(g, x); scrollTop(); return; }
+    if (parts[0] === "kategoria" && subBySlug(parts[1])) {
+      const { g, x } = subBySlug(parts[1]);
+      if (x.cat) { history.replaceState(null, "", BASE + `#/kategoria/${catSlug(x.cat)}`); routed = location.pathname + location.hash; return route(); }
+      renderOnRequest(g, x); scrollTop(); return;
+    }
     if (parts[0] === "kategorite") { renderAllCategories(); scrollTop(); return; }
     if (parts[0] === "produktet") { if (state.cat !== "All" || state.q || state.onSale || state.col || state.grp) resetFilters(); showView("catalog"); render(); scrollTop(); return; }
     if (parts[0] === "ofertat") { if (!state.onSale || state.cat !== "All" || state.q || state.col || state.grp) { resetFilters(); state.onSale = true; state.sort = "discount"; } showView("catalog"); render(); scrollTop(); return; }
@@ -1096,14 +1164,20 @@
     "Laptopë": [["cpu", "Procesori", "cpu"], ["ram", "Memoria", "memory-stick", " RAM"], ["storage", "Ruajtja", "hard-drive", " SSD"], ["screen", "Ekrani", "monitor"]],
     "Procesorë": [["cores", "Bërthamat", "cpu"], ["socket", "Soketi", "layers"], ["series", "Seria", "gauge"]],
     "Kartela grafike": [["chip", "Çipi", "cpu"], ["vram", "Memoria", "memory-stick", " GDDR"], ["series", "Seria", "gauge"]],
+    "Monitorë": [["size", "Madhësia", "monitor"], ["res", "Rezolucioni", "layers"], ["hz", "Frekuenca", "gauge"], ["panel", "Paneli", "sparkles"]],
+    "PC gaming": [["cpu", "Procesori", "cpu"], ["gpu", "Kartela grafike", "layers"], ["ram", "Memoria", "memory-stick", " RAM"], ["storage", "Ruajtja", "hard-drive", " SSD"]],
+    "Pllaka amë": [["socket", "Soketi", "cpu"], ["chipset", "Çipseti", "layers"], ["form", "Formati", "pc-case"]],
+    "Memorie RAM": [["ddr", "Lloji", "memory-stick"], ["cap", "Kapaciteti", "layers"], ["form", "Forma", "gauge"]],
+    "SSD": [["cap", "Kapaciteti", "hard-drive"], ["iface", "Ndërfaqja", "gauge"], ["form", "Formati", "layers"]],
   };
   const SPEC_GROUPS = [
     ["Performanca", ["cpu", "ram", "storage", "gpu", "cores", "chip", "vram", "series"]],
     ["Ekrani, sistemi dhe platforma", ["screen", "os", "type", "socket"]],
   ];
   function glanceHTML(p) {
-    const rows = GLANCE[p.cat];
-    if (!rows) return "";
+    // Kategoritë pa skemë të veçantë: deri në 4 atributet e para që ka produkti.
+    const rows = GLANCE[p.cat] || (FACETS[p.cat] || []).filter((f) => p.attrs[f.key] !== undefined).slice(0, 4).map((f) => [f.key, f.label, "layers"]);
+    if (rows.length < 2) return "";
     return `<h3 class="pp__h">Konfigurimi në një vështrim</h3>
       <ul class="glance">${rows.map(([k, label, icon, suffix = ""]) => {
         const v = p.attrs[k];
@@ -1119,11 +1193,14 @@
       const rows = keys.map((k) => facets.find((f) => f.key === k)).filter((f) => f && p.attrs[f.key] !== undefined).map((f) => { used.add(f.key); return [f.label, fmtVal(p.cat, f.key, p.attrs[f.key])]; });
       return [title, rows];
     });
+    // Atributet e tjera të kategorisë (monitorë, rrjet, periferikë …) në një grup të vetin.
+    const rest = facets.filter((f) => !used.has(f.key) && p.attrs[f.key] !== undefined).map((f) => [f.label, fmtVal(p.cat, f.key, p.attrs[f.key])]);
+    if (rest.length) groups.push(["Karakteristikat", rest]);
     const missing = p.cat === "Laptopë" ? ["ram", "storage"].filter((k) => p.attrs[k] === undefined) : [];
     groups.push(["Modeli dhe garancia", [
       ["Modeli", p.name], ["Brendi", p.brand], ["Kodi i artikullit", p.id.toUpperCase()],
       ...missing.map((k) => [facets.find((f) => f.key === k)?.label || k, "Sipas konfigurimit · verifikohet sipas kodit të artikullit"]),
-      ["Garancia", "24 muaj"],
+      ["Garancia", isQuote(p) ? "Konfirmohet me ofertën" : "24 muaj"],
     ]]);
     if (p.specs.length) groups.push(["Veçoritë nga prodhuesi", p.specs.map((x, i) => [i ? "" : "Pikat kryesore", x])]);
     const html = groups.filter(([, rows]) => rows.length).map(([title, rows]) =>
@@ -1133,6 +1210,7 @@
       ${total > 12 ? `<button type="button" class="link-btn spec-more" id="specMore" aria-controls="specTable" aria-expanded="false">Shfaq të gjitha specifikimet (${total})</button>` : ""}`;
   }
   function shipCalc(p, city) {
+    if (isQuote(p)) return `Kostoja dhe afati${city ? ` për ${esc(city)}` : ""} konfirmohen me ofertën · marrje falas në dyqan`;
     const zone = (window.STORE.zones || []).find((z) => z.cities?.includes(city));
     const fee = p.price >= S.freeShippingFrom ? 0 : zone?.fee ?? S.shippingFee;
     const days = zone?.days || "1–2";
@@ -1150,7 +1228,8 @@
     const inShop = PRODUCTS.includes(p);
     const crumbs = [`<a href="#/">Ballina</a>`, inShop ? `<a href="#/kategoria/${catSlug(p.cat)}">${esc(p.cat)}</a>` : "", `<span aria-current="page">${esc(p.name)}</span>`].filter(Boolean);
     const ship = p.price >= S.freeShippingFrom ? "Dërgesë falas" : `Dërgesa ${fmt(S.shippingFee)} · falas mbi ${fmt0(S.freeShippingFrom)}`;
-    showView("product", `${p.name} · ITCOM`, `${p.name}: ${shortSpecs(p)}. ${fmt(p.price)} me TVSH, garanci 24 muaj, dërgesë në gjithë Kosovën.`);
+    const quote = isQuote(p);
+    showView("product", `${p.name} · ITCOM`, quote ? `${p.name}: ${shortSpecs(p)}. Kërkoni ofertë nga ITCOM për çmimin dhe afatin.` : `${p.name}: ${shortSpecs(p)}. ${fmt(p.price)} me TVSH, garanci 24 muaj, dërgesë në gjithë Kosovën.`);
     $("#viewProduct").innerHTML = `
       <nav class="crumbs" aria-label="Navigimi">${crumbs.join('<span aria-hidden="true">/</span>')}</nav>
       <div class="pp">
@@ -1165,19 +1244,19 @@
           <p class="pp__sub">${esc(shortSpecs(p))}</p>
           <p class="pp__sku">Kodi i artikullit: <span class="mono">${esc(p.id.toUpperCase())}</span></p>
           <div class="pp__price">${priceHTML(p)}${d ? `<span class="pp__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}</div>
-          <p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%${S.installments ? ` · ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj` : ""}</p>
-          <div class="pp__stock">${stockLabel(p)}<span>${p.stock ? `Porosit sot, arrin <b>${deliveryDate(2)}</b> · marrje falas në dyqan` : "Aktualisht i padisponueshëm — pyetni për afatin"}</span></div>
+          ${quote ? `<p class="pp__vat">Çmimi, stoku dhe afati i dorëzimit konfirmohen nga ekipi ITCOM me ofertë, zakonisht brenda ditës së punës.</p>` : `<p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%${S.installments ? ` · ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj` : ""}</p>`}
+          <div class="pp__stock">${stockLabel(p)}<span>${quote ? "Produkt me porosi nga furnitori" : p.stock ? `Porosit sot, arrin <b>${deliveryDate(2)}</b> · marrje falas në dyqan` : "Aktualisht i padisponueshëm — pyetni për afatin"}</span></div>
           <div class="pp__buy">
-            <button type="button" class="btn btn--cta btn--lg" id="ppAdd" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>
+            ${quote ? `<button type="button" class="btn btn--cta btn--lg" data-quote="${p.id}">Kërko ofertë</button>` : `<button type="button" class="btn btn--cta btn--lg" id="ppAdd" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>
             <div class="qty qty--lg" role="group" aria-label="Sasia">
               <button type="button" id="ppMinus" aria-label="Zvogëlo sasinë">−</button>
               <span id="ppQty" aria-live="polite">1</span>
               <button type="button" id="ppPlus" aria-label="Rrit sasinë">+</button>
-            </div>
+            </div>`}
           </div>
           <ul class="pp__terms">
-            <li><button type="button" data-info="delivery">Dërgesa</button><span>${ship}</span></li>
-            <li><button type="button" data-info="warranty">Garancia</button><span>24 muaj · kthim brenda 14 ditëve</span></li>
+            <li><button type="button" data-info="delivery">Dërgesa</button><span>${quote ? "Konfirmohet me ofertën" : ship}</span></li>
+            <li><button type="button" data-info="warranty">Garancia</button><span>${quote ? "Konfirmohet me ofertën" : "24 muaj · kthim brenda 14 ditëve"}</span></li>
           </ul>
           <div class="pp__actions">
             <button type="button" class="link-btn ${cmp ? "is-on" : ""}" data-cmp="${p.id}" aria-pressed="${cmp}">${svg(ICON.compare)}Krahaso</button>
@@ -1215,7 +1294,7 @@
               </section>
               <section>
                 <h4 class="pp__h4">${lucide("shield-check")}Garancia</h4>
-                <p>24 muaj për defektet e fabrikës. Kthim brenda 14 ditëve për produkte të paprekura në paketimin origjinal.</p>
+                <p>${quote ? "Kohëzgjatja e garancisë konfirmohet me ofertën, sipas prodhuesit dhe furnitorit." : "24 muaj për defektet e fabrikës."} Kthim brenda 14 ditëve për produkte të paprekura në paketimin origjinal.</p>
                 <button type="button" class="link-btn" data-info="warranty">Kushtet e garancisë</button>
               </section>
               <section>
@@ -1229,24 +1308,26 @@
         <aside class="pp__help pp__before">
           <h2>Para se të porosisësh</h2>
           <dl>
-            <dt>${lucide("truck")}Dërgesa</dt><dd>${p.price >= S.freeShippingFrom ? "Falas" : fmt(S.shippingFee)} · afati sipas adresës, zakonisht 1–2 ditë pune.</dd>
-            <dt>${lucide("shield-check")}Garancia</dt><dd>24 muaj · kushtet sipas kodit ${esc(p.id.toUpperCase())}.</dd>
+            <dt>${lucide("truck")}Dërgesa</dt><dd>${quote ? "Kostoja dhe afati konfirmohen me ofertën." : `${p.price >= S.freeShippingFrom ? "Falas" : fmt(S.shippingFee)} · afati sipas adresës, zakonisht 1–2 ditë pune.`}</dd>
+            <dt>${lucide("shield-check")}Garancia</dt><dd>${quote ? "Kohëzgjatja dhe kushtet konfirmohen me ofertën." : `24 muaj · kushtet sipas kodit ${esc(p.id.toUpperCase())}.`}</dd>
             <dt>${lucide("circle-help")}Ke një pyetje?</dt><dd>Ekipi të ndihmon të zgjedhësh variantin e duhur.</dd>
           </dl>
-          <button type="button" class="btn btn--cta btn--block" data-ask="${p.id}">Pyet për produktin</button>
+          <button type="button" class="btn btn--cta btn--block" ${quote ? `data-quote="${p.id}">Kërko ofertë` : `data-ask="${p.id}">Pyet për produktin`}</button>
         </aside>
       </div>
       ${imgs.length > 1 ? `<section class="pp__angles"><h2>E njëjta pajisje. Nga kënde të ndryshme.</h2><div class="pp__angles-grid">${imgs.slice(1).map((src) => `<div class="media"><img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy" /></div>`).join("")}</div></section>` : ""}
       ${related.length ? `<section class="home-sec"><div class="home-sec__head"><h2 class="home-sec__title">Produkte të ngjashme</h2>${inShop ? `<a class="home-sec__link" href="#/kategoria/${catSlug(p.cat)}">Të gjitha</a>` : ""}</div><div class="pgrid">${related.map((x) => card(x)).join("")}</div></section>` : ""}
-      <div class="pp__bar" aria-hidden="true"><b>${fmt(p.price)}</b><button type="button" class="btn btn--cta" data-add="${p.id}" tabindex="-1" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button></div>`;
+      <div class="pp__bar" aria-hidden="true"><b>${priceText(p)}</b>${quote ? `<button type="button" class="btn btn--cta" data-quote="${p.id}" tabindex="-1">Kërko ofertë</button>` : `<button type="button" class="btn btn--cta" data-add="${p.id}" tabindex="-1" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>`}</div>`;
 
-    let qty = 1;
-    const room = () => Math.max(1, p.stock - cartQty(p.id));
-    const sync = () => { $("#ppQty").textContent = qty; $("#ppMinus").disabled = qty <= 1; $("#ppPlus").disabled = qty >= room(); };
-    sync();
-    $("#ppMinus").onclick = () => { qty = Math.max(1, qty - 1); sync(); };
-    $("#ppPlus").onclick = () => { qty = Math.min(room(), qty + 1); sync(); };
-    $("#ppAdd").onclick = () => { if (addToCart(p.id, qty)) { qty = 1; sync(); } };
+    if (!quote) {
+      let qty = 1;
+      const room = () => Math.max(1, p.stock - cartQty(p.id));
+      const sync = () => { $("#ppQty").textContent = qty; $("#ppMinus").disabled = qty <= 1; $("#ppPlus").disabled = qty >= room(); };
+      sync();
+      $("#ppMinus").onclick = () => { qty = Math.max(1, qty - 1); sync(); };
+      $("#ppPlus").onclick = () => { qty = Math.min(room(), qty + 1); sync(); };
+      $("#ppAdd").onclick = () => { if (addToCart(p.id, qty)) { qty = 1; sync(); } };
+    }
     const root = $("#viewProduct");
     const tabs = $$("[data-tab]", root);
     const pick = (t, focus) => {
@@ -1400,10 +1481,10 @@
     if (compare.length < 2) { toast("Zgjidhni të paktën dy produkte për krahasim"); return; }
     const ps = compare.map((id) => byId[id]);
     const cat = ps[0].cat;
-    const minPrice = Math.min(...ps.map((p) => p.price));
+    const minPrice = Math.min(...ps.filter((p) => !isQuote(p)).map((p) => p.price));
     const groups = [
       ["Bazat", [
-        ["Çmimi", ps.map((p) => `<span class="${p.price === minPrice ? "best" : ""}">${fmt(p.price)}</span>`), ps.map((p) => p.price)],
+        ["Çmimi", ps.map((p) => `<span class="${!isQuote(p) && p.price === minPrice ? "best" : ""}">${priceText(p)}</span>`), ps.map((p) => p.price)],
         ["Disponueshmëria", ps.map(stockLabel), ps.map((p) => (p.stock ? (p.stock <= 5 ? 1 : 2) : 0))],
         ["Brendi", ps.map((p) => esc(p.brand)), ps.map((p) => p.brand)],
       ]],
@@ -1427,7 +1508,7 @@
         <div class="cmp__opts"><label class="check"><input type="checkbox" id="cmpDiff" ${onlyDiff ? "checked" : ""} /> Shfaq vetëm dallimet</label><span>Rreshtat me sfond ndryshojnë mes produkteve.</span></div>
         <div class="cmp__scroll" tabindex="0" aria-label="Tabela e krahasimit">
           <table>
-            <thead><tr><td></td>${ps.map((p) => `<th scope="col"><div class="cmp-head">${media(p)}<a href="${productHref(p.id)}" data-close-modal>${esc(p.name)}</a><b>${fmt(p.price)}</b><div class="row"><button type="button" class="btn btn--cta" data-add="${p.id}" ${p.stock ? "" : "disabled"}>Shto në shportë</button><button type="button" class="link-btn" data-uncmp="${p.id}" data-reopen>Hiq</button></div></div></th>`).join("")}</tr></thead>
+            <thead><tr><td></td>${ps.map((p) => `<th scope="col"><div class="cmp-head">${media(p)}<a href="${productHref(p.id)}" data-close-modal>${esc(p.name)}</a><b>${priceText(p)}</b><div class="row">${isQuote(p) ? `<button type="button" class="btn btn--cta" data-quote="${p.id}">Kërko ofertë</button>` : `<button type="button" class="btn btn--cta" data-add="${p.id}" ${p.stock ? "" : "disabled"}>Shto në shportë</button>`}<button type="button" class="link-btn" data-uncmp="${p.id}" data-reopen>Hiq</button></div></div></th>`).join("")}</tr></thead>
             ${body}
           </table>
         </div>
@@ -1726,18 +1807,11 @@
   function renderCmsHome() {
     const cols = COLLECTIONS.filter((c) => c.productIds.length);
     $("#colSec").hidden = !cols.length;
-    $("#colTiles").innerHTML = cols.slice(0, 4).map((c) => {
-      const img = c.image || (byId[c.productIds[0]] ? imgSrc(byId[c.productIds[0]]) : "");
-      const photo = /assets\/photos\//.test(img);
-      return `<a class="col-card" href="#/koleksioni/${esc(c.slug)}">
-        <span class="col-card__img ${photo ? "is-photo" : ""}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" />` : ""}</span>
-        <span class="col-card__body">
-          <b>${esc(c.title)}</b>
-          <span>${esc(c.tagline || plural(c.productIds.length, "produkt", "produkte"))}</span>
-          <span class="col-card__cta">Shiko koleksionin</span>
-        </span>
-      </a>`;
-    }).join("");
+    // Koleksionet si hyrje kompakte (Raundi 03, f. 10): ikonë, emri, një rresht; fotot e mëdha mbeten te faqja e koleksionit.
+    const COL_ICON = { "per-studente": "laptop", "per-krijues": "monitor", gaming: "cpu", "per-biznes": "pc-case" };
+    $("#colTiles").innerHTML = cols.slice(0, 4).map((c) => `<a class="col-chip" href="#/koleksioni/${esc(c.slug)}">
+        ${lucide(COL_ICON[c.slug] || "layers")}<span><b>${esc(c.title)}</b>${c.tagline ? `<small>${esc(c.tagline)}</small>` : ""}</span>
+      </a>`).join("");
     const hb = (window.CMS?.banners || []).find((b) => b.position === "home-banner");
     $("#homeBanner").hidden = !hb;
     $("#homeBanner").innerHTML = hb ? bannerHTML(hb, "banner--home") : "";
@@ -2081,6 +2155,52 @@
   /* ================================================================ ngjarjet */
   document.addEventListener("click", (e) => {
     if (e.target.closest("#promoApply")) { applyPromo($("#promoCode").value); return; }
+    const quoteBtn = e.target.closest("[data-quote]");
+    if (quoteBtn) {
+      const p = byId[quoteBtn.dataset.quote];
+      if (!p) return;
+      closeModal();
+      openForm({
+        title: "Kërko ofertë",
+        intro: `${esc(p.name)}. Ekipi ITCOM ju kthen përgjigje me çmimin, disponueshmërinë dhe afatin, zakonisht brenda ditës së punës.`,
+        submit: "Dërgo kërkesën",
+        fields: [
+          { id: "name", label: "Emri", value: me()?.name, attrs: 'autocomplete="name"' },
+          { id: "phone", label: "Telefoni", type: "tel", attrs: 'autocomplete="tel"' },
+          { id: "email", label: "Email-i", type: "email", optional: true, value: me()?.email, attrs: 'autocomplete="email"' },
+          { id: "qty", label: "Sasia", type: "number", value: "1", attrs: 'min="1" inputmode="numeric"' },
+          { id: "message", label: "Shënim", type: "textarea", full: true, optional: true },
+        ],
+        onSubmit: (v) => {
+          const ok = window.CMS?.saveInquiry({ type: "quote", name: v.name, phone: v.phone, email: v.email, productId: p.id, message: `Kërkesë për ofertë: ${v.qty || 1} × ${p.name}${v.message ? `\n${v.message}` : ""}`, tags: ["oferte-produkti"] });
+          closeModal();
+          toast(ok ? "Faleminderit! Kërkesa për ofertë u dërgua." : "Kërkesa nuk u dërgua. Provoni përsëri.");
+        },
+      });
+      return;
+    }
+    const ex = e.target.closest("[data-explore]");
+    if (ex) { explore.tab = ex.dataset.explore; renderExplore(true); return; }
+    if (e.target.closest("#exploreMore")) {
+      const b = $("#exploreMore");
+      if (b.disabled) return;
+      b.disabled = true;
+      b.textContent = "Duke ngarkuar…";
+      const before = $("#explore").children.length;
+      requestAnimationFrame(() => {
+        try {
+          explore.shown += EXPLORE_STEP;
+          renderExplore();
+          $("#explore").children[before]?.querySelector(".pcard__title a")?.focus({ preventScroll: true });
+          announce($("#exploreCount").textContent);
+        } catch (err) {
+          console.error(err);
+          b.disabled = false;
+          b.textContent = "Provo përsëri";
+        }
+      });
+      return;
+    }
     const req = e.target.closest("[data-request]");
     if (req) {
       const hit = groupBySlug(req.dataset.request) || subBySlug(req.dataset.request)?.x;
@@ -2114,7 +2234,14 @@
     else if (d.mega) { const [c, k, v] = d.mega.split("|"); toggleMega(false); resetFilters(c); state.f[k] = new Set([v]); go(`#/kategoria/${catSlug(c)}`); }
     else if (d.brand) { closeModal(); resetFilters(); state.brands.add(d.brand); go("#/produktet"); }
     else if (d.chip) { if (d.chip === "all") { const q = state.q; resetFilters(state.cat); state.q = q; render(); } else removeFilter(d.chip); }
-    else if (d.page) { state.page = Number(d.page); renderResults(); $("#viewCatalog").scrollIntoView({ block: "start" }); }
+    else if (d.page) {
+      // Shtojmë produktet poshtë pa e çuar vizitorin në fillim; fokusi kalon te i pari i ri.
+      const before = $("#grid").children.length;
+      state.page = Number(d.page);
+      renderResults();
+      $("#grid").children[before]?.querySelector(".pcard__title a")?.focus({ preventScroll: true });
+      announce($("#pager p")?.textContent || "");
+    }
     else if (d.slide) { goSlide(Number(d.slide)); autoSlide(); }
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
@@ -2300,7 +2427,7 @@
         item: {
           "@type": "Product", name: p.name, sku: p.id.toUpperCase(), brand: { "@type": "Brand", name: p.brand },
           description: p.desc, category: p.cat, url: `${S.siteUrl}p/${p.id}/`, image: new URL(imgSrc(p), S.siteUrl).href,
-          offers: { "@type": "Offer", price: p.price.toFixed(2), priceCurrency: S.currency, availability: p.stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" },
+          ...(isQuote(p) ? {} : { offers: { "@type": "Offer", price: p.price.toFixed(2), priceCurrency: S.currency, availability: p.stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } }),
         },
       })),
     });

@@ -86,7 +86,13 @@ export function buildSnapshot(db: Db, by: string, now = new Date()): Snapshot {
       categories: db.categories,
       products: db.products
         .filter((p) => p.status === 'active')
-        .map(({ cost: _cost, barcode: _barcode, incoming: _incoming, ...p }) => p),
+        // Market references from the photo pack stay internal: never published as (or next to) ITCOM prices.
+        .map(({ cost: _cost, barcode: _barcode, incoming: _incoming, ...p }) => {
+          const x = (p as { itcom?: Record<string, unknown> }).itcom;
+          if (!x || !('ref' in x)) return p;
+          const { ref: _ref, ...itcom } = x;
+          return { ...p, itcom } as typeof p;
+        }),
       pages: db.pages.filter((p) => p.published),
       posts: db.posts.filter((p) => p.published),
       collections: db.collections.filter((c) => c.published),

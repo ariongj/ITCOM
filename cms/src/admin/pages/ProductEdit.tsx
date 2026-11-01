@@ -463,6 +463,19 @@ function Editor({ source }: { source?: ProductX }) {
             </div>
 
             <div id="sec-price" className="scroll-mt-24">
+              {form.p.itcom?.quote && (
+                // ITCOM: imported from the photo pack without an ITCOM price — the shop shows "Çmimi me ofertë" until a price is set.
+                <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] leading-relaxed text-amber-900">
+                  <b>Pa çmim të ITCOM ende.</b> Në dyqan shfaqet “Çmimi me ofertë” dhe butoni “Kërko ofertë”. Vendosni çmimin, stokun dhe garancinë e ITCOM që produkti të shitet nga shporta.
+                  {form.p.itcom.ref && (
+                    <span className="mt-1 block text-amber-800">
+                      Referencë tregu (vetëm për ekipin, nuk publikohet): {form.p.itcom.ref.refPrice.toLocaleString('de-DE', { minimumFractionDigits: 2 })} € te {form.p.itcom.ref.site}
+                      {form.p.itcom.ref.captured ? `, ${form.p.itcom.ref.captured}` : ''} ·{' '}
+                      <a href={form.p.itcom.ref.url} target="_blank" rel="noreferrer noopener" className="font-semibold underline">burimi</a>
+                    </span>
+                  )}
+                </div>
+              )}
               <PricingCard
                 price={form.price}
                 compareAt={form.compareAt}

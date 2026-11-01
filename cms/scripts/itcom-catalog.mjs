@@ -8,7 +8,11 @@ import vm from 'node:vm';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const ctx = { window: {} };
 vm.runInNewContext(readFileSync(root + 'js/products.js', 'utf8'), ctx);
+// Products from the real-photo pack (01.11.2026): no ITCOM price yet ("Çmimi me ofertë" in the shop).
+vm.runInNewContext(readFileSync(root + 'js/products-real.js', 'utf8'), ctx);
 const { PRODUCTS, BUILDER_PARTS, CATEGORIES } = ctx.window;
+/** Internal market references (source shop price on the capture date) — for staff only, never shown as ITCOM prices. */
+const REFS = JSON.parse(readFileSync(new URL('./real-refs.json', import.meta.url), 'utf8'));
 
 const same = (v) => ({ me: v, sq: v, en: v });
 const T = (sq, en) => ({ me: en, sq, en });
@@ -18,25 +22,53 @@ const SHOP = {
   'Laptopë': { id: 'cat-laptop', slug: 'laptope', en: 'Laptops', tagline: T('Laptopë për punë, shkollë dhe krijim', 'Laptops for work, study and creating') },
   'Procesorë': { id: 'cat-cpu', slug: 'procesore', en: 'Processors', tagline: T('AMD Ryzen dhe Intel Core Ultra', 'AMD Ryzen and Intel Core Ultra') },
   'Kartela grafike': { id: 'cat-gpu', slug: 'kartela-grafike', en: 'Graphics cards', tagline: T('NVIDIA GeForce dhe AMD Radeon', 'NVIDIA GeForce and AMD Radeon') },
+  // PC-part groups are shared with the 3D builder: builder parts stay out of the shop by their 'ndërtuesi' tag.
+  'Pllaka amë': { id: 'cat-mb', slug: 'pllaka-ame', en: 'Motherboards' },
+  'Memorie RAM': { id: 'cat-ram', slug: 'ram', en: 'Memory' },
+  'SSD': { id: 'cat-ssd', slug: 'ssd', en: 'SSDs' },
+  'Furnizues rryme': { id: 'cat-psu', slug: 'furnizues-rryme', en: 'Power supplies' },
+  'Kasa': { id: 'cat-case', slug: 'kasa', en: 'PC cases' },
+  'Ftohje & ventilatorë': { id: 'cat-cooler', slug: 'ftohje-ventilatore', en: 'Cooling & fans' },
+  'Monitorë': { id: 'cat-monitor', slug: 'monitore', en: 'Monitors' },
+  'PC gaming': { id: 'cat-pc-gaming', slug: 'pc-gaming', en: 'Gaming PCs' },
+  'Maus': { id: 'cat-mouse', slug: 'maus', en: 'Mice' },
+  'Tastiera': { id: 'cat-keyboard', slug: 'tastiera', en: 'Keyboards' },
+  'Kufje': { id: 'cat-headset', slug: 'kufje', en: 'Headsets' },
+  'Kamera sigurie': { id: 'cat-camera', slug: 'kamera-sigurie', en: 'Security cameras' },
+  'Routerë': { id: 'cat-router', slug: 'routere', en: 'Routers' },
+  'Rrjet mesh': { id: 'cat-mesh', slug: 'rrjet-mesh', en: 'Mesh Wi-Fi' },
+  'Switch': { id: 'cat-switch', slug: 'switch', en: 'Switches' },
+  'NAS': { id: 'cat-nas', slug: 'nas', en: 'NAS' },
+  'Disqe të jashtme': { id: 'cat-extdrive', slug: 'disqe-te-jashtme', en: 'External drives' },
+  'Printerë': { id: 'cat-printer', slug: 'printere', en: 'Printers' },
+  'Multifunksionale': { id: 'cat-mfp', slug: 'multifunksionale', en: 'All-in-one printers' },
+  'Telefona': { id: 'cat-phone', slug: 'telefona', en: 'Phones' },
+  'Tabletë': { id: 'cat-tablet', slug: 'tablete', en: 'Tablets' },
+  'Orë të mençura': { id: 'cat-watch', slug: 'ore-te-mencura', en: 'Smartwatches & trackers' },
+  'Kabllo': { id: 'cat-cable', slug: 'kabllo', en: 'Cables' },
+  'Karikues': { id: 'cat-charger', slug: 'karikues', en: 'Chargers' },
+  'Hub & dock': { id: 'cat-hub', slug: 'hub-dock', en: 'Hubs & docks' },
 };
 const BUILDER = [
   ['cat-mb', 'pllaka-ame', 'Pllaka amë', 'Motherboards', /^mb-/],
-  ['cat-ram', 'memorie-ram', 'Memorie RAM', 'Memory', /^cp-(furyb32|veng32|tz5rgb32)$/],
-  ['cat-cooler', 'ftohes', 'Ftohës procesori', 'CPU coolers', /^cl-/],
-  ['cat-ssd', 'disqe-ssd', 'Disqe SSD', 'SSDs', /^st-/],
-  ['cat-psu', 'furnizues', 'Furnizues rryme', 'Power supplies', /^ps-/],
+  ['cat-ram', 'ram', 'Memorie RAM', 'Memory', /^cp-(furyb32|veng32|tz5rgb32)$/],
+  ['cat-cooler', 'ftohje-ventilatore', 'Ftohje & ventilatorë', 'Cooling & fans', /^cl-/],
+  ['cat-ssd', 'ssd', 'SSD', 'SSDs', /^st-/],
+  ['cat-psu', 'furnizues-rryme', 'Furnizues rryme', 'Power supplies', /^ps-/],
   ['cat-case', 'kasa', 'Kasa', 'PC cases', /^cs-/],
 ];
 
 const categories = [
   ...CATEGORIES.map((c, i) => {
     const m = SHOP[c.id];
+    if (!m) throw new Error(`No CMS category for shop category ${c.id}`);
+    const tagline = m.tagline || T(`${c.id} nga ITCOM`, `${m.en} from ITCOM`);
     return {
-      id: m.id, slug: m.slug, name: T(c.id, m.en), tagline: m.tagline, description: m.tagline,
-      image: '', order: i + 1, featured: true,
+      id: m.id, slug: m.slug, name: T(c.id, m.en), tagline, description: tagline,
+      image: '', order: i + 1, featured: i < 3,
     };
   }),
-  ...BUILDER.map(([id, slug, sq, en], i) => ({
+  ...BUILDER.filter(([id]) => !Object.values(SHOP).some((m) => m.id === id)).map(([id, slug, sq, en], i) => ({
     id, slug, name: T(sq, en),
     tagline: T('Vetëm në ndërtuesin e PC‑së', 'PC builder only'),
     description: T('Pjesë që shiten vetëm brenda ndërtuesit të PC‑së, jo në katalog.', 'Parts sold only inside the PC builder, not in the catalogue.'),
@@ -78,17 +110,25 @@ function product(p, i, categoryId, builderOnly) {
     featured: PICKS.includes(p.id),
     status: 'active',
     warrantyYears: 2,
-    sold: Math.round((p.reviews || 0) * 1.6 + (builderOnly ? 6 : 3)),
-    cost: Math.round(p.price * (COST[categoryId] ?? 0.78) * 100) / 100,
+    sold: p.quote ? 0 : Math.round((p.reviews || 0) * 1.6 + (builderOnly ? 6 : 3)),
+    // No cost estimate for quote products: ITCOM's purchase price is not known yet.
+    cost: p.quote ? undefined : Math.round(p.price * (COST[categoryId] ?? 0.78) * 100) / 100,
     vendor: p.brand,
-    tags: builderOnly ? ['ndërtuesi'] : [],
+    tags: builderOnly ? ['ndërtuesi'] : p.quote ? ['me-oferte', 'foto-reale'] : [],
     barcode: ean13(i + 1),
     incoming: 0,
     unavailable: 0,
-    template: 'standard',
+    // Price on request (CMS template 'quote' ↔ quoteOnly): saved without a price, sold through a quote request.
+    // Staff switch the template to 'standard' and set the price when ITCOM sells it from the cart.
+    template: p.quote ? 'quote' : 'standard',
+    ...(p.quote ? { quoteOnly: true } : {}),
     channels: ['online', 'pos'],
     // ITCOM storefront fields the CMS keeps as they are (filters, ratings, badge text, drawing fallback)
-    itcom: { attrs: p.attrs || {}, rating: p.rating || 0, reviews: p.reviews || 0, badge: p.badge || '', art: p.art || null },
+    itcom: {
+      attrs: p.attrs || {}, rating: p.rating || 0, reviews: p.reviews || 0, badge: p.badge || '', art: p.art || null,
+      // Price on request until staff set ITCOM's price; `ref` = market reference from the photo pack (internal).
+      ...(p.quote ? { quote: true, ref: REFS[p.id] || null } : {}),
+    },
   };
 }
 

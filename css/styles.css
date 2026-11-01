@@ -1978,3 +1978,112 @@ button.navbar__link { border: 0; background: none; font: inherit; font-size: 14p
 .col-card__img { aspect-ratio: 16 / 5.4; }
 .slide--collection .slide__art { overflow: hidden; }
 @media (max-width: 760px) { .slide--collection .slide__art img { height: 180px; } }
+
+/* ==========================================================================
+   Raundi 03: shërbimet e errëta, Hot Deals, Eksploro produktet, koleksione kompakte, çmimi me ofertë, mobile
+   ========================================================================== */
+/* Shërbimet (f. 05): boks #14243C, titull i bardhë, përshkrim #CAD6E8, ikona Lucide 24 px të qendruara */
+.svc { gap: 12px; background: transparent; border-radius: 0; overflow: visible; }
+.svc li { background: transparent; }
+.svc button { min-height: 76px; padding: 14px 18px; gap: 14px; border-radius: 14px; background: #14243c; color: #fff; }
+.svc button:hover { background: #1b2f4d; }
+.svc button:focus-visible { outline: 3px solid #8fc1ff; outline-offset: 2px; }
+.svc__icon { width: 28px; height: 28px; background: transparent; color: #fff; border-radius: 0; }
+.svc__icon .icon { width: 24px; height: 24px; }
+.svc b { color: #fff; font-size: 15px; }
+.svc small { color: #cad6e8; }
+
+/* Etiketa e zbritjes dhe çmimi me ofertë */
+.ptag--sale { background: #14243c; color: #fff; }
+.price--quote { font-size: 16px !important; font-weight: 700; color: var(--ink-2); letter-spacing: 0; }
+.stock--quote { color: var(--brand-2); }
+.stock--quote::before { background: var(--brand-2); }
+.btn--quote { background: #14243c; color: #fff; }
+.btn--quote:hover { background: #1b2f4d; }
+.btn--dark { background: #14243c; color: #fff; }
+.btn--dark:hover { background: #1b2f4d; color: #fff; }
+
+/* Hot Deals dhe produktet */
+.home-sec__sub { margin-top: 2px; color: var(--muted); font-size: 14.5px; }
+.hot-all-m { display: none; margin-top: 14px; }
+.brands-band { margin-top: 34px; padding: 18px 20px; border-radius: var(--radius-lg); background: var(--surface); text-align: center; }
+.brands-band__title { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.brands-band .brands-row { margin-top: 0; }
+.brands-band .brands-row button { box-shadow: none; background: var(--surface-2); }
+.explore-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: -4px 0 14px; }
+.explore-tab { min-height: 40px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); font: inherit; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.explore-tab:hover { border-color: var(--brand-2); color: var(--brand-2); }
+.explore-tab[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.explore-more { display: grid; justify-items: center; gap: 8px; margin-top: 18px; }
+.explore-more .btn { min-width: 320px; }
+.pager { flex-direction: column; align-items: center; gap: 8px; }
+.pager .btn { min-width: 280px; }
+
+/* Koleksione kompakte (f. 10) */
+.col-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.col-chip { display: flex; align-items: center; gap: 14px; min-height: 76px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); transition: border-color .2s, box-shadow .2s; }
+.col-chip:hover { border-color: var(--brand-2); box-shadow: var(--shadow); }
+.col-chip .icon { width: 24px; height: 24px; color: var(--brand-2); flex: none; }
+.col-chip span { display: grid; min-width: 0; }
+.col-chip b { font-size: 15.5px; }
+.col-chip small { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Konfiguruesi pas produkteve, banderolë e plotë */
+.builder-band { margin-top: 40px; }
+.builder-band .duo__builder { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); min-height: 230px; }
+.biz__cta { display: flex; flex-wrap: wrap; gap: 10px; }
+
+@media (max-width: 1024px) {
+  .col-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Telefoni (f. 12–15): tituj 24–28 px, tekst 16 px, çmime 20–24 px, butona 44 px */
+@media (max-width: 760px) {
+  body { font-size: 16px; }
+  .home-sec__title, .catalog__head h1, .page-title, #viewCart > h1, #viewCheckout > h1 { font-size: 24px; }
+  .home-sec { margin-top: 28px; }
+  /* Heroi: CTA i plotë; dy promo-t si hyrje kompakte në një rresht */
+  .slide .btn--cta { width: 100%; min-height: 44px; }
+  .side-promos { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .side-promos .promo { min-height: 96px; padding: 14px; justify-content: space-between; }
+  .side-promos .promo__art, .side-promos .promo__title { display: none; }
+  .side-promos .promo .eyebrow { font-size: 15px; font-weight: 700; letter-spacing: 0; text-transform: none; color: inherit; }
+  .side-promos .promo--dark .eyebrow { color: #fff; }
+  .side-promos .promo__link { font-size: 14px; }
+  /* Shërbimet 2 × 2 */
+  .svc { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .svc button { min-height: 56px; padding: 10px 12px; gap: 10px; }
+  .svc small { display: none; }
+  .svc__icon .icon { width: 22px; height: 22px; }
+  /* Shiriti i kategorive: rreth 3 karta */
+  .cat-strip li { flex-basis: calc((100% - 2 * 10px) / 3.2); }
+  .cat-strip { gap: 10px; }
+  .cat-card { height: 96px; padding: 10px 6px; }
+  .cat-card b { font-size: 13px; }
+  .cat-card small { display: none; }
+  /* Kartat: emri 15 px në dy rreshta, çmimi 20 px, butoni 44 px */
+  .pcard { padding: 10px; }
+  .pcard__title { font-size: 15px; min-height: 2.6em; }
+  .pcard__price .price { font-size: 20px; }
+  .pcard .add, .pcard .btn--quote, .pcard .btn--cta { min-height: 44px; height: auto; font-size: 14px; }
+  .pcard__brand { font-size: 12px; }
+  .hot-all-m:not([hidden]) { display: inline-flex; width: 100%; }
+  #hotAll { display: none; }
+  .explore-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: calc(-1 * var(--gutter-r)); padding-right: var(--gutter-r); }
+  .explore-tab { flex: none; min-height: 44px; }
+  .explore-more .btn, .pager .btn { min-width: 0; width: 100%; }
+  .col-chip { min-height: 60px; padding: 10px 12px; gap: 10px; }
+  .col-chip small { display: none; }
+  .builder-band .duo__builder { grid-template-columns: 1fr; }
+  .brands-band { padding: 14px 10px; }
+  /* Katalogu: Filtro dhe Rendit 44 px krah për krah */
+  .catalog__head .toolbar__controls { gap: 8px; }
+  .catalog__head .filters__open, .catalog__head .select select { min-height: 44px; height: 44px; flex: 1; }
+  .catalog__head .filters__open { justify-content: center; }
+  /* Fushat 16 px (pa zmadhim automatik në iOS); butonat e formave 44 px */
+  .field input, .field select, .field textarea, .promo-box__row input, .lead-form textarea, .booking select, .booking textarea { font-size: 16px; }
+  .qty button { min-width: 40px; min-height: 40px; }
+  .biz__cta .btn { flex: 1; }
+}
+@media (max-width: 400px) {
+  .pcard__price .price { font-size: 19px; }
+}
