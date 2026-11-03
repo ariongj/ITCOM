@@ -1222,6 +1222,120 @@
     return `<b>${fee ? fmt(fee) : "Falas"}</b> · ${days} ditë pune${city ? ` në ${esc(city)}` : ""} · marrje falas në dyqan`;
   }
 
+  /* Përputhshmëria (raporti R03, f. 17): kontrollohet sipas të dhënave të modelit (soketi, lloji i memories,
+   * fuqia, gjatësia), jo sipas emrit. Kur një e dhënë mungon, thuhet hapur që konfirmohet sipas kodit të artikullit. */
+  const BSPEC = window.BUILD_SPECS || {};
+  const SOCKET_RAM = { AM5: "DDR5", LGA1851: "DDR5", AM4: "DDR4" };
+  const KIND_BY_CAT = { "Procesorë": "cpu", "Pllaka amë": "mb", "Memorie RAM": "ram", "Kartela grafike": "gpu", "Furnizues rryme": "psu", "Kasa": "case", "Ftohje & ventilatorë": "cooler" };
+  const CPU_BUDGET = 120; // W, një procesor tipik desktop për llogaritjen e furnizimit
+  const psuFor = (gpuTdp) => Math.ceil(((gpuTdp + CPU_BUDGET + 75) * 1.4) / 50) * 50;
+  function partInfo(p) {
+    const sp = BSPEC[p.id] || {};
+    const a = p.attrs || {};
+    const kind = KIND_BY_CAT[p.cat] || sp.slot || "";
+    const i = { kind, sp };
+    if (kind === "cpu") { i.socket = a.socket || sp.socket; i.tdp = sp.tdp; i.ddr = SOCKET_RAM[i.socket]; }
+    if (kind === "mb") { i.socket = a.socket || sp.socket; i.ddr = a.ddr || sp.ram; i.form = a.form; }
+    if (kind === "ram") { i.ddr = a.ddr || sp.type; i.form = a.form || "DIMM"; }
+    if (kind === "gpu") { i.tdp = sp.tdp; i.len = sp.len; }
+    if (kind === "psu") { i.watt = a.watt || sp.watt; }
+    if (kind === "case") { i.gpuMax = sp.gpuMax; i.coolerMax = sp.coolerMax; i.rads = sp.rads; i.form = a.form; }
+    if (kind === "cooler") { const r = /(\d{3})\s?mm AIO/i.exec(p.name); i.rad = sp.rad || (r ? +r[1] : 0); i.height = sp.height; }
+    return i;
+  }
+  const PART_INFO = {};
+  const infoOf = (p) => (PART_INFO[p.id] ||= partInfo(p));
+  const partsOf = (kind) => PRODUCTS.filter((x) => infoOf(x).kind === kind);
+
+  function compatHTML(p) {
+    const me = infoOf(p);
+    if (!me.kind) return "";
+    const rows = [];
+    const groups = [];
+    const note = (t) => rows.push([null, t]);
+    const unknown = "Konfirmohet sipas kodit të artikullit";
+    const group = (title, list, href) => { if (list.length) groups.push({ title, list, href }); };
+    if (me.kind === "cpu") {
+      rows.push(["Soketi", me.socket || unknown], ["Memoria", me.socket === "SP5" ? "DDR5 RDIMM (server)" : me.ddr || unknown]);
+      if (me.tdp) rows.push(["Konsumi (TDP)", `${me.tdp} W`]);
+      if (me.socket === "SP5") note("Procesor serveri: kërkon pllakë amë SP5 dhe memorie të regjistruar (RDIMM). Konfigurimin e plotë e konfirmon ekipi me ofertë.");
+      else if (me.socket) {
+        group(`Pllaka amë ${me.socket}`, partsOf("mb").filter((x) => infoOf(x).socket === me.socket), `#/kategoria/pllaka-ame?socket=${encodeURIComponent(me.socket)}`);
+        if (me.ddr) group(`Memorie ${me.ddr} për desktop`, partsOf("ram").filter((x) => infoOf(x).ddr === me.ddr && infoOf(x).form === "DIMM"), `#/kategoria/memorie-ram?ddr=${me.ddr}`);
+      }
+    } else if (me.kind === "mb") {
+      rows.push(["Soketi", me.socket || unknown], ["Memoria", me.ddr ? `${me.ddr} DIMM` : unknown]);
+      if (me.form) rows.push(["Formati", me.form]);
+      if (!me.ddr && me.socket === "LGA1700") note("Pllakat LGA1700 vijnë në version DDR4 ose DDR5: lloji i memories konfirmohet sipas kodit të saktë të modelit.");
+      if (me.socket) group(`Procesorë ${me.socket}`, partsOf("cpu").filter((x) => infoOf(x).socket === me.socket), `#/kategoria/procesore?socket=${encodeURIComponent(me.socket)}`);
+      if (me.ddr) group(`Memorie ${me.ddr}`, partsOf("ram").filter((x) => infoOf(x).ddr === me.ddr && infoOf(x).form === "DIMM"), `#/kategoria/memorie-ram?ddr=${me.ddr}`);
+    } else if (me.kind === "ram") {
+      rows.push(["Lloji", me.ddr || unknown], ["Forma", me.form === "SO-DIMM" ? "SO-DIMM (laptopë, mini PC)" : "DIMM (PC desktop)"]);
+      if (me.form === "SO-DIMM") note("Memorie për laptopë dhe mini PC. Nuk hyn në pllakat amë desktop; kontrolloni llojin dhe shpejtësinë që pranon pajisja juaj.");
+      else if (me.ddr) {
+        group(`Pllaka amë me ${me.ddr}`, partsOf("mb").filter((x) => infoOf(x).ddr === me.ddr), `#/kategoria/pllaka-ame?ddr=${me.ddr}`);
+        group("Procesorë për këtë memorie", partsOf("cpu").filter((x) => infoOf(x).ddr === me.ddr));
+      }
+    } else if (me.kind === "gpu") {
+      if (me.tdp) {
+        const need = psuFor(me.tdp);
+        rows.push(["Konsumi", `${me.tdp} W`], ["Gjatësia", `${me.len} mm`], ["Furnizimi i rekomanduar", `${need} W ose më shumë`]);
+        note(`Llogaritur me një procesor deri në ${CPU_BUDGET} W dhe 40% rezervë, si në konfiguruesin 3D.`);
+        group(`Furnizues ${need} W ose më shumë`, partsOf("psu").filter((x) => infoOf(x).watt >= need), "#/kategoria/furnizues-rryme");
+      } else {
+        rows.push(["Konsumi dhe gjatësia", unknown]);
+        note("Para porosisë, ekipi kontrollon furnizimin dhe vendin në kasë sipas modelit të saktë.");
+      }
+    } else if (me.kind === "psu") {
+      if (me.watt) rows.push(["Fuqia", `${me.watt} W`]);
+      if (me.watt && me.watt < 300) note("Furnizim për NAS dhe mini PC, jo për PC me kartelë grafike.");
+      else if (me.watt) {
+        const maxGpu = Math.floor(me.watt / 1.4 - CPU_BUDGET - 75);
+        rows.push(["Kartela grafike deri në", `rreth ${maxGpu} W konsum`]);
+        group("Kartela grafike që mban", partsOf("gpu").filter((x) => infoOf(x).tdp && psuFor(infoOf(x).tdp) <= me.watt), "#/kategoria/kartela-grafike");
+      }
+    } else if (me.kind === "case") {
+      if (me.gpuMax) {
+        rows.push(["Kartela grafike deri në", `${me.gpuMax} mm`], ["Ftohës ajri deri në", `${me.coolerMax} mm`], ["Radiator", me.rads.map((r) => `${r} mm`).join(", ")]);
+        group("Kartela grafike që hyjnë", partsOf("gpu").filter((x) => infoOf(x).len && infoOf(x).len <= me.gpuMax));
+      } else {
+        if (me.form) rows.push(["Formati", me.form]);
+        rows.push(["Përmasat e lejuara", unknown]);
+      }
+    } else if (me.kind === "cooler") {
+      if (me.rad) rows.push(["Lloji", `Ftohje me lëng, radiator ${me.rad} mm`]);
+      rows.push(["Soketet", (p.attrs && p.attrs.socket) || unknown]);
+      if (me.rad) note(`Kontrolloni që kasa të mbajë radiator ${me.rad} mm në pjesën e përparme ose sipër.`);
+    }
+    const slot = BSPEC[p.id]?.slot;
+    const chip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(x.name)}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
+    return `<section class="cmpt" aria-labelledby="cmptTitle">
+      <div class="cmpt__head"><h2 id="cmptTitle">${lucide("puzzle")}Përputhshmëria</h2>${slot ? `<a class="btn btn--ghost" href="#builder" data-builder data-part="${slot}:${p.id}">${lucide("box")}Provoje në konfiguruesin 3D</a>` : ""}</div>
+      <dl class="cmpt__rows">${rows.filter((r) => r[0]).map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+      ${rows.filter((r) => !r[0]).map(([, t]) => `<p class="cmpt__note">${lucide("info")}${esc(t)}</p>`).join("")}
+      ${groups.map((g) => `<div class="cmpt__group"><h3>${esc(g.title)} <small>${plural(g.list.length, "produkt", "produkte")}</small>${g.href ? ` <a href="${g.href}">Shiko në katalog</a>` : ""}</h3><ul>${g.list.slice(0, 4).map(chip).join("")}</ul></div>`).join("")}
+    </section>`;
+  }
+
+  /* Një SKU për variant: variantet e të njëjtit model (paketimi, ngjyra) lidhen me njëri-tjetrin. */
+  const VAR_COLOR = /\b(e zez[eë]|zez[eë]|e bardh[eë]|bardh[eë]|e verdh[eë]|black|white|silver|gr[ae]y|blue|pink|gold|graphite|midnight|starlight)\b/gi;
+  const VAR_PACK = /\b(oem|pib\/wof|pib|wof|box|tray)\b/gi;
+  const variantKey = (p) => `${p.brand}|${p.cat}|${slugify(p.name.replace(VAR_COLOR, "").replace(VAR_PACK, "").replace(/\([^)]*\)/g, ""))}`;
+  const variantLabel = (p) => {
+    const pack = /pib|wof|box/i.test(p.name) ? "Box (në kuti shitjeje)" : /\boem|tray\b/i.test(p.name) ? "OEM (pa kuti)" : "";
+    const col = (p.name.match(VAR_COLOR) || [])[0];
+    return [pack, col && col[0].toUpperCase() + col.slice(1)].filter(Boolean).join(" · ") || p.id.toUpperCase();
+  };
+  function variantsHTML(p) {
+    const k = variantKey(p);
+    const sib = PRODUCTS.filter((x) => x.id !== p.id && variantKey(x) === k);
+    if (!sib.length) return "";
+    const all = [p, ...sib].sort((a, b) => a.id.localeCompare(b.id));
+    return `<div class="pp__variants"><span>Variantet</span><ul>${all.map((x) => x.id === p.id
+      ? `<li><span class="vchip is-on" aria-current="true">${esc(variantLabel(x))}</span></li>`
+      : `<li><a class="vchip" href="${productHref(x.id)}">${esc(variantLabel(x))}</a></li>`).join("")}</ul></div>`;
+  }
+
   function renderProduct(id) {
     const p = byId[id];
     if (!p) return;
@@ -1248,6 +1362,7 @@
           <h1>${esc(p.name)}</h1>
           <p class="pp__sub">${esc(shortSpecs(p))}</p>
           <p class="pp__sku">Kodi i artikullit: <span class="mono">${esc(p.id.toUpperCase())}</span></p>
+          ${variantsHTML(p)}
           <div class="pp__price">${priceHTML(p)}${d ? `<span class="pp__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}</div>
           ${DEMO && !quote ? `<p class="demo-tag"><span>Demo</span>Çmimi dhe stoku janë për demonstrim, jo ofertë shitjeje.</p>` : ""}
           ${quote ? `<p class="pp__vat">Çmimi, stoku dhe afati i dorëzimit konfirmohen nga ekipi ITCOM me ofertë, zakonisht brenda ditës së punës.</p>` : `<p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%${S.installments ? ` · ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj` : ""}</p>`}
@@ -1321,6 +1436,7 @@
           <button type="button" class="btn btn--cta btn--block" ${quote ? `data-quote="${p.id}">Kërko ofertë` : `data-ask="${p.id}">Pyet për produktin`}</button>
         </aside>
       </div>
+      ${compatHTML(p)}
       ${imgs.length > 1 ? `<section class="pp__angles"><h2>E njëjta pajisje. Nga kënde të ndryshme.</h2><div class="pp__angles-grid">${imgs.slice(1).map((src) => `<div class="media"><img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy" /></div>`).join("")}</div></section>` : ""}
       ${related.length ? `<section class="home-sec"><div class="home-sec__head"><h2 class="home-sec__title">Produkte të ngjashme</h2>${inShop ? `<a class="home-sec__link" href="#/kategoria/${catSlug(p.cat)}">Të gjitha</a>` : ""}</div><div class="pgrid">${related.map((x) => card(x)).join("")}</div></section>` : ""}
       <div class="pp__bar" aria-hidden="true"><b>${priceText(p)}</b>${quote ? `<button type="button" class="btn btn--cta" data-quote="${p.id}" tabindex="-1">Kërko ofertë</button>` : `<button type="button" class="btn btn--cta" data-add="${p.id}" tabindex="-1" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>`}</div>`;
@@ -2252,7 +2368,7 @@
     else if ("sgall" in d) applySearch($("#search").value);
     else if (d.sgcat) applySearch($("#search").value, d.sgcat);
     else if (d.info) openInfo(d.info);
-    else if ("builder" in d) { e.preventDefault(); closeModal(); toggleMega(false); window.ITCOM.openBuilder?.(); }
+    else if ("builder" in d) { e.preventDefault(); closeModal(); toggleMega(false); window.ITCOM.openBuilder?.(d.part ? { part: d.part } : undefined); }
     else if ("business" in d) openBusiness();
     else if (d.ask) openAsk(d.ask);
     else if ("account" in d) openAccount();

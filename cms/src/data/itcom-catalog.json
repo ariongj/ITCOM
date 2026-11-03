@@ -9120,7 +9120,8 @@
    ],
    "itcom": {
     "attrs": {
-     "series": "Ryzen 9000"
+     "series": "Ryzen 9000",
+     "socket": "AM5"
     },
     "rating": 0,
     "reviews": 0,
@@ -9228,7 +9229,8 @@
    ],
    "itcom": {
     "attrs": {
-     "series": "Ryzen 9000"
+     "series": "Ryzen 9000",
+     "socket": "AM5"
     },
     "rating": 0,
     "reviews": 0,
@@ -9324,7 +9326,8 @@
    ],
    "itcom": {
     "attrs": {
-     "series": "Ryzen 8000"
+     "series": "Ryzen 8000",
+     "socket": "AM5"
     },
     "rating": 0,
     "reviews": 0,
@@ -9432,7 +9435,8 @@
    ],
    "itcom": {
     "attrs": {
-     "series": "Ryzen 3000"
+     "series": "Ryzen 3000",
+     "socket": "AM4"
     },
     "rating": 0,
     "reviews": 0,
@@ -9528,7 +9532,8 @@
    ],
    "itcom": {
     "attrs": {
-     "series": "EPYC 9000"
+     "series": "EPYC 9000",
+     "socket": "SP5"
     },
     "rating": 0,
     "reviews": 0,
@@ -11465,7 +11470,8 @@
     "attrs": {
      "socket": "AM5",
      "chipset": "B850",
-     "form": "ATX"
+     "form": "ATX",
+     "ddr": "DDR5"
     },
     "rating": 0,
     "reviews": 0,
@@ -11584,7 +11590,8 @@
     "attrs": {
      "socket": "AM4",
      "chipset": "A520",
-     "form": "Micro-ATX"
+     "form": "Micro-ATX",
+     "ddr": "DDR4"
     },
     "rating": 0,
     "reviews": 0,
@@ -11703,7 +11710,8 @@
     "attrs": {
      "socket": "AM5",
      "chipset": "B850",
-     "form": "Micro-ATX"
+     "form": "Micro-ATX",
+     "ddr": "DDR5"
     },
     "rating": 0,
     "reviews": 0,
@@ -12169,7 +12177,8 @@
     "attrs": {
      "socket": "LGA1700",
      "chipset": "B760",
-     "form": "Micro-ATX"
+     "form": "Micro-ATX",
+     "ddr": "DDR4"
     },
     "rating": 0,
     "reviews": 0,

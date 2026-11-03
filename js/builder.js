@@ -199,6 +199,12 @@
 
   /* ------------------------------------------------------------ open / close */
   function open(saved) {
+    // Nga faqja e produktit: "Provoje në konfigurues" vendos këtë pjesë në konfigurimin aktual ("cpu:cp-7800x3d").
+    if (saved && saved.part) {
+      const [slot, id] = String(saved.part).split(":");
+      if (SPECS[id] && SPECS[id].slot === slot && byId[id]) { st = { ...st, parts: { ...st.parts, [slot]: id }, open: slot }; persist(); }
+      saved = null;
+    }
     if (saved && saved.parts) st = { ...st, parts: validParts(saved.parts), color: saved.color || 0, rgb: saved.rgb ?? st.rgb, assembly: saved.assembly ?? st.assembly };
     A.closeModal();
     root.hidden = false;

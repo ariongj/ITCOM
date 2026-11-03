@@ -104,6 +104,11 @@ def attrs_for(cat, name):
     elif cat == "Procesorë":
         if x := m(r"Ryzen \d (?:Pro )?(\d)\d{3}"): a["series"] = f"Ryzen {x.group(1)}000"
         elif x := m(r"EPYC (\d)\d{3}"): a["series"] = f"EPYC {x.group(1)}000"
+        # Soketi sipas platformës së serisë (fakt i modelit, jo i emrit): Ryzen 7000–9000 = AM5, Ryzen 1000–5000 = AM4, EPYC 9004 = SP5.
+        sr = a.get("series", "")
+        if re.match(r"Ryzen [789]000", sr): a["socket"] = "AM5"
+        elif re.match(r"Ryzen [1-5]000", sr): a["socket"] = "AM4"
+        elif sr == "EPYC 9000": a["socket"] = "SP5"
     elif cat == "Kasa":
         if x := m(r"(Mid Tower|Full Tower|Mini Tower)"): a["form"] = x.group(1)
     elif cat == "Kartela grafike":
@@ -124,6 +129,9 @@ def attrs_for(cat, name):
         if x := m(r"\b([ABHXZ]\d{3}M?)\b"): a["chipset"] = re.sub(r"M$", "", x.group(1))
         a["form"] = "Micro-ATX" if m(r"micro ATX|mATX|\d{3}M[- ]") else "ATX"
         if x := m(r"(DDR\d)"): a["ddr"] = x.group(1)
+        elif m(r"\bD4\b"): a["ddr"] = "DDR4"  # ASRock/ASUS shënojnë versionin DDR4 me "D4"
+        elif a.get("socket") in ("AM5", "LGA1851"): a["ddr"] = "DDR5"  # platforma pranon vetëm DDR5
+        elif a.get("socket") == "AM4": a["ddr"] = "DDR4"
     elif cat in ("SSD", "Disqe të jashtme"):
         if x := m(r"(\d+(?:\.\d+)?)\s?(TB|GB)"): a["cap"] = int(round(num(x.group(1)) * (1000 if x.group(2) == "TB" else 1)))
         if cat == "SSD":

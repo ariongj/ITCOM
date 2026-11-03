@@ -40,6 +40,13 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - CMS → Publikimi shows the same "Kontrolli i katalogut" (it also checks that every photo loads) and disables "Publiko tani" until the errors are fixed
 - Sections filled by the script keep their space while loading, so the page does not jump (layout shift below 0.02 at every width)
 
+**Compatibility and variants** (report "Raundi 03", p. 17)
+- Product pages for processors, motherboards, RAM, graphics cards, power supplies, cases and coolers have a "Përputhshmëria" block. It uses the model's data, not its name: socket, memory type (DDR4/DDR5, DIMM or SO-DIMM), power draw, card length and case clearance. It lists the matching products in the shop, with a link to the filtered catalogue (e.g. AM5 motherboards, DDR5 memory, power supplies of 600 W or more)
+- The recommended power supply uses the same rule as the 3D configurator (graphics card + a 120 W processor + 75 W, with 40% headroom). Parts the configurator knows get "Provoje në konfiguruesin 3D", which opens the configurator with that part in the current build
+- Missing data is never guessed: the block says "Konfirmohet sipas kodit të artikullit". LGA1700 boards (DDR4 or DDR5 depending on the model) and server processors (SP5, RDIMM) are explained
+- Sockets of imported processors come from the platform of their series (Ryzen 7000–9000 = AM5, Ryzen 1000–5000 = AM4, EPYC 9004 = SP5); AM4/AM5 boards and "D4" models get their memory type the same way
+- One SKU per variant: variants of the same model (packaging OEM / Box, colour) link to each other as "Variantet" on the product page
+
 **Advanced filtering (Gjirafa50‑style)**
 - Filters change with the category: Laptops get Type, Processor, RAM, Storage, Screen size, Graphics and OS; Processors get Series, Socket and Cores; Graphics cards get Chip, Series and Memory
 - Live counts next to every option, recalculated against all other active filters; options with no results are greyed out
