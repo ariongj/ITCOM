@@ -33,6 +33,13 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Phones: 16 px body and form fields, 24 px titles, 20 px card prices, 44 px buttons (cards, Filtro/Rendit, sticky product CTA), the two promos side by side, services in a 2×2 grid, 2‑line card names
 - **Price on request** (`quote: true` or price 0): the card and product page say "Çmimi me ofertë" and offer "Kërko ofertë" instead of "Shto në shportë"; the request (quantity, contact) lands in the CMS inbox as a quote. These products cannot be added to the cart, are sorted after priced ones and have no `Offer` in their structured data
 
+**Demo data and automatic checks** (report "Raundi 03", p. 17–18)
+- Demo prices and stock are marked visibly: a "Demo" bar above the header and a note under the price on product pages. Set `demo: false` in `window.STORE` (`js/products.js`) once real inventory is connected
+- The shop never shows an old price that is not higher than the current price
+- `node scripts/check-catalog.mjs` checks the static catalogue and the published CMS version. It fails on a duplicate SKU, the same product listed twice, a negative price, an old price that is not higher, a broken photo path, an unknown category or an empty category. `scripts/build-pages.mjs` runs it first and stops on errors
+- CMS → Publikimi shows the same "Kontrolli i katalogut" (it also checks that every photo loads) and disables "Publiko tani" until the errors are fixed
+- Sections filled by the script keep their space while loading, so the page does not jump (layout shift below 0.02 at every width)
+
 **Advanced filtering (Gjirafa50‑style)**
 - Filters change with the category: Laptops get Type, Processor, RAM, Storage, Screen size, Graphics and OS; Processors get Series, Socket and Cores; Graphics cards get Chip, Series and Memory
 - Live counts next to every option, recalculated against all other active filters; options with no results are greyed out
@@ -172,7 +179,9 @@ Photos on a white or transparent background look best. If an image is missing, t
 | Filters shown per category | `js/products.js` (`FACETS`) |
 | Currency, VAT, delivery fees, instalments, phone | `window.STORE` in `js/products.js` |
 | Hero slides and promo tiles | CMS → Online Store → Slides, or `SLIDES` / `renderHero()` in `js/app.js` |
-| Static product pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes) |
+| Static product pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes; runs the catalogue check first) |
+| Catalogue check | `node scripts/check-catalog.mjs` |
+| Demo marking on/off | `demo` in `window.STORE` (`js/products.js`) |
 | Collections, discounts, campaigns, blog, menus, services | CMS, then **Publikimi → Publiko tani** |
 | Colours, fonts, radii (light and dark) | tokens at the top of `css/styles.css` |
 | Logo / favicon | `assets/favicon.svg` |

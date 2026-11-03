@@ -6,6 +6,11 @@
   const CATS = window.CATEGORIES;
   const FACETS = window.FACETS;
   const PRODUCTS = window.PRODUCTS;
+  // Çmimi i vjetër shfaqet vetëm kur është më i lartë se çmimi aktual (raporti R03, f. 17); produktet me ofertë nuk kanë zbritje.
+  PRODUCTS.forEach((p) => { if (p.old !== undefined && !(p.price > 0 && Number(p.old) > p.price && !p.quote)) delete p.old; });
+  // Dyqan demo: çmimet dhe stoku shënohen dukshëm si demonstrim (STORE.demo = false kur lidhet inventari real).
+  const DEMO = window.STORE.demo !== false;
+  if (!DEMO) document.getElementById("demoBar")?.remove();
   const byId = Object.fromEntries([...PRODUCTS, ...(window.BUILDER_PARTS || []), ...(window.SERVICES || [])].map((p) => [p.id, p]));
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -1244,6 +1249,7 @@
           <p class="pp__sub">${esc(shortSpecs(p))}</p>
           <p class="pp__sku">Kodi i artikullit: <span class="mono">${esc(p.id.toUpperCase())}</span></p>
           <div class="pp__price">${priceHTML(p)}${d ? `<span class="pp__save">Kurseni ${fmt(p.old - p.price)}</span>` : ""}</div>
+          ${DEMO && !quote ? `<p class="demo-tag"><span>Demo</span>Çmimi dhe stoku janë për demonstrim, jo ofertë shitjeje.</p>` : ""}
           ${quote ? `<p class="pp__vat">Çmimi, stoku dhe afati i dorëzimit konfirmohen nga ekipi ITCOM me ofertë, zakonisht brenda ditës së punës.</p>` : `<p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%${S.installments ? ` · ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj` : ""}</p>`}
           <div class="pp__stock">${stockLabel(p)}<span>${quote ? "Produkt me porosi nga furnitori" : p.stock ? `Porosit sot, arrin <b>${deliveryDate(2)}</b> · marrje falas në dyqan` : "Aktualisht i padisponueshëm — pyetni për afatin"}</span></div>
           <div class="pp__buy">

@@ -21,6 +21,8 @@ window.STORE = {
   expressFee: 5,
   installments: 12,
   phone: "+383 44 000 000",
+  // Dyqan demo: shirit sipër dhe shënim te produkti që çmimet/stoku janë demonstrim. Vendos false kur lidhet inventari real.
+  demo: true,
   // Numri i WhatsApp-it për porosi (vetëm shifra, me prefiksin e shtetit, p.sh. "38344123456").
   // Kur plotësohet, në porosi shfaqet butoni "Porosit me WhatsApp" dhe porositë vijnë direkt te ju.
   whatsapp: "",

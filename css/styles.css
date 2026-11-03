@@ -2087,3 +2087,28 @@ button.navbar__link { border: 0; background: none; font: inherit; font-size: 14p
 @media (max-width: 400px) {
   .pcard__price .price { font-size: 19px; }
 }
+
+/* Demo: çmimet dhe stoku shënohen si demonstrim (R03, f. 17) */
+.demo-bar { margin: 0; padding: 6px var(--gutter-r, 16px); background: #fff4d6; color: #5b4100; font-size: 13px; line-height: 1.4; text-align: center; border-bottom: 1px solid #f0dca2; }
+.demo-bar b, .demo-tag span { display: inline-block; margin-right: 6px; padding: 1px 7px; border-radius: 999px; background: #5b4100; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 1px; }
+.demo-tag { margin: 8px 0 0; color: #5b4100; font-size: 13px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .demo-bar { background: #3a2f12; color: #f3e2b0; border-color: #54451c; } }
+:root[data-theme="dark"] .demo-bar { background: #3a2f12; color: #f3e2b0; border-color: #54451c; }
+
+/* Hapësirë e rezervuar derisa skripti të mbushë seksionet (pa zhvendosje të faqes, R03 f. 18).
+   :empty vlen vetëm para shfaqjes, kështu që një rresht më i shkurtër nuk lë boshllëk. */
+.slider:has(#slides:empty) { min-height: 422px; }
+#promos:empty { min-height: 150px; }
+#services:empty { min-height: 76px; }
+#catStrip:empty { min-height: 120px; }
+#hotDeals:empty { min-height: 560px; }
+#explore:empty { min-height: 1700px; }
+@media (min-width: 1101px) { #promos:empty { min-height: 0; } }
+@media (max-width: 1100px) { #services:empty { min-height: 164px; } }
+@media (max-width: 760px) {
+  .slider:has(#slides:empty) { min-height: 452px; }
+  #promos:empty { min-height: 97px; }
+  #services:empty { min-height: 120px; }
+  #catStrip:empty { min-height: 104px; }
+  #hotDeals:empty { min-height: 400px; }
+}

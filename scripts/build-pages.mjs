@@ -6,8 +6,12 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+// Kontrolli i katalogut së pari: pa SKU të përsëritura, çmime negative, foto të prishura apo kategori bosh.
+const check = spawnSync(process.execPath, [root + 'scripts/check-catalog.mjs'], { stdio: 'inherit' });
+if (check.status !== 0) { console.error('Faqet nuk u ndërtuan: rregulloni gabimet e katalogut.'); process.exit(1); }
 const ctx = { window: {} };
 vm.runInNewContext(readFileSync(root + 'js/products.js', 'utf8'), ctx);
 // Produktet me foto reale (pa çmim të ITCOM ende): faqe pa çmim dhe pa Offer në të dhënat e strukturuara.

@@ -125,6 +125,52 @@ export function summarize(state: PublicState) {
   };
 }
 
+/** Automatic catalogue check before publishing (report Round 03, p. 17): duplicate SKUs, negative prices, a sale
+ * price that is not lower (the shop would hide it), products without photos, empty categories. Errors block publishing. */
+export interface CatalogIssue { level: 'error' | 'warn'; code: 'dupSku' | 'dupName' | 'negPrice' | 'badSale' | 'noImage' | 'emptyCat' | 'noCat'; ids: string[]; label: string }
+export function auditCatalog(state: PublicState): CatalogIssue[] {
+  const out: CatalogIssue[] = [];
+  const sq = (v: unknown) => (v && typeof v === 'object' ? ((v as Record<string, string>).sq || (v as Record<string, string>).en || '') : String(v ?? ''));
+  const live = state.products.filter((p) => p.status === 'active' && (!p.channels || p.channels.includes('online')));
+  const bySku = new Map<string, string[]>();
+  const byName = new Map<string, string[]>();
+  const norm = (t: string) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  for (const p of live) {
+    const sku = String(p.sku || p.id).trim().toUpperCase();
+    bySku.set(sku, [...(bySku.get(sku) ?? []), p.id]);
+    const n = norm(sq(p.name));
+    if (n) byName.set(n, [...(byName.get(n) ?? []), p.id]);
+    if (!(p.price >= 0) || (p.salePrice != null && p.salePrice < 0)) out.push({ level: 'error', code: 'negPrice', ids: [p.id], label: sq(p.name) });
+    if (p.salePrice != null && p.salePrice > 0 && !(p.salePrice < p.price)) out.push({ level: 'warn', code: 'badSale', ids: [p.id], label: sq(p.name) });
+    if (!p.images || !p.images.length) out.push({ level: 'warn', code: 'noImage', ids: [p.id], label: sq(p.name) });
+    if (!state.categories.some((c) => c.id === p.categoryId)) out.push({ level: 'error', code: 'noCat', ids: [p.id], label: sq(p.name) });
+  }
+  for (const [sku, ids] of bySku) if (ids.length > 1) out.push({ level: 'error', code: 'dupSku', ids, label: sku });
+  for (const [, ids] of byName) if (ids.length > 1) out.push({ level: 'error', code: 'dupName', ids, label: sq(live.find((p) => p.id === ids[0])?.name) });
+  for (const c of state.categories) if (!live.some((p) => p.categoryId === c.id)) out.push({ level: 'warn', code: 'emptyCat', ids: [c.id], label: sq(c.name) });
+  return out;
+}
+
+/** Photos that do not load (checked in the browser; data: and blob: images are local and always count as loaded). */
+export async function brokenImages(state: PublicState, base: string): Promise<string[]> {
+  const live = state.products.filter((p) => p.status === 'active');
+  const bad: string[] = [];
+  const probe = (src: string) => new Promise<boolean>((res) => {
+    if (/^(data|blob):/.test(src)) return res(true);
+    const img = new Image();
+    img.onload = () => res(img.naturalWidth > 0);
+    img.onerror = () => res(false);
+    img.src = /^(https?:)?\/\//.test(src) || src.startsWith('/') ? src : base + src;
+  });
+  const queue = live.flatMap((p) => (p.images ?? []).map((src) => ({ id: p.id, src })));
+  for (let i = 0; i < queue.length; i += 8) {
+    const batch = queue.slice(i, i + 8);
+    const ok = await Promise.all(batch.map((q) => probe(q.src)));
+    batch.forEach((q, k) => { if (!ok[k] && !bad.includes(q.id)) bad.push(q.id); });
+  }
+  return bad;
+}
+
 /* ------------------------------------------------------------------ */
 /* GitHub                                                              */
 /* ------------------------------------------------------------------ */

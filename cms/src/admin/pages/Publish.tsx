@@ -2,6 +2,7 @@
 // connects the order channel (orders, messages and bookings sent by every visitor's shop) and can load the live
 // version into this browser for a second staff device. See src/lib/publish.ts.
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { CircleCheck, Copy, Download, ExternalLink, Inbox, KeyRound, RefreshCw, Rocket, ShieldAlert, TriangleAlert } from 'lucide-react';
 import { Card, PageHeader, confirmDialog } from '@/admin/components/kit';
@@ -15,7 +16,7 @@ import { BASE } from '@/lib/paths';
 import { timeAgo } from '@/lib/format';
 import { CHANNEL_SCRIPT } from '@/lib/channel-script';
 import {
-  PublishError, SNAPSHOT_PATH, buildSnapshot, checkAccess, fetchChannel, fetchLiveSnapshot, publish, readConfig, saveConfig, snapshotScript,
+  PublishError, SNAPSHOT_PATH, auditCatalog, brokenImages, buildSnapshot, checkAccess, fetchChannel, fetchLiveSnapshot, publish, readConfig, saveConfig, snapshotScript,
   summarize, type PublishConfig, type PublishStep, type Snapshot,
 } from '@/lib/publish';
 import type { Booking, Db, Inquiry, Order } from '@/lib/types';
@@ -50,6 +51,10 @@ const en = {
   fetch: 'Fetch orders', fetching: 'Fetching…', fetched: '{n} new records imported.', fetchedNone: 'Nothing new.',
   fetchErr: 'The channel did not answer: {msg}', script: 'Google Apps Script for the channel', copy: 'Copy script', copied: 'Copied.',
   badUrl: 'Enter an https:// address.',
+  auditTitle: 'Catalogue check', auditOk: 'No duplicate SKUs, negative prices, missing photos or empty categories.',
+  auditBlock: 'Fix the errors before publishing.', auditImages: 'Checking photos…',
+  a_dupSku: 'Duplicate SKU', a_dupName: 'Same product listed twice', a_negPrice: 'Negative price', a_badSale: 'Sale price not lower than the price (not shown)',
+  a_noImage: 'No photo', a_emptyCat: 'Empty category', a_noCat: 'Category missing', a_badImg: 'Photo does not load',
 };
 const sq: typeof en = {
   title: 'Publikimi',
@@ -81,6 +86,10 @@ const sq: typeof en = {
   fetch: 'Merr porositë', fetching: 'Duke marrë…', fetched: 'U importuan {n} regjistrime të reja.', fetchedNone: 'Asgjë e re.',
   fetchErr: 'Kanali nuk u përgjigj: {msg}', script: 'Google Apps Script për kanalin', copy: 'Kopjo skriptin', copied: 'U kopjua.',
   badUrl: 'Shkruani një adresë https://',
+  auditTitle: 'Kontrolli i katalogut', auditOk: 'Pa SKU të përsëritura, çmime negative, foto të prishura apo kategori bosh.',
+  auditBlock: 'Rregulloni gabimet para publikimit.', auditImages: 'Duke kontrolluar fotot…',
+  a_dupSku: 'SKU e përsëritur', a_dupName: 'I njëjti produkt dy herë', a_negPrice: 'Çmim negativ', a_badSale: 'Çmimi në zbritje nuk është më i ulët (nuk shfaqet)',
+  a_noImage: 'Pa foto', a_emptyCat: 'Kategori bosh', a_noCat: 'Pa kategori', a_badImg: 'Foto nuk hapet',
 };
 const dict = defineDict({ me: en, sq, en });
 
@@ -102,6 +111,15 @@ export default function Publish() {
 
   const snapshot = useMemo(() => buildSnapshot(db, by), [db, by]);
   const sum = useMemo(() => summarize(snapshot.state), [snapshot]);
+  const issues = useMemo(() => auditCatalog(snapshot.state), [snapshot]);
+  const [badImgs, setBadImgs] = useState<string[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    setBadImgs(null);
+    const id = setTimeout(() => brokenImages(snapshot.state, BASE).then((b) => alive && setBadImgs(b)), 400);
+    return () => { alive = false; clearTimeout(id); };
+  }, [snapshot]);
+  const blocking = issues.some((i) => i.level === 'error') || (badImgs?.length ?? 0) > 0;
   const [busy, setBusy] = useState<'' | 'publish' | 'check' | 'fetch'>('');
   const [step, setStep] = useState('');
   const [live, setLive] = useState<Snapshot | null | undefined>(undefined);
@@ -241,8 +259,26 @@ export default function Publish() {
               <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" /> {interpolate(t('codesWarn'), { codes: sum.codes.join(', ') })}
             </p>
           )}
+          <div className="mt-4 rounded-lg border border-line px-3 py-2.5 text-[13px]" data-audit>
+            <p className="font-semibold text-ink">{t('auditTitle')}</p>
+            {issues.length === 0 && badImgs?.length === 0 && <p className="mt-1 flex items-center gap-1.5 text-emerald-700"><CircleCheck className="h-4 w-4" /> {t('auditOk')}</p>}
+            {badImgs === null && <p className="mt-1 text-muted">{t('auditImages')}</p>}
+            {(issues.length > 0 || (badImgs?.length ?? 0) > 0) && (
+              <ul className="mt-1.5 grid gap-1">
+                {(badImgs ?? []).map((id) => (
+                  <li key={'img' + id} className="flex items-start gap-1.5 text-red-700"><TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {t('a_badImg')}: <Link className="underline" to={`/admin/proizvodi/${id}`}>{id}</Link></li>
+                ))}
+                {issues.map((i, k) => (
+                  <li key={k} className={`flex items-start gap-1.5 ${i.level === 'error' ? 'text-red-700' : 'text-amber-800'}`}>
+                    <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {t(`a_${i.code}` as keyof typeof en)}: {i.label} {i.ids.length > 1 || i.label !== i.ids[0] ? <span className="font-mono text-[12px] text-muted">({i.ids.join(', ')})</span> : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {blocking && <p className="mt-1.5 font-medium text-red-700">{t('auditBlock')}</p>}
+          </div>
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button variant="primary" icon={<Rocket className="h-4 w-4" />} loading={busy === 'publish'} disabled={!hasToken || !canPublish || !!busy} onClick={onPublish}>
+            <Button variant="primary" icon={<Rocket className="h-4 w-4" />} loading={busy === 'publish'} disabled={!hasToken || !canPublish || !!busy || blocking} onClick={onPublish}>
               {busy === 'publish' ? t('publishing') : t('publish')}
             </Button>
             <Button variant="outline" icon={<Download className="h-4 w-4" />} onClick={onDownload}>
