@@ -94,8 +94,19 @@
 
   /* ================================================================ ndihmës për produktet */
   const imgSrc = (p) => p.img || `assets/products/${p.id}.webp`;
-  const media = (p, cls = "", eager = false) =>
-    `<div class="media ${cls}"><img src="${esc(imgSrc(p))}" alt="${esc(p.name)}" data-pid="${p.id}" ${eager ? "" : 'loading="lazy"'} decoding="async" /></div>`;
+  // Fotot e produkteve kanë versione 480 dhe 720 px (scripts/build-thumbs.py): srcset + sizes, që kartat dhe telefoni
+  // të mos shkarkojnë foton 1000–1200 px (Raundi 04, f. 24). Fotot nga CMS-i me adresë tjetër mbeten siç janë.
+  const THUMB_RE = /^(assets\/products\/(?:photo\/dark\/|photo\/|real\/)?)([^/]+\.webp)$/;
+  const srcsetOf = (src) => { const m = THUMB_RE.exec(src || ""); return m ? `${m[1]}480/${m[2]} 480w, ${m[1]}720/${m[2]} 720w, ${src} 1000w` : ""; };
+  const SIZES = {
+    card: "(max-width: 479px) 112px, (max-width: 760px) 46vw, (max-width: 1100px) 30vw, 280px",
+    main: "(max-width: 1024px) 92vw, 600px",
+    deal: "(max-width: 760px) 300px, 320px",
+    thumb: "96px",
+  };
+  const imgAttrs = (src, sizes = "card") => { const set = srcsetOf(src); return set ? `srcset="${esc(set)}" sizes="${SIZES[sizes] || sizes}"` : ""; };
+  const media = (p, cls = "", eager = false, sizes = "card") =>
+    `<div class="media ${cls}"><img src="${esc(imgSrc(p))}" ${imgAttrs(imgSrc(p), sizes)} alt="${esc(p.name)}" data-pid="${p.id}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" /></div>`;
   // Nëse një foto mungon, shfaqet vizatimi i produktit.
   document.addEventListener("error", (e) => {
     const el = e.target;
@@ -475,10 +486,10 @@
       const items = PRODUCTS.filter((p) => matches(p, "f:type") && String(p.attrs.type) === v).sort(SORTS.featured);
       const pic = items[0] || PRODUCTS.find((p) => p.cat === state.cat && String(p.attrs.type) === v);
       const on = sel.has(v);
-      return `<li><button type="button" class="tile" data-tile="${esc(v)}" aria-pressed="${on}" ${!items.length && !on ? "disabled" : ""}>${media(pic)}<b>${esc(v)}</b><small>${plural(items.length, "produkt", "produkte")}</small></button></li>`;
+      return `<li><button type="button" class="tile" data-tile="${esc(v)}" aria-pressed="${on}" ${!items.length && !on ? "disabled" : ""}>${media(pic, "", false, "thumb")}<b>${esc(v)}</b><small>${plural(items.length, "produkt", "produkte")}</small></button></li>`;
     }).join("")}</ul>`;
   }
-  const recentChip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(shortName(x))}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
+  const recentChip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x, "", false, "thumb")}<span><b>${esc(shortName(x))}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
   function recentHTML(exclude = "") {
     const list = recent.filter((id) => id !== exclude && PRODUCTS.some((p) => p.id === id)).slice(0, 8).map((id) => byId[id]);
     if (!list.length) return "";
@@ -588,7 +599,7 @@
           <div class="slide__price">${priceHTML(p)}</div>
           <a class="btn btn--cta" href="${productHref(p.id)}">${esc(s.cta || "Shiko produktin")}</a>
         </div>
-        <a class="slide__art" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true"><img src="${esc(s.img || imgSrc(p))}" alt="" data-pid="${p.id}" ${lazy} /></a>
+        <a class="slide__art" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true"><img src="${esc(s.img || imgSrc(p))}" ${imgAttrs(s.img || imgSrc(p), "(max-width: 760px) 62vw, 520px")} alt="" data-pid="${p.id}" ${lazy} /></a>
       </div>`;
     }
     const href = s.href && !/^\/(produkt|faqe)\//.test(s.href) ? s.href : p ? productHref(p.id) : "#/";
@@ -675,7 +686,7 @@
     return `<li class="dcard">
       <div class="dcard__top">${d ? `<span class="dcard__pct">−${discount(p)}%</span>` : `<span class="dcard__pct dcard__pct--pick">Përzgjedhje</span>`}
         <button type="button" class="pcard__icon ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Ruaj te"} të ruajturat: ${esc(p.name)}">${svg(ICON.heart)}</button></div>
-      <a class="dcard__media" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true">${media(p)}</a>
+      <a class="dcard__media" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true">${media(p, "", false, "deal")}</a>
       <div class="dcard__body">
         <span class="dcard__brand">${esc(p.brand)}</span>
         <h3 class="dcard__title"><a href="${productHref(p.id)}">${esc(shortName(p))}</a></h3>
@@ -867,7 +878,7 @@
     box.innerHTML = hits.length
       ? `${Object.keys(cats).length > 1 ? `<div class="suggest__label">Kategoritë</div><div class="suggest__cats">${Object.entries(cats).map(([c, n]) => `<button type="button" data-sgcat="${esc(c)}">${esc(c)} (${n})</button>`).join("")}</div>` : ""}
          <div class="suggest__label">Produktet</div>
-         ${hits.slice(0, 6).map((p) => `<button type="button" class="sg-item" role="option" data-open="${p.id}">${media(p)}<span><b>${highlight(p.name, q)}</b><small>${esc(p.cat)} · ${stockLabel(p).replace(/<[^>]+>/g, "")}</small></span>${isQuote(p) ? `<span class="price price--quote">Me ofertë</span>` : `<span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span>`}</button>`).join("")}
+         ${hits.slice(0, 6).map((p) => `<button type="button" class="sg-item" role="option" data-open="${p.id}">${media(p, "", false, "thumb")}<span><b>${highlight(p.name, q)}</b><small>${esc(p.cat)} · ${stockLabel(p).replace(/<[^>]+>/g, "")}</small></span>${isQuote(p) ? `<span class="price price--quote">Me ofertë</span>` : `<span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span>`}</button>`).join("")}
          <button type="button" class="suggest__all" data-sgall>Shiko të gjitha rezultatet (${hits.length}) për “${esc(q)}”</button>`
       : `<div class="suggest__none">Nuk u gjet asnjë produkt për “${esc(q)}”. Provoni një markë, model ose specifikë, p.sh. “Wi‑Fi 7” ose “32 GB”.</div>`;
     box.hidden = false;
@@ -967,7 +978,7 @@
     $("#cartList").innerHTML = cart.map((l) => {
       const p = byId[l.id];
       return `<li class="cart-item">
-        ${media(p)}
+        ${media(p, "", false, "thumb")}
         <div>
           <h4>${esc(p.name)}</h4>
           <span class="muted">${fmt(p.price)} / copë</span>
@@ -1461,7 +1472,7 @@
       if (me.rad) note(`Kontrolloni që kasa të mbajë radiator ${me.rad} mm në pjesën e përparme ose sipër.`);
     }
     const slot = BSPEC[p.id]?.slot;
-    const chip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(shortName(x))}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
+    const chip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x, "", false, "thumb")}<span><b>${esc(shortName(x))}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
     return `<section class="cmpt" aria-labelledby="cmptTitle">
       <div class="cmpt__head"><h2 id="cmptTitle">${lucide("puzzle")}Përputhshmëria</h2>${slot ? `<a class="btn btn--ghost" href="#builder" data-builder data-part="${slot}:${p.id}">${lucide("box")}Provoje në konfiguruesin 3D</a>` : ""}</div>
       <dl class="cmpt__rows">${rows.filter((r) => r[0]).map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
@@ -1507,9 +1518,9 @@
       <div class="pp">
         <div class="pp__head" aria-hidden="true"><span class="eyebrow">${esc(p.brand)} / ${esc(p.cat)}</span><p class="pp__head-title">${esc(p.name)}</p><p class="pp__sub">${esc(shortSpecs(p))}</p></div>
         <div class="pp__gallery">
-          <div class="pp__main" id="ppMain">${media(p, "", true)}</div>
+          <div class="pp__main" id="ppMain">${media(p, "", true, "main")}</div>
           <p class="pp__caption">Foto nga prodhuesi · varianti përfundimtar verifikohet sipas kodit të artikullit</p>
-          ${imgs.length > 1 ? `<div class="pp__thumbs" role="tablist" aria-label="Fotot e produktit">${imgs.map((src, i) => `<button type="button" role="tab" data-thumb="${i}" aria-selected="${i === 0}" aria-label="Foto ${i + 1}"><img src="${esc(src)}" alt="" loading="lazy" /></button>`).join("")}</div>` : ""}
+          ${imgs.length > 1 ? `<div class="pp__thumbs" role="tablist" aria-label="Fotot e produktit">${imgs.map((src, i) => `<button type="button" role="tab" data-thumb="${i}" aria-selected="${i === 0}" aria-label="Foto ${i + 1}"><img src="${esc(src)}" ${imgAttrs(src, "thumb")} alt="" loading="lazy" /></button>`).join("")}</div>` : ""}
         </div>
         <div class="pp__info">
           <span class="eyebrow">${esc(p.brand)} / ${esc(p.cat)}</span>
@@ -1632,7 +1643,11 @@
     $("#shipCity")?.addEventListener("change", (e) => { $("#shipOut").innerHTML = shipCalc(p, e.target.value); });
     $$("[data-thumb]", root).forEach((t) => t.addEventListener("click", () => {
       $$("[data-thumb]", root).forEach((x) => x.setAttribute("aria-selected", x === t));
-      $("#ppMain img").src = imgs[Number(t.dataset.thumb)];
+      const main = $("#ppMain img");
+      const src = imgs[Number(t.dataset.thumb)];
+      const set = srcsetOf(src);
+      if (set) main.srcset = set; else main.removeAttribute("srcset");
+      main.src = src;
     }));
   }
 
@@ -1748,7 +1763,7 @@
     c.hidden = !compare.length;
     $("#cmpItems").innerHTML = compare.map((id) => {
       const p = byId[id];
-      return `<div class="cmp-chip">${media(p)}<span>${esc(p.name)}</span><button type="button" data-uncmp="${id}" aria-label="Hiq ${esc(p.name)} nga krahasimi">${svg(ICON.x)}</button></div>`;
+      return `<div class="cmp-chip">${media(p, "", false, "thumb")}<span>${esc(p.name)}</span><button type="button" data-uncmp="${id}" aria-label="Hiq ${esc(p.name)} nga krahasimi">${svg(ICON.x)}</button></div>`;
     }).join("") + Array.from({ length: 4 - compare.length }, () => `<div class="cmp-slot">Shtoni një produkt</div>`).join("");
     $("#cmpOpen").textContent = `Krahaso (${compare.length})`;
     $("#cmpOpen").disabled = compare.length < 2;
@@ -1875,7 +1890,7 @@
           <ul class="cline-list">${cart.map((l) => {
             const p = byId[l.id];
             return `<li class="cline">
-              <a href="${productHref(p.id)}" class="cline__img" tabindex="-1" aria-hidden="true">${media(p)}</a>
+              <a href="${productHref(p.id)}" class="cline__img" tabindex="-1" aria-hidden="true">${media(p, "", false, "thumb")}</a>
               <div class="cline__info">
                 <h2><a href="${productHref(p.id)}">${esc(p.name)}</a></h2>
                 <p class="muted">${esc(shortSpecs(p))}</p>
