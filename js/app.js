@@ -148,7 +148,7 @@
 
   /* ================================================================ gjendja */
   const catMax = (cat) => Math.ceil(Math.max(...PRODUCTS.filter((p) => cat === "All" || p.cat === cat).map((p) => p.price)) / 50) * 50;
-  const blankFilters = (cat = "All") => ({ q: "", cat, brands: new Set(), f: {}, min: 0, max: catMax(cat), inStock: false, onSale: false, col: null, grp: null });
+  const blankFilters = (cat = "All") => ({ q: "", cat, brands: new Set(), f: {}, min: 0, max: catMax(cat), inStock: false, onSale: false, freeShip: false, priced: false, col: null, grp: null });
   // Koleksionet nga CMS-i (Produktet → Koleksionet): grupe produktesh me adresën e vet (#/koleksioni/<slug>).
   const COLLECTIONS = window.CMS?.collections || [];
   const colBySlug = (slug) => COLLECTIONS.find((c) => c.slug === slug);
@@ -171,6 +171,8 @@
     if (skip !== "price" && (p.price < state.min || p.price > state.max)) return false;
     if (skip !== "inStock" && state.inStock && !p.stock) return false;
     if (skip !== "onSale" && state.onSale && !p.old) return false;
+    if (skip !== "freeShip" && state.freeShip && !(!isQuote(p) && p.price >= S.freeShippingFrom)) return false;
+    if (skip !== "priced" && state.priced && isQuote(p)) return false;
     for (const [k, set] of Object.entries(state.f)) {
       if (!set.size || skip === "f:" + k) continue;
       const v = p.attrs[k];
@@ -205,6 +207,8 @@
     if (priceActive()) out.push(["price", "Çmimi", `${fmt0(state.min)} – ${fmt0(state.max)}`]);
     if (state.inStock) out.push(["inStock", "", "Në stok"]);
     if (state.onSale) out.push(["onSale", "", "Në zbritje"]);
+    if (state.freeShip) out.push(["freeShip", "", "Dërgesë falas"]);
+    if (state.priced) out.push(["priced", "", "Me çmim"]);
     return out;
   }
 
@@ -347,6 +351,14 @@
   };
   const shortSpecs = (p) => keySpecs(p).slice(0, 3).join(" · ") || p.specs.slice(0, 2).join(" · ");
 
+  // Kësti mujor në kartë: vetëm për produkte me çmim nga 200 € e lart.
+  const INST_FROM = 200;
+  // Pamja listë: specifikimet kryesore të modelit (nga filtrat e kategorisë), të fshehura në pamjen rrjetë.
+  function listSpecs(p) {
+    const rows = (FACETS[p.cat] || []).filter((f) => p.attrs[f.key] !== undefined && p.attrs[f.key] !== "").slice(0, 6);
+    return rows.length ? `<dl class="pcard__more">${rows.map((f) => `<div><dt>${esc(f.label)}</dt><dd>${esc(fmtVal(p.cat, f.key, p.attrs[f.key]))}</dd></div>`).join("")}</dl>` : "";
+  }
+
   function card(p, opts = {}) {
     const w = wish.has(p.id), inCart = cartQty(p.id) > 0, cmp = compare.includes(p.id);
     const ship = p.price >= S.freeShippingFrom ? "Dërgesë falas" : `Dërgesë ${fmt(S.shippingFee)}`;
@@ -364,9 +376,13 @@
           <span class="pcard__brand">${esc(p.brand)}</span>
           <h3 class="pcard__title"><a href="${productHref(p.id)}">${esc(p.name)}</a></h3>
           <p class="pcard__specs">${esc(shortSpecs(p))}</p>
-          <div class="pcard__price">${priceHTML(p)}</div>
-          <p class="pcard__stock">${stockLabel(p)}${p.stock && !isQuote(p) ? `<span class="pcard__ship">${ship}</span>` : ""}</p>
-          ${cardCta(p, inCart)}
+          ${listSpecs(p)}
+          <div class="pcard__buy">
+            <div class="pcard__price">${priceHTML(p)}</div>
+            ${!isQuote(p) && S.installments && p.price >= INST_FROM ? `<p class="pcard__inst">ose ${S.installments} × ${fmt(p.price / S.installments)} në muaj</p>` : ""}
+            <p class="pcard__stock">${stockLabel(p)}${p.stock && !isQuote(p) ? `<span class="pcard__ship">${ship}</span>` : ""}</p>
+            ${cardCta(p, inCart)}
+          </div>
         </div>
       </article>`;
   }
@@ -403,6 +419,45 @@
       <aside><h3>Nuk je i sigurt?</h3><p>Trego si do ta përdorësh dhe ekipi të sugjeron konfigurimin.</p><button type="button" class="btn btn--primary" data-ask-col="${esc(c.slug)}">Pyet ekipin</button></aside>` : "";
   }
 
+  /* Rreshti i filtrave të shpejtë, pllakat sipas llojit, pamja rrjetë/listë dhe "Shikuar së fundi". */
+  const QUICK = [
+    ["inStock", "Në stok", (p) => p.stock > 0 && !isQuote(p)],
+    ["onSale", "Në zbritje", (p) => !!p.old],
+    ["freeShip", "Dërgesë falas", (p) => !isQuote(p) && p.price >= S.freeShippingFrom],
+    ["priced", "Me çmim", (p) => !isQuote(p)],
+  ];
+  let viewMode = saved.get("viewMode", "grid") === "list" ? "list" : "grid";
+  function renderQuick() {
+    $("#quick").innerHTML = QUICK.map(([k, label, test]) => {
+      const n = PRODUCTS.filter((p) => matches(p, k) && test(p)).length;
+      const on = !!state[k];
+      return `<button type="button" class="quick__btn" data-quick="${k}" aria-pressed="${on}" ${!n && !on ? "disabled" : ""}>${esc(label)} <small>${n}</small></button>`;
+    }).join("");
+    $$("[data-view-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.viewMode === viewMode)));
+    $("#grid").classList.toggle("pgrid--list", viewMode === "list");
+  }
+  function renderTiles() {
+    const host = $("#typeTiles");
+    const def = state.cat !== "All" && !state.q && !state.col ? facetDef(state.cat, "type") : null;
+    const values = def ? [...new Set(PRODUCTS.filter((p) => p.cat === state.cat && p.attrs.type).map((p) => String(p.attrs.type)))] : [];
+    host.hidden = values.length < 2;
+    if (host.hidden) { host.innerHTML = ""; return; }
+    const sel = state.f.type || new Set();
+    host.innerHTML = `<ul>${values.map((v) => {
+      const items = PRODUCTS.filter((p) => matches(p, "f:type") && String(p.attrs.type) === v).sort(SORTS.featured);
+      const pic = items[0] || PRODUCTS.find((p) => p.cat === state.cat && String(p.attrs.type) === v);
+      const on = sel.has(v);
+      return `<li><button type="button" class="tile" data-tile="${esc(v)}" aria-pressed="${on}" ${!items.length && !on ? "disabled" : ""}>${media(pic)}<b>${esc(v)}</b><small>${plural(items.length, "produkt", "produkte")}</small></button></li>`;
+    }).join("")}</ul>`;
+  }
+  const recentChip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(x.name)}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
+  function recentHTML(exclude = "") {
+    const list = recent.filter((id) => id !== exclude && PRODUCTS.some((p) => p.id === id)).slice(0, 8).map((id) => byId[id]);
+    if (!list.length) return "";
+    const tid = `recentTitle-${exclude || "cat"}`;
+    return `<section class="recent" aria-labelledby="${tid}"><div class="recent__head"><h2 id="${tid}">${lucide("history")}Shikuar së fundi</h2><button type="button" class="link-btn" data-recent-clear>Pastro listën</button></div><ul>${list.map(recentChip).join("")}</ul></section>`;
+  }
+
   function renderResults() {
     const grid = $("#grid");
     try {
@@ -413,6 +468,9 @@
       const slice = list.slice(0, state.page * state.per);
       $("#loadError").hidden = true;
       grid.innerHTML = slice.map((p) => card(p)).join("");
+      renderQuick();
+      renderTiles();
+      $("#recentSec").innerHTML = recentHTML();
       $("#empty").hidden = list.length > 0;
 
       const title = state.col ? state.col.title : state.grp ? state.grp.name : state.q ? `Rezultatet për “${state.q}”` : state.onSale && state.cat === "All" ? "Ofertat" : state.cat === "All" ? "Të gjitha produktet" : state.cat;
@@ -1439,6 +1497,7 @@
       ${compatHTML(p)}
       ${imgs.length > 1 ? `<section class="pp__angles"><h2>E njëjta pajisje. Nga kënde të ndryshme.</h2><div class="pp__angles-grid">${imgs.slice(1).map((src) => `<div class="media"><img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy" /></div>`).join("")}</div></section>` : ""}
       ${related.length ? `<section class="home-sec"><div class="home-sec__head"><h2 class="home-sec__title">Produkte të ngjashme</h2>${inShop ? `<a class="home-sec__link" href="#/kategoria/${catSlug(p.cat)}">Të gjitha</a>` : ""}</div><div class="pgrid">${related.map((x) => card(x)).join("")}</div></section>` : ""}
+      ${recentHTML(p.id)}
       <div class="pp__bar" aria-hidden="true"><b>${priceText(p)}</b>${quote ? `<button type="button" class="btn btn--cta" data-quote="${p.id}" tabindex="-1">Kërko ofertë</button>` : `<button type="button" class="btn btn--cta" data-add="${p.id}" tabindex="-1" ${p.stock ? "" : "disabled"}>${p.stock ? "Shto në shportë" : "Jashtë stokut"}</button>`}</div>`;
 
     if (!quote) {
@@ -2378,6 +2437,22 @@
     else if (d.slideDir) { goSlide(slide + Number(d.slideDir)); autoSlide(); }
     else if ("close" in d) closeCart();
     else if ("closeModal" in d) closeModal();
+  });
+
+  // Filtrat e shpejtë, pllakat, pamja rrjetë/listë, "Shikuar së fundi"
+  document.addEventListener("click", (e) => {
+    const q = e.target.closest("[data-quick]");
+    if (q) { const k = q.dataset.quick; state[k] = !state[k]; state.page = 1; render(); $(`[data-quick="${k}"]`)?.focus(); return; }
+    const t = e.target.closest("[data-tile]");
+    if (t) {
+      const v = t.dataset.tile;
+      const cur = state.f.type || new Set();
+      state.f.type = cur.size === 1 && cur.has(v) ? new Set() : new Set([v]);
+      state.page = 1; render(); $(`[data-tile="${CSS.escape(v)}"]`)?.focus(); return;
+    }
+    const m = e.target.closest("[data-view-mode]");
+    if (m) { viewMode = m.dataset.viewMode; saved.set("viewMode", viewMode); renderQuick(); announce(viewMode === "list" ? "Pamja listë" : "Pamja rrjetë"); return; }
+    if (e.target.closest("[data-recent-clear]")) { recent = []; saved.set("recent", recent); $$(".recent").forEach((x) => { x.hidden = true; }); }
   });
 
   // Filtrat

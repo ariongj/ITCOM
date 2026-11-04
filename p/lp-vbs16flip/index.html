@@ -238,6 +238,14 @@
 
         <div class="results">
           <div id="catBanner" hidden></div>
+          <section class="type-tiles" id="typeTiles" aria-label="Zgjidh sipas llojit" hidden></section>
+          <div class="results__bar">
+            <div class="quick" id="quick" role="group" aria-label="Filtra të shpejtë"></div>
+            <div class="viewtog" role="group" aria-label="Pamja e produkteve">
+              <button type="button" class="viewtog__btn" data-view-mode="grid" aria-pressed="true" aria-label="Pamja rrjetë" title="Pamja rrjetë"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></button>
+              <button type="button" class="viewtog__btn" data-view-mode="list" aria-pressed="false" aria-label="Pamja listë" title="Pamja listë"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg></button>
+            </div>
+          </div>
           <div class="chips" id="chips"></div>
           <div class="pgrid pgrid--catalog" id="grid"></div>
           <div class="state" id="empty" hidden>
@@ -252,6 +260,7 @@
             <button class="btn btn--primary" id="retryResults">Provo përsëri</button>
           </div>
           <nav class="pager" id="pager" aria-label="Faqet"></nav>
+          <div id="recentSec"></div>
           <section class="col-why" id="colWhy" hidden></section>
         </div>
       </div>
