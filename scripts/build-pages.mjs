@@ -85,9 +85,9 @@ function page(p) {
           <h1>${esc(p.name)}</h1>
           <p class="pp__sub">${esc(short)}</p>
           <p class="pp__sku">Kodi i artikullit: <span class="mono">${esc(p.id.toUpperCase())}</span></p>
-          <div class="pp__price">${quote ? '<span class="price price--quote">Çmimi me ofertë</span>' : `<span class="price">${fmt(p.price)}</span>${p.old > p.price ? `<span class="price-old">${fmt(p.old)}</span>` : ''}`}</div>
+          <div class="pp__price">${quote ? '<span class="price price--quote">Çmimi me kërkesë</span>' : `<span class="price">${fmt(p.price)}</span>${p.old > p.price ? `<span class="price-old">${fmt(p.old)}</span>` : ''}`}</div>
           ${quote ? '' : `<p class="pp__vat">Çmimi përfshin TVSH ${Math.round(S.vatRate * 100)}%.</p>`}
-          <p>${quote ? 'Me porosi · çmimi me ofertë' : p.stock ? 'Në stok' : 'Jashtë stokut'}</p>
+          <p>${quote ? 'Me porosi · çmimi me kërkesë' : p.stock ? 'Në stok' : 'Jashtë stokut'}</p>
         </div>
       </div>
       <div class="pp__details"><div>
