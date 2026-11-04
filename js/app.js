@@ -1561,16 +1561,19 @@
             <button type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="tabAbout" data-tab="about" tabindex="-1">Përshkrimi</button>
             <button type="button" role="tab" id="tab-ship" aria-selected="false" aria-controls="tabShip" data-tab="ship" tabindex="-1">Dërgesa &amp; garancia</button>
           </div>
+<h3 class="acc-h"><button type="button" class="acc__btn" data-acc="specs" aria-controls="tabSpecs" aria-expanded="true">Specifikimet<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
           <div id="tabSpecs" role="tabpanel" aria-labelledby="tab-specs" data-pane="specs" tabindex="0">
             ${glanceHTML(p)}
             ${specGroupsHTML(p)}
           </div>
+<h3 class="acc-h"><button type="button" class="acc__btn" data-acc="about" aria-controls="tabAbout" aria-expanded="false">Përshkrimi<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
           <div id="tabAbout" role="tabpanel" aria-labelledby="tab-about" data-pane="about" tabindex="0" hidden>
             <h3 class="pp__h">${esc(p.name)}</h3>
             ${p.desc ? `<p class="pp__desc">${esc(p.desc)}</p>` : ""}
             ${p.specs.length ? `<h4 class="pp__h4">Pikat kryesore</h4><ul class="pp__points">${p.specs.slice(0, 3).map((x) => `<li>${lucide("sparkles")}<span>${esc(x)}</span></li>`).join("")}</ul>` : ""}
             <p class="pp__note">Foto dhe të dhëna nga prodhuesi. Varianti, ngjyra dhe përmbajtja e paketës verifikohen sipas kodit të artikullit para dërgesës.</p>
           </div>
+<h3 class="acc-h"><button type="button" class="acc__btn" data-acc="ship" aria-controls="tabShip" aria-expanded="false">Dërgesa &amp; garancia<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></h3>
           <div id="tabShip" role="tabpanel" aria-labelledby="tab-ship" data-pane="ship" tabindex="0" hidden>
             <div class="ship-grid">
               <section>
@@ -1621,11 +1624,23 @@
     }
     const root = $("#viewProduct");
     const tabs = $$("[data-tab]", root);
+    // Desktop: tabe. Telefon (Raundi 04, f. 22): seksione accordion, specifikimet të hapura, disa mund të jenë të hapura njëkohësisht.
+    const phone = matchMedia("(max-width: 760px)");
+    const accOpen = { specs: true, about: false, ship: false };
+    let current = tabs[0];
+    const syncPanes = () => {
+      $$("[data-pane]", root).forEach((pane) => { pane.hidden = phone.matches ? !accOpen[pane.dataset.pane] : pane.dataset.pane !== current.dataset.tab; });
+      $$("[data-acc]", root).forEach((b) => b.setAttribute("aria-expanded", String(!!accOpen[b.dataset.acc])));
+    };
     const pick = (t, focus) => {
+      current = t;
       tabs.forEach((x) => { x.setAttribute("aria-selected", x === t); x.tabIndex = x === t ? 0 : -1; });
-      $$("[data-pane]", root).forEach((pane) => { pane.hidden = pane.dataset.pane !== t.dataset.tab; });
+      syncPanes();
       if (focus) t.focus();
     };
+    $$("[data-acc]", root).forEach((b) => b.addEventListener("click", () => { accOpen[b.dataset.acc] = !accOpen[b.dataset.acc]; syncPanes(); }));
+    phone.addEventListener?.("change", syncPanes);
+    syncPanes();
     tabs.forEach((t, i) => {
       t.addEventListener("click", () => pick(t));
       // Tabet e aksesueshme: shigjetat, Home dhe End lëvizin mes tyre.

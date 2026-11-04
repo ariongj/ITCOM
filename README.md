@@ -41,6 +41,9 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Catalogue on phones: under 480 px the cards are horizontal (photo 112 px, short name, configuration line, price, button); 6 products first and "Shfaq më shumë" adds 6 (desktop 12 + 12). Coming back from a product keeps the filters, sort, loaded products and scroll position. Cards show a short brand + model name; the full name and SKU stay on the product page
 - Product page on phones: the title comes before the photo, the photo is about 240 px high and the price + button stay fixed at the bottom
 - Footer link groups open as an accordion on phones; the "Këshilla" cards are compact
+- Product details on phones: the three tabs become accordion sections (Specifikimet open; several can be open at once); desktop keeps the tabs with arrow-key navigation
+- Product states: on-request items say "Çmimi me kërkesë" (never 0 €); quote and availability forms start with the product, its SKU and variant, and the request carries them. A priced product without stock shows "Më njofto kur vjen" instead of a disabled button; the request reaches the CMS inbox tagged `njoftim-stoku`
+- Photos: every product photo also exists at 480 and 720 px (`python3 scripts/build-thumbs.py` after adding photos); cards, offers, gallery and thumbnails use `srcset`/`sizes`, so desktop pages download about half the image data (home 956 → 541 KB, catalogue 853 → 339 KB)
 - **Payments**: only methods confirmed by ITCOM are shown (CMS → Cilësimet → Pagesat). None is confirmed yet, so checkout says the payment method is confirmed by phone, and no instalments, banks or cards are promised anywhere. Instalments appear only when `installments` in `window.STORE` is set after an agreement with a provider
 
 **Catalogue listing**
@@ -203,6 +206,7 @@ Photos on a white or transparent background look best. If an image is missing, t
 | Hero slides and promo tiles | CMS → Online Store → Slides, or `SLIDES` / `renderHero()` in `js/app.js` |
 | Static product pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes; runs the catalogue check first) |
 | Catalogue check | `node scripts/check-catalog.mjs` |
+| Smaller photo versions (480/720 px) | `python3 scripts/build-thumbs.py` |
 | Demo marking on/off | `demo` in `window.STORE` (`js/products.js`) |
 | Collections, discounts, campaigns, blog, menus, services | CMS, then **Publikimi → Publiko tani** |
 | Colours, fonts, radii (light and dark) | tokens at the top of `css/styles.css` |

@@ -2395,3 +2395,18 @@ button.navbar__link { border: 0; background: none; font: inherit; font-size: 14p
 .req-item small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--muted); }
 .btn--notify { background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); box-shadow: none; }
 .btn--notify:hover { background: var(--surface-2); }
+
+/* Detajet e produktit në telefon: accordion në vend të tabeve (Raundi 04, f. 22) */
+.acc-h { display: none; margin: 0; }
+@media (max-width: 760px) {
+  .pp__tabs > .tabs { display: none; }
+  .acc-h { display: block; border-top: 1px solid var(--line); }
+  .acc-h:first-of-type { border-top: 0; }
+  .acc__btn { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 52px; padding: 0 2px; border: 0; background: none; font: inherit; font-size: 17px; font-weight: 700; color: var(--ink); text-align: left; cursor: pointer; }
+  .acc__btn .icon { width: 20px; height: 20px; color: var(--muted); transition: transform .2s; }
+  .acc__btn[aria-expanded="true"] .icon { transform: rotate(180deg); }
+  .pp__tabs [data-pane] { padding-bottom: 14px; }
+  .spec-table { font-size: 15px; }
+  .spec-table th { width: 42%; }
+}
+@media (prefers-reduced-motion: reduce) { .acc__btn .icon { transition: none; } }
