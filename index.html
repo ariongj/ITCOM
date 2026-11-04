@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <p class="demo-bar" id="demoBar"><b>Demo</b> Çmimet, zbritjet dhe stoku janë për demonstrim. Porositë nuk dërgohen automatikisht.</p>
+  <aside class="demo-bar" id="demoBar" aria-label="Dyqan demo"><b>Demo</b> Çmimet, zbritjet dhe stoku janë për demonstrim. Porositë nuk dërgohen automatikisht.</aside>
   <header class="header" id="top">
     <div class="header__main">
       <div class="container header__inner">
@@ -222,7 +222,7 @@
           </button>
           <label class="select">
             <span class="select__label">Rendit sipas:</span>
-            <select id="sort">
+            <select id="sort" aria-label="Rendit produktet">
               <option value="featured">Të rekomanduarat</option>
               <option value="price-asc">Çmimi: nga më i ulëti</option>
               <option value="price-desc">Çmimi: nga më i larti</option>
@@ -233,7 +233,7 @@
         </div>
       </div>
       <div class="catalog__layout">
-        <aside class="filters" id="filters" aria-label="Filtrat">
+        <section class="filters" id="filters" aria-label="Filtrat">
           <div class="filters__head">
             <h2>Filtrat</h2>
             <button class="link-btn" id="resetFilters">Pastro</button>
@@ -245,7 +245,7 @@
           <div class="filters__foot">
             <button class="btn btn--primary btn--block btn--lg" id="applyFilters">Shfaq rezultatet</button>
           </div>
-        </aside>
+        </section>
 
         <div class="results">
           <div id="catBanner" hidden></div>
@@ -257,6 +257,7 @@
               <button type="button" class="viewtog__btn" data-view-mode="list" aria-pressed="false" aria-label="Pamja listë" title="Pamja listë"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg></button>
             </div>
           </div>
+          <h2 class="sr-only">Produktet</h2>
           <div class="chips" id="chips"></div>
           <div class="pgrid pgrid--catalog" id="grid"></div>
           <div class="state" id="empty" hidden>

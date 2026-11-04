@@ -981,7 +981,7 @@
       return `<li class="cart-item">
         ${media(p, "", false, "thumb")}
         <div>
-          <h4>${esc(p.name)}</h4>
+          <h3 class="cart-item__name">${esc(p.name)}</h3>
           <span class="muted">${fmt(p.price)} / copë</span>
           <div class="qty" role="group" aria-label="Sasia">
             <button type="button" data-qty="${p.id}" data-d="-1" aria-label="Zvogëlo sasinë">−</button>
@@ -1358,7 +1358,7 @@
   function specGroupsHTML(p) {
     const facets = FACETS[p.cat] || [];
     const used = new Set();
-    const row = ([k, v]) => `<tr><th scope="row">${esc(k)}</th><td>${esc(v)}</td></tr>`;
+    const row = ([k, v]) => (k ? `<tr><th scope="row">${esc(k)}</th><td>${esc(v)}</td></tr>` : `<tr><td colspan="2">${esc(v)}</td></tr>`);
     const groups = SPEC_GROUPS.map(([title, keys]) => {
       const rows = keys.map((k) => facets.find((f) => f.key === k)).filter((f) => f && p.attrs[f.key] !== undefined).map((f) => { used.add(f.key); return [f.label, fmtVal(p.cat, f.key, p.attrs[f.key])]; });
       return [title, rows];
@@ -1555,6 +1555,7 @@
         </div>
       </div>
       <div class="pp__details">
+        <h2 class="sr-only">Detajet e produktit</h2>
         <div class="pp__tabs">
           <div class="tabs" role="tablist" aria-label="Detajet e produktit">
             <button type="button" role="tab" id="tab-specs" aria-selected="true" aria-controls="tabSpecs" data-tab="specs">Specifikimet</button>
@@ -1577,7 +1578,7 @@
           <div id="tabShip" role="tabpanel" aria-labelledby="tab-ship" data-pane="ship" tabindex="0" hidden>
             <div class="ship-grid">
               <section>
-                <h4 class="pp__h4">${lucide("truck")}Dërgesa</h4>
+                <h3 class="pp__h4">${lucide("truck")}Dërgesa</h3>
                 <label class="field" for="shipCity">Zgjidh qytetin
                   <select id="shipCity">${(S.zones || []).flatMap((z) => z.cities || []).map((c) => `<option ${c === "Prishtinë" ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>
                 </label>
@@ -1585,19 +1586,19 @@
                 <p class="muted">Dërgesë e shpejtë +${fmt(S.expressFee)} · ditën tjetër të punës.</p>
               </section>
               <section>
-                <h4 class="pp__h4">${lucide("shield-check")}Garancia</h4>
+                <h3 class="pp__h4">${lucide("shield-check")}Garancia</h3>
                 <p>${quote ? "Kohëzgjatja e garancisë konfirmohet me ofertën, sipas prodhuesit dhe furnitorit." : "24 muaj për defektet e fabrikës."} Kthim brenda 14 ditëve për produkte të paprekura në paketimin origjinal.</p>
                 <button type="button" class="link-btn" data-info="warranty">Kushtet e garancisë</button>
               </section>
               <section>
-                <h4 class="pp__h4">${lucide("headset")}Mbështetja</h4>
+                <h3 class="pp__h4">${lucide("headset")}Mbështetja</h3>
                 <p>Pyet ekipin para blerjes ose për instalimin.</p>
                 <button type="button" class="link-btn" data-ask="${p.id}">Pyet ekipin</button>
               </section>
             </div>
           </div>
         </div>
-        <aside class="pp__help pp__before">
+        <section class="pp__help pp__before" aria-label="Para se të porosisësh">
           <h2>Para se të porosisësh</h2>
           <dl>
             <dt>${lucide("truck")}Dërgesa</dt><dd>${quote ? "Kostoja dhe afati konfirmohen me ofertën." : `${p.price >= S.freeShippingFrom ? "Falas" : fmt(S.shippingFee)} · afati sipas adresës, zakonisht 1–2 ditë pune.`}</dd>
@@ -1605,7 +1606,7 @@
             <dt>${lucide("circle-help")}Ke një pyetje?</dt><dd>Ekipi të ndihmon të zgjedhësh variantin e duhur.</dd>
           </dl>
           <button type="button" class="btn btn--cta btn--block" ${quote ? `data-quote="${p.id}">Kërko ofertë` : `data-ask="${p.id}">Pyet për produktin`}</button>
-        </aside>
+        </section>
       </div>
       ${compatHTML(p)}
       ${imgs.length > 1 ? `<section class="pp__angles"><h2>E njëjta pajisje. Nga kënde të ndryshme.</h2><div class="pp__angles-grid">${imgs.slice(1).map((src) => `<div class="media"><img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy" /></div>`).join("")}</div></section>` : ""}
@@ -2239,6 +2240,7 @@
     $("#viewPage").innerHTML = `
       ${crumbsHTML([["Ballina", "#/"], ["Këshilla"]])}
       <h1 class="page-title">Këshilla para blerjes</h1>
+      <h2 class="sr-only">Artikujt</h2>
       <p class="muted page-sub">Udhëzues të shkurtër nga ekipi ITCOM.</p>
       ${posts.length ? `<div class="post-grid">${posts.map(postCard).join("")}</div>` : `<div class="state"><h2>Ende pa artikuj</h2></div>`}`;
   }
