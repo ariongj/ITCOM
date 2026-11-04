@@ -979,16 +979,19 @@
       discount, applied: pr ? pr.applied : [], code: pr?.codeOk ? promo : "", codeError: promo && pr ? pr.codeError : "",
     };
   }
+  // Kursimi nga çmimet e ofertës është tashmë brenda çmimit: shfaqet si shënim, jo si rresht që zbritet nga totali.
+  const savingsNote = (t) => (t.savings > 0 ? `<dd class="sum__note">Përfshirë kursimin nga ofertat: ${fmt(t.savings)}${cart.some((l) => byId[l.id]?.demoOffer) ? " (zbritje demo)" : ""}</dd>` : "");
   const discountRows = (t) => t.applied.map((a) => `<dt>${esc(a.title)}${a.code ? ` <span class="code-tag">${esc(a.code)}</span>` : ""}</dt><dd class="save">−${fmt(a.amount)}</dd>`).join("");
   const hasDiscounts = () => !!window.CMS?.discounts?.length;
 
   const totalsHTML = (t) => `
     <dt>Nëntotali (${plural(t.items, "artikull", "artikuj")})</dt><dd>${fmt(t.subtotal)}</dd>
-    ${t.savings > 0 ? `<dt>Kurseni</dt><dd class="save">−${fmt(t.savings)}</dd>` : ""}
+    
     ${discountRows(t)}
     <dt>Dërgesa</dt><dd>${t.shipping === 0 ? "Falas" : fmt(t.shipping)}</dd>
     <dt>Përfshirë TVSH ${Math.round(S.vatRate * 100)}%</dt><dd>${fmt(t.vat)}</dd>
-    <dt class="grand">Totali</dt><dd class="grand">${fmt(t.total)}</dd>`;
+    <dt class="grand">Totali</dt><dd class="grand">${fmt(t.total)}</dd>
+    ${savingsNote(t)}`;
 
   function renderCart() {
     const t = totals();
@@ -1912,7 +1915,7 @@
   const summaryHTML = (t, cta) => `
     <aside class="sum" aria-label="Përmbledhja">
       <h2>Përmbledhja</h2>
-      <ul class="sum__lines">${cart.map((l) => `<li><span>${l.qty} × ${esc(byId[l.id].name)}</span><span class="num">${fmt(byId[l.id].price * l.qty)}</span></li>`).join("")}</ul>
+      <ul class="sum__lines">${cart.map((l) => { const p = byId[l.id]; const v = PRODUCTS.includes(p) ? variantOf(p) : ""; return `<li><span>${l.qty} × ${esc(p.name)}<small class="sum__sku">${esc(p.id.toUpperCase())}${v ? ` · ${esc(v)}` : ""}</small></span><span class="num">${fmt(p.price * l.qty)}</span></li>`; }).join("")}</ul>
       <div id="promoSlot">${promoHTML(t)}</div>
       <dl class="sum__totals" id="sumRows">${sumRows(t)}</dl>
       <p class="sum__vat" id="sumVat">Përfshirë TVSH ${Math.round(S.vatRate * 100)}% (${fmt(t.vat)}).</p>
@@ -1920,10 +1923,11 @@
     </aside>`;
   const sumRows = (t) => `
         <dt>Nëntotali</dt><dd>${fmt(t.subtotal)}</dd>
-        ${t.savings > 0 ? `<dt>Kurseni</dt><dd class="save">−${fmt(t.savings)}</dd>` : ""}
+        
         ${discountRows(t)}
         <dt>Dërgesa</dt><dd id="sumShip">${t.shipping === 0 ? (t.shippingBefore > 0 ? "Falas" : "0,00 €") : fmt(t.shipping)}</dd>
-        <dt class="grand">Totali</dt><dd class="grand" id="sumTotal">${fmt(t.total)}</dd>`;
+        <dt class="grand">Totali</dt><dd class="grand" id="sumTotal">${fmt(t.total)}</dd>
+        ${savingsNote(t)}`;
   // Kutia e kodit të zbritjes: shfaqet vetëm kur CMS-i ka të paktën një zbritje me kod.
   const promoHTML = (t) => !window.CMS?.discounts?.some((d) => d.method === "code") ? "" : `
       <div class="promo-box">

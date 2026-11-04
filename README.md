@@ -40,6 +40,8 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Product page: actions (Krahaso, Ruaj) at the top, then model, configuration, price, demo/VAT note, stock, variants, quantity + "Shto në shportë" in one row, "Pyet për këtë produkt", delivery and warranty, and a card payment block. The gallery is shorter (4:3) with thumbnails in the same card
 - Card payments (Visa / Mastercard): the block on the product page says "koncept · mënyrat dhe ofruesi ende nuk janë konfirmuar" until card payment is switched on in CMS → Cilësimet → Pagesat; checkout then offers "Pagesë me kartë" with the card logos. No card number is ever asked for on the site: the provider's own form or link is used once a provider is chosen
 - Header: one wide search field with an icon and a blue "Kërko" button; account, compare and saved items are icons of the same size, the cart keeps its total
+- CMS → Online Store → **Hot Deals**: the offers the shop shows, in the shop's order (pinned, discount %, saving, freshness; at most 12), with pin, valid-until, exclude and demo controls on each row, plus the discounted products that do not qualify and why. Configurator-only parts are left out, as in the shop
+- Checkout summary: SKU (and variant) under each line; the saving from offer prices is shown as a note ("Përfshirë kursimin nga ofertat"), not as a deduction, because it is already in the price
 - Footer: "Nuk je i sigurt çfarë të zgjedhësh?" with "Kontakto ekipin" before the footer on every page except the home page (where ITCOM Business is next to it); a clean bottom row with © and the legal links; link groups as an accordion on phones
 
 **Premium Hot Deals, brands and phones** (visual report "Raundi 04", 3 November 2026)

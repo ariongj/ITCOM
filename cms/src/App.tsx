@@ -62,6 +62,7 @@ const Slides = lazyRetry(() => import('@/admin/pages/Slides'));
 const SlideEdit = lazyRetry(() => import('@/admin/pages/SlideEdit'));
 const Integrations = lazyRetry(() => import('@/admin/pages/Integrations'));
 const Publish = lazyRetry(() => import('@/admin/pages/Publish'));
+const HotDeals = lazyRetry(() => import('@/admin/pages/HotDeals'));
 const SettingsPage = lazyRetry(() => import('@/admin/pages/SettingsPage'));
 
 function Loader() {
@@ -182,6 +183,7 @@ const adminRoutes: RouteObject[] = [
   screen('prodavnica/slajdovi', 'onlineStore', <Slides />),
   screen('prodavnica/slajdovi/:id', 'onlineStore', <SlideEdit />),
   { path: 'prodavnica/editor', element: <Navigate to="/admin/prodavnica/slajdovi" replace /> },
+  screen('prodavnica/hot-deals', 'onlineStore', <HotDeals />),
   screen('prodavnica/publikimi', 'onlineStore', <Publish />),
   screen('trzista', 'markets', <Markets />),
   screen('integracije', 'integrations', <Integrations />),

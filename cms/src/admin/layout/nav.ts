@@ -89,6 +89,7 @@ export const NAV: NavItem[] = [
     id: 'onlineStore', to: '/admin/prodavnica', label: 'nav_onlineStore', icon: Store, module: 'onlineStore', section: 'channels',
     children: [
       { to: '/admin/prodavnica/slajdovi', label: 'nav_slides', module: 'onlineStore' },
+      { to: '/admin/prodavnica/hot-deals', label: 'nav_hotDeals', module: 'onlineStore' },
       { to: '/admin/prodavnica/publikimi', label: 'nav_publish', module: 'onlineStore' },
     ],
   },
