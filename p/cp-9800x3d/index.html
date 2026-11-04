@@ -55,11 +55,11 @@
         </a>
 
         <div class="search" role="search">
-          <label class="sr-only" for="searchCat">Kërko në kategori</label>
-          <select id="searchCat" class="search__cat"><option value="All">Të gjitha</option></select>
+          <select id="searchCat" class="search__cat" hidden aria-hidden="true" tabindex="-1"><option value="All">Të gjitha</option></select>
+          <svg class="icon search__ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input id="search" type="search" placeholder="Kërko pajisje, kategori ose model…" aria-label="Kërko produkte" autocomplete="off" aria-controls="suggest" />
           <button type="button" class="search__btn" id="searchBtn" aria-label="Kërko">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="search__btn-text">Kërko</span>
           </button>
           <div class="suggest" id="suggest" role="listbox" hidden></div>
         </div>
@@ -285,7 +285,7 @@
           <h1>AMD Ryzen 7 9800X3D</h1>
           <p class="pp__sub">Ryzen 9000 · AM5 · 8 bërthama</p>
           <p class="pp__sku">Kodi i artikullit: <span class="mono">CP-9800X3D</span></p>
-          <div class="pp__price"><span class="price">479,00 €</span></div>
+          <div class="pp__price"><span class="price">479,00 €</span><span class="price-old">529,00 €</span></div>
           <p class="pp__vat">Çmimi përfshin TVSH 18%.</p>
           <p>Në stok</p>
         </div>
@@ -339,6 +339,17 @@
     </section>
   </main>
 
+  <section class="helpstrip" id="helpStrip" aria-labelledby="helpTitle">
+    <div class="container helpstrip__inner">
+      <div>
+        <p class="eyebrow">Jemi këtu për zgjedhjen tënde</p>
+        <h2 id="helpTitle">Nuk je i sigurt çfarë të zgjedhësh?</h2>
+        <p>Na trego për çfarë të duhet. Të ndihmojmë të gjesh pajisjen e duhur.</p>
+      </div>
+      <button type="button" class="btn btn--cta btn--lg" data-help><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></svg>Kontakto ekipin</button>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="container footer__grid">
       <div>
@@ -373,9 +384,10 @@
       </div>
     </div>
     <div class="container footer__bottom">
-      <span>© <span id="year"></span> ITCOM · <button type="button" data-info="privacy">Privatësia</button> · <button type="button" data-info="terms">Kushtet e blerjes</button> · <a href="admin/">Hyrje për stafin</a></span>
-      <span class="footer__demo">Dyqan demonstrativ: porositë dhe pagesat ende nuk përpunohen automatikisht. Foto banerësh: ELLA DON, User_Pascal, ergonofis / Unsplash.</span>
+      <span>© <span id="year"></span> ITCOM. Të gjitha të drejtat e rezervuara.</span>
+      <nav class="footer__legal" aria-label="Kushtet"><button type="button" data-info="privacy">Privatësia</button><button type="button" data-info="terms">Kushtet e blerjes</button><button type="button" data-info="returns">Kthimi</button><a href="admin/">Hyrje për stafin</a></nav>
     </div>
+    <p class="container footer__demo">Dyqan demonstrativ: porositë dhe pagesat ende nuk përpunohen automatikisht. Foto banerësh: ELLA DON, User_Pascal, ergonofis / Unsplash.</p>
   </footer>
 
   <!-- Navigimi i poshtëm në telefon (Raundi 04, f. 23): vetëm në ballinë dhe katalog; me safe-area -->

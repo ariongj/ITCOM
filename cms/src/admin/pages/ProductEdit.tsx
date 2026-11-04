@@ -525,6 +525,7 @@ function Editor({ source }: { source?: ProductX }) {
                           </div>
                         </div>
                         <Checkbox checked={!!deal.exclude} onChange={(v) => setDeal({ exclude: v })} label="Përjashto nga Hot Deals" description="Zbritja mbetet në produkt dhe në katalog, por nuk shfaqet në seksionin e ballinës." />
+                        <Checkbox checked={!!deal.demo} onChange={(v) => setDeal({ demo: v })} label="Ofertë demo" description="Çmimi i mëparshëm është ilustrues; dyqani e shënon “Ofertë demo”. Hiqeni kur oferta miratohet me çmime reale." />
                       </div>
                     );
                   })()}

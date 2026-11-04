@@ -2415,3 +2415,163 @@ button.navbar__link { border: 0; background: none; font: inherit; font-size: 14p
 .footer__toggle { display: inline; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: default; }
 .footer__toggle .icon { display: none; }
 @media (max-width: 760px) { .footer__toggle { cursor: pointer; } .footer__toggle .icon { display: block; } }
+
+/* ============ Raundi 05: slajdi 5 s me progres, kalim i butë (f. 6–7) ============ */
+.slider__track { display: grid; transform: none !important; transition: none; }
+.slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateX(16px);
+  transition: opacity .55s ease, transform .6s cubic-bezier(.2,.8,.2,1), visibility 0s linear .6s; }
+.slide.is-active { opacity: 1; visibility: visible; transform: none; transition: opacity .55s ease, transform .6s cubic-bezier(.2,.8,.2,1), visibility 0s; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .slide, .slide.is-active { transition: none; transform: none; } }
+/* Tre vija: zona e klikimit më e madhe se trashësia; vija aktive mbushet nga e majta në të djathtë */
+.slider__dots { bottom: 8px; gap: 4px; z-index: 3; }
+.slider__dots button, .slider__dots button[aria-selected="true"] { display: grid; align-items: center; width: 52px; height: 28px; padding: 0 6px; border: 0; border-radius: 0; background: transparent !important; cursor: pointer; }
+.dot__bar { display: block; height: 3px; border-radius: 3px; overflow: hidden; background: rgb(0 0 0 / .16); }
+.dot__bar i { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: left center; }
+.slider:has(.slide--launch:not([inert]), .slide--collection:not([inert]), .slide--offer:not([inert])) .dot__bar { background: rgb(255 255 255 / .32); }
+.slider:has(.slide--launch:not([inert]), .slide--collection:not([inert]), .slide--offer:not([inert])) .dot__bar i { background: #fff; }
+.slider__dots button:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; border-radius: 4px; }
+/* Pa Pause/Play në kompozim: kontrolli shfaqet vetëm kur merr fokus me tastierë */
+.slider__pause:not(:focus-visible) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ============ Dy bokset anash (f. 8) ============ */
+.side-promos .promo { position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 6px; min-height: 0; padding: 22px; border: 0; border-radius: var(--radius-lg); color: #fff; text-align: left; font: inherit; cursor: pointer; text-decoration: none; }
+.side-promos .promo .eyebrow, .promo__chip { position: absolute; top: 20px; left: 22px; }
+.side-promos .promo .eyebrow { color: rgb(255 255 255 / .7); letter-spacing: .12em; }
+.promo__title { font-size: clamp(22px, 2vw, 28px); font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; max-width: 12ch; }
+.side-promos .promo .promo__link { display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 600; color: rgb(255 255 255 / .9); }
+.side-promos .promo .promo__link .icon { width: 18px; height: 18px; }
+.promo--gpu { background: radial-gradient(90% 90% at 80% 60%, #18223a 0%, #0a0d14 70%); }
+.promo--gpu .promo__art { position: absolute; z-index: -1; right: -14%; bottom: -10%; width: 78%; aspect-ratio: 1; }
+.promo--gpu .promo__art img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; border-radius: 24px; mask-image: linear-gradient(90deg, transparent 0%, #000 35%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 35%); transition: transform .5s; }
+.promo--gpu .promo__title { max-width: 9ch; margin-bottom: auto; margin-top: 30px; }
+.promo--biz { background: #0b1730; }
+.promo--biz .promo__photo { position: absolute; inset: 0; z-index: -2; }
+.promo--biz .promo__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.promo--biz::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(8 22 52 / .35) 0%, rgb(8 22 52 / .82) 70%); }
+.promo__chip { padding: 4px 10px; border-radius: 6px; background: rgb(255 255 255 / .92); color: #0b1730; font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.side-promos .promo:hover img { transform: scale(1.04); }
+.side-promos .promo:focus-visible { outline: 3px solid var(--brand-2); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .side-promos .promo img { transition: none; } }
+
+/* Telefoni: hero i lexueshëm, bokset poshtë slajdit (f. 15) */
+@media (max-width: 760px) {
+  .slide h2 { font-size: 28px; }
+  .slider__dots button, .slider__dots button[aria-selected="true"] { width: 48px; height: 32px; }
+  .side-promos .promo { min-height: 132px; padding: 16px; }
+  .side-promos .promo .eyebrow, .promo__chip { top: 14px; left: 16px; }
+  .promo__chip { font-size: 10px; padding: 3px 8px; letter-spacing: .08em; }
+  .promo__title { font-size: 19px; }
+  .promo--gpu .promo__title { margin-top: 24px; }
+  .side-promos .promo .promo__link { font-size: 13px; }
+}
+@media (max-width: 374px) { .side-promos { grid-template-columns: 1fr !important; } }
+/* Raundi 05 – rregullime: kalimi pa mbivendosje teksti, GPU më e dukshme, pa shigjetë të dyfishtë, titujt në telefon */
+.slide { transition: opacity .28s ease, transform .3s ease, visibility 0s linear .3s; }
+.slide.is-active { transition: opacity .55s ease .14s, transform .65s cubic-bezier(.2,.8,.2,1) .14s, visibility 0s; }
+.side-promos .promo .promo__link::after { content: none; }
+.promo--gpu .promo__art { right: -8%; bottom: -14%; width: 92%; }
+.promo--gpu .promo__art img { mask-image: linear-gradient(90deg, transparent 0%, #000 28%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 28%); filter: brightness(1.25) contrast(1.05); }
+@media (max-width: 760px) {
+  .side-promos { gap: 10px; }
+  .side-promos .promo { min-height: 128px; justify-content: flex-end; }
+  .side-promos .promo .promo__title { display: block; max-width: 11ch; margin: 0; font-size: 18px; }
+  .side-promos .promo .promo__art { display: block; }
+  .side-promos .promo .eyebrow, .side-promos .promo__chip { display: none; }
+  .promo--gpu .promo__title { margin-top: 0; margin-bottom: 0; }
+  .promo--gpu .promo__art { width: 100%; right: -30%; bottom: -18%; opacity: .75; }
+}
+.side-promos .promo--gpu .promo__art { inset: 0 0 0 28%; width: auto; aspect-ratio: auto; right: 0; bottom: 0; mix-blend-mode: normal; opacity: 1; }
+.side-promos .promo--gpu .promo__art img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 55%; border-radius: 0; mix-blend-mode: normal; filter: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%); mask-image: linear-gradient(90deg, transparent 0%, #000 45%); }
+@media (max-width: 760px) { .side-promos .promo--gpu .promo__art { inset: 0 0 0 20%; opacity: .55; } }
+
+/* ============ Raundi 05: faqja e produktit (f. 11–12) ============ */
+/* Galeria: më pak lartësi bosh, miniaturat brenda të njëjtës kartë */
+.pp__gallery { padding: 18px; background: var(--surface); border-radius: var(--radius-lg); gap: 12px; }
+.pp__main { padding: 4% 6%; background: transparent; border-radius: 0; }
+.pp__main .media { aspect-ratio: 4 / 3; }
+.pp__thumbs { justify-content: center; }
+.pp__caption { text-align: center; }
+/* Paneli i blerjes: model → konfigurim → çmim → sasi + CTA → ndihmë → kartat */
+.pp__info { gap: 12px; }
+.pp__info > .pp__actions { justify-content: flex-end; gap: 4px 16px; margin: -6px 0 -4px; font-size: 13.5px; }
+.pp__info > .pp__actions .link-btn { color: var(--muted); }
+.pp__info > .pp__actions .link-btn.is-on, .pp__info > .pp__actions .link-btn.is-active { color: var(--ink); }
+.pp__price .price { font-size: clamp(30px, 3vw, 36px); }
+.pp__buy { flex-wrap: nowrap; }
+.pp__buy .qty { order: -1; flex: none; }
+.pp__buy .btn { min-width: 0; min-height: 52px; }
+.pp__ask { min-height: 48px; gap: 8px; justify-content: center; }
+.pp__ask .icon { width: 18px; height: 18px; }
+.pp__terms { border-top: 0; margin-top: 0; }
+.pp__terms li { align-items: center; justify-content: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0; }
+.pp__terms li > span:last-child { margin-left: auto; }
+.pp__term-ic .icon { width: 18px; height: 18px; color: var(--muted); }
+/* Blloku i kartave pranë blerjes */
+.paycard { display: grid; gap: 6px; padding: 12px 14px; border-radius: 14px; background: #eef4ff; border: 1px solid #dbe6fb; }
+.paycard__label { font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #3b4f7a; }
+.paycard__row { display: flex; align-items: center; gap: 12px; }
+.paycard__row p, .paycard p { margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.paycard--muted { grid-template-columns: auto 1fr; align-items: center; margin-top: 10px; background: var(--surface-2); border-color: var(--line); }
+.cards { display: inline-flex; align-items: center; gap: 8px; flex: none; }
+.cards__mc { width: 34px; height: 22px; }
+.cards__visa { width: 48px; height: 16px; }
+.option .cards { margin-left: auto; }
+/* Hot Deals: ofertat demo dallohen */
+.dcard__tags { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.dcard__demo { padding: 3px 8px; border-radius: 999px; background: #fff4d6; color: #5b4100; font-size: 11.5px; font-weight: 700; }
+@media (max-width: 760px) {
+  .pp__gallery { padding: 10px; }
+  .pp__main .media { aspect-ratio: auto; }
+  .pp__head-title { font-size: 26px; }
+  .pp__price .price { font-size: 30px; }
+  .pp__buy .btn, .pp__ask { min-height: 48px; }
+}
+
+/* ============ Raundi 05: header (f. 10) ============ */
+.search { align-items: center; }
+.search__ic { flex: none; width: 20px; height: 20px; margin-left: 16px; color: var(--muted); }
+.search input { padding-left: 10px; }
+.search__btn { width: auto; gap: 8px; padding: 0 20px 0 16px; font: inherit; font-size: 15px; font-weight: 700; }
+.search__btn .icon { width: 18px; height: 18px; }
+/* Llogaria, krahasimi dhe të ruajturat: e njëjta madhësi optike; shporta mban totalin */
+.header__actions { gap: 6px; }
+.header__actions .hbtn:not(.hbtn--cart) { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 999px; }
+.header__actions .hbtn:not(.hbtn--cart):hover { background: rgb(255 255 255 / .1); }
+#accountBtn .hbtn__label { display: none; }
+.header__actions .hbtn .icon { width: 22px; height: 22px; }
+.hbtn--cart { height: 44px; padding: 0 16px 0 12px; border-radius: 999px; }
+@media (max-width: 760px) {
+  .search__btn { padding: 0 14px; }
+  .search__btn-text { display: none; }
+  .search__ic { margin-left: 12px; }
+}
+
+/* ============ Raundi 05: thirrja për ndihmë dhe footer-i (f. 16–17) ============ */
+.helpstrip { margin-top: 40px; }
+.helpstrip__inner { display: flex; align-items: center; justify-content: space-between; gap: 18px 28px; padding: 26px 32px; border-radius: var(--radius-lg); background: #eaf2fd; border: 1px solid #d7e5fb; }
+.helpstrip h2 { margin: 4px 0 4px; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.helpstrip p { margin: 0; color: var(--ink-2); }
+.helpstrip .eyebrow { color: #3b4f7a; }
+.helpstrip .btn { flex: none; gap: 8px; }
+.helpstrip .btn .icon { width: 20px; height: 20px; }
+.footer { margin-top: 0; }
+.helpstrip + .footer, .brandband + .helpstrip { margin-top: 0; }
+.helpstrip:not([hidden]) + .footer { margin-top: 40px; }
+.footer__tag { max-width: 34ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.footer__grid h2, .footer__toggle { font-size: 15px; font-weight: 700; }
+.footer__bottom { justify-content: space-between; }
+.footer__legal { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.footer__legal button, .footer__legal a { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; cursor: pointer; }
+.footer__legal button:hover, .footer__legal a:hover { color: #fff; text-decoration: underline; }
+p.footer__demo { padding-bottom: 22px; font-size: 12.5px; color: #8e99b0; }
+@media (max-width: 760px) {
+  .helpstrip { margin-top: 28px; }
+  .helpstrip__inner { flex-direction: column; align-items: stretch; padding: 20px 18px; }
+  .helpstrip h2 { font-size: 21px; }
+  .helpstrip .btn { width: 100%; justify-content: center; min-height: 48px; }
+  .footer__bottom { flex-direction: column; align-items: flex-start; }
+}
+.search__btn { display: inline-flex; align-items: center; justify-content: center; }
+p.footer__demo { margin-block: 0; margin-inline: auto; }
+@media (max-width: 760px) { .footer__toggle { display: flex; width: 100%; justify-content: space-between; align-items: center; min-height: 48px; } }

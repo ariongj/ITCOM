@@ -125,6 +125,7 @@
         dealPin: x.deal && x.deal.pin > 0 ? x.deal.pin : undefined,
         dealExclude: x.deal && x.deal.exclude ? true : undefined,
         dealUntil: x.deal && x.deal.until ? x.deal.until : undefined,
+        demoOffer: x.deal && x.deal.demo ? true : undefined,
         fresh: Date.parse(p.updatedAt || p.createdAt || "") || 0,
         art: x.art || base.art || { s: builder ? "box" : p.categoryId === "cat-gpu" ? "gpu" : p.categoryId === "cat-cpu" ? "cpu" : "laptop", c: "#2b2d31" },
         attrs: x.attrs || base.attrs || {},

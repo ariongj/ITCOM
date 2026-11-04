@@ -156,6 +156,8 @@ const W = {
   graphite: ["#1d2026", "#5a606b"],
 };
 
+/* demoOffer: ofertë demonstruese (Raundi 05, f. 9): çmimi bazë është demo, që Hot Deals të tregojë 8 karta.
+ * Dallohet në dyqan me "Ofertë demo"; zëvendësohet me ofertat e miratuara nga ekipi para shitjes reale. */
 window.PRODUCTS = [
   /* ------------------------------------------------------------ Laptopë */
   { id: "lp-x1c12", img: "assets/products/photo/lp-x1c12.webp", name: "Lenovo ThinkPad X1 Carbon Gen 12", brand: "Lenovo", cat: "Laptopë", price: 2149, old: 2399, stock: 9, rating: 4.8, reviews: 214,
@@ -163,7 +165,7 @@ window.PRODUCTS = [
     attrs: { type: "Biznes", cpu: "Intel Core Ultra 7", ram: 32, storage: 1000, screen: 14, gpu: "E integruar", os: "Windows 11 Pro" },
     specs: ["Ekran 14\" 2.8K OLED, 120 Hz", "Intel Core Ultra 7 155U", "32 GB LPDDR5X", "SSD 1 TB PCIe 4.0", "1,09 kg, MIL‑STD‑810H"],
     desc: "Laptopi më i mirë i Lenovo për biznes: trup prej fibre karboni, tastierë e shkëlqyer dhe siguri e nivelit korporativ, në pak më shumë se një kilogram." },
-  { id: "lp-mba13m4", img: "assets/products/photo/lp-mba13m4.webp", name: "Apple MacBook Air 13\" M4", brand: "Apple", cat: "Laptopë", price: 1199, stock: 22, rating: 4.9, reviews: 402, badge: "I ri",
+  { id: "lp-mba13m4", img: "assets/products/photo/lp-mba13m4.webp", name: "Apple MacBook Air 13\" M4", brand: "Apple", cat: "Laptopë", price: 1199, old: 1299, demoOffer: true, stock: 22, rating: 4.9, reviews: 402, badge: "I ri",
     art: { s: "laptop", c: "#cfd3da", w: W.mist },
     attrs: { type: "Ultrabook", cpu: "Apple M4", ram: 16, storage: 256, screen: 13.6, gpu: "E integruar", os: "macOS" },
     specs: ["Ekran 13,6\" Liquid Retina", "Apple M4, CPU 10 bërthama / GPU 8 bërthama", "16 GB memorie e unifikuar", "SSD 256 GB", "Deri në 18 orë bateri"],
@@ -236,7 +238,7 @@ window.PRODUCTS = [
     attrs: { type: "Ultrabook", cpu: "Intel Core Ultra 7", screen: 14, gpu: "E integruar", os: "Windows 11" },
     specs: ["Ekran 14\" 3K OLED", "Intel Core Ultra 7 (Seria 200V)", "Copilot+ PC", "Trup Ceraluminum™", "RAM dhe SSD sipas konfigurimit"],
     desc: "Ultrabook 14 inç i hollë dhe efikas, me bateri të gjatë." },
-  { id: "lp-zb14amd", img: "assets/products/photo/lp-zb14amd.webp", name: "ASUS Zenbook 14 OLED UM3406", brand: "ASUS", cat: "Laptopë", price: 899, stock: 6, rating: 0, reviews: 0,
+  { id: "lp-zb14amd", img: "assets/products/photo/lp-zb14amd.webp", name: "ASUS Zenbook 14 OLED UM3406", brand: "ASUS", cat: "Laptopë", price: 899, old: 999, demoOffer: true, stock: 6, rating: 0, reviews: 0,
     art: { s: "laptop", c: "#3a3d44", w: W.sea },
     attrs: { type: "Ultrabook", cpu: "AMD Ryzen", screen: 14, gpu: "E integruar", os: "Windows 11" },
     specs: ["Ekran 14\" OLED", "Procesor AMD Ryzen", "Trup alumini", "RAM dhe SSD sipas konfigurimit", "Windows 11"],
@@ -256,7 +258,7 @@ window.PRODUCTS = [
     attrs: { type: "2‑në‑1", cpu: "Snapdragon X", screen: 14, gpu: "E integruar", os: "Windows 11" },
     specs: ["Ekran 14\" me prekje", "Qualcomm Snapdragon X", "Rrotullohet 360°", "Copilot+ PC", "RAM dhe SSD sipas konfigurimit"],
     desc: "2‑në‑1 kompakt për shkollë dhe punë, me bateri të gjatë." },
-  { id: "lp-vbs16", img: "assets/products/photo/lp-vbs16.webp", name: "ASUS Vivobook S16 S3607", brand: "ASUS", cat: "Laptopë", price: 749, stock: 6, rating: 0, reviews: 0,
+  { id: "lp-vbs16", img: "assets/products/photo/lp-vbs16.webp", name: "ASUS Vivobook S16 S3607", brand: "ASUS", cat: "Laptopë", price: 749, old: 849, demoOffer: true, stock: 6, rating: 0, reviews: 0,
     art: { s: "laptop", c: "#5d6169", w: W.slate },
     attrs: { type: "Shtëpi & zyrë", cpu: "Intel Core", screen: 16, gpu: "E integruar", os: "Windows 11" },
     specs: ["Ekran 16\"", "Procesor Intel", "Trup i hollë", "RAM dhe SSD sipas konfigurimit", "Windows 11"],
@@ -279,12 +281,12 @@ window.PRODUCTS = [
 
 
   /* ------------------------------------------------------------ Procesorë */
-  { id: "cp-7800x3d", img: "assets/products/photo/cp-7800x3d.webp", name: "AMD Ryzen 7 7800X3D", brand: "AMD", cat: "Procesorë", price: 389, stock: 11, rating: 4.9, reviews: 498,
+  { id: "cp-7800x3d", img: "assets/products/photo/cp-7800x3d.webp", name: "AMD Ryzen 7 7800X3D", brand: "AMD", cat: "Procesorë", price: 389, old: 419, demoOffer: true, stock: 11, rating: 4.9, reviews: 498,
     art: { s: "cpu", c: "#c7c9cd", l: "RYZEN 7" },
     attrs: { socket: "AM5", cores: 8, series: "Ryzen 7000" },
     specs: ["8 bërthama / 16 fije", "Deri në 5,0 GHz", "96 MB L3 (3D V‑Cache)", "TDP 120 W", "Pa ftohës në paketë"],
     desc: "Procesori më i mirë për lojëra, falë 3D V‑Cache së madhe." },
-  { id: "cp-9800x3d", img: "assets/products/photo/cp-9800x3d.webp", name: "AMD Ryzen 7 9800X3D", brand: "AMD", cat: "Procesorë", price: 479, stock: 5, rating: 0, reviews: 0, badge: "I ri",
+  { id: "cp-9800x3d", img: "assets/products/photo/cp-9800x3d.webp", name: "AMD Ryzen 7 9800X3D", brand: "AMD", cat: "Procesorë", price: 479, old: 529, demoOffer: true, stock: 5, rating: 0, reviews: 0, badge: "I ri",
     art: { s: "cpu", c: "#c7c9cd", l: "RYZEN 7" },
     attrs: { socket: "AM5", cores: 8, series: "Ryzen 9000" },
     specs: ["8 bërthama / 16 fije", "Deri në 5,2 GHz", "96 MB L3 (3D V‑Cache e gjeneratës së dytë)", "TDP 120 W", "Pa ftohës në paketë"],
@@ -329,7 +331,7 @@ window.PRODUCTS = [
     attrs: { chip: "NVIDIA GeForce", vram: 12, series: "RTX 40" },
     specs: ["12 GB GDDR6X", "DLSS 3.5, ray tracing", "220 W", "Kompakte me dy ventilatorë", "HDMI 2.1a, 3 × DP"],
     desc: "Performancë e shkëlqyer në 1440p dhe përshpejtim AI për kreativë dhe lojtarë." },
-  { id: "cp-rx7800xt", img: "assets/products/photo/cp-rx7800xt.webp", name: "Sapphire PULSE Radeon RX 7800 XT 16 GB", brand: "Sapphire", cat: "Kartela grafike", price: 529, stock: 6, rating: 4.7, reviews: 133,
+  { id: "cp-rx7800xt", img: "assets/products/photo/cp-rx7800xt.webp", name: "Sapphire PULSE Radeon RX 7800 XT 16 GB", brand: "Sapphire", cat: "Kartela grafike", price: 529, old: 599, demoOffer: true, stock: 6, rating: 4.7, reviews: 133,
     art: { s: "gpu", c: "#1c1d21", l: "3" },
     attrs: { chip: "AMD Radeon", vram: 16, series: "RX 7000" },
     specs: ["16 GB GDDR6", "FSR 3", "263 W", "Ftohës me tre slote", "HDMI 2.1, 2 × DP 2.1"],

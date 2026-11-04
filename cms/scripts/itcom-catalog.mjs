@@ -128,6 +128,8 @@ function product(p, i, categoryId, builderOnly) {
       attrs: p.attrs || {}, rating: p.rating || 0, reviews: p.reviews || 0, badge: p.badge || '', art: p.art || null,
       // Price on request until staff set ITCOM's price; `ref` = market reference from the photo pack (internal).
       ...(p.quote ? { quote: true, ref: REFS[p.id] || null } : {}),
+      // Demo offer (Raundi 05): the shop labels it "Ofertë demo" until the team approves real offers.
+      ...(p.demoOffer ? { deal: { demo: true } } : {}),
     },
   };
 }

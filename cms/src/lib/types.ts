@@ -106,7 +106,7 @@ export interface Product {
     /** Market reference from the photo pack (source shop price on the capture date) — internal, never published */
     ref?: { packId: string; refPrice: number; refOld: number | null; site: string; url: string; sku?: string | null; captured?: string } | null;
     /** Hot Deals (Raundi 04): fixed order set by the team (1 = first), exclusion, and the last day the offer is valid */
-    deal?: { pin?: number | null; exclude?: boolean; until?: string | null };
+    deal?: { pin?: number | null; exclude?: boolean; until?: string | null; /** demo offer (base price is illustrative), labelled in the shop */ demo?: boolean };
   };
 }
 

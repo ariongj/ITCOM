@@ -769,8 +769,8 @@
     "sq": "I hollë, pa ventilator dhe krejtësisht i heshtur, me performancë të mjaftueshme për pothuajse këdo. Mbështet dy monitorë të jashtëm.",
     "en": "I hollë, pa ventilator dhe krejtësisht i heshtur, me performancë të mjaftueshme për pothuajse këdo. Mbështet dy monitorë të jashtëm."
    },
-   "price": 1199,
-   "salePrice": null,
+   "price": 1299,
+   "salePrice": 1199,
    "unit": "kom",
    "stock": 22,
    "images": [
@@ -840,7 +840,8 @@
     }
    ],
    "badges": [
-    "new"
+    "new",
+    "sale"
    ],
    "featured": true,
    "status": "active",
@@ -877,6 +878,9 @@
       "#5b6f8e",
       "#c3cfe0"
      ]
+    },
+    "deal": {
+     "demo": true
     }
    }
   },
@@ -2559,8 +2563,8 @@
     "sq": "Zenbook me ekran OLED dhe procesor AMD, me vlerë të mirë për çmimin.",
     "en": "Zenbook me ekran OLED dhe procesor AMD, me vlerë të mirë për çmimin."
    },
-   "price": 899,
-   "salePrice": null,
+   "price": 999,
+   "salePrice": 899,
    "unit": "kom",
    "stock": 6,
    "images": [
@@ -2629,7 +2633,9 @@
      }
     }
    ],
-   "badges": [],
+   "badges": [
+    "sale"
+   ],
    "featured": false,
    "status": "active",
    "warrantyYears": 2,
@@ -2663,6 +2669,9 @@
       "#163a4a",
       "#6aa0b0"
      ]
+    },
+    "deal": {
+     "demo": true
     }
    }
   },
@@ -3067,8 +3076,8 @@
     "sq": "Laptop 16 inç për shtëpi dhe zyrë, me ekran të madh për punë të përditshme.",
     "en": "Laptop 16 inç për shtëpi dhe zyrë, me ekran të madh për punë të përditshme."
    },
-   "price": 749,
-   "salePrice": null,
+   "price": 849,
+   "salePrice": 749,
    "unit": "kom",
    "stock": 6,
    "images": [
@@ -3137,7 +3146,9 @@
      }
     }
    ],
-   "badges": [],
+   "badges": [
+    "sale"
+   ],
    "featured": false,
    "status": "active",
    "warrantyYears": 2,
@@ -3171,6 +3182,9 @@
       "#2b3a52",
       "#7d93b8"
      ]
+    },
+    "deal": {
+     "demo": true
     }
    }
   },
@@ -3575,8 +3589,8 @@
     "sq": "Procesori më i mirë për lojëra, falë 3D V‑Cache së madhe.",
     "en": "Procesori më i mirë për lojëra, falë 3D V‑Cache së madhe."
    },
-   "price": 389,
-   "salePrice": null,
+   "price": 419,
+   "salePrice": 389,
    "unit": "kom",
    "stock": 11,
    "images": [
@@ -3645,7 +3659,9 @@
      }
     }
    ],
-   "badges": [],
+   "badges": [
+    "sale"
+   ],
    "featured": true,
    "status": "active",
    "warrantyYears": 2,
@@ -3674,6 +3690,9 @@
      "s": "cpu",
      "c": "#c7c9cd",
      "l": "RYZEN 7"
+    },
+    "deal": {
+     "demo": true
     }
    }
   },
@@ -3697,8 +3716,8 @@
     "sq": "Procesori më i shpejtë për lojëra në platformën AM5, me 3D V‑Cache nën bërthama për frekuenca më të larta.",
     "en": "Procesori më i shpejtë për lojëra në platformën AM5, me 3D V‑Cache nën bërthama për frekuenca më të larta."
    },
-   "price": 479,
-   "salePrice": null,
+   "price": 529,
+   "salePrice": 479,
    "unit": "kom",
    "stock": 5,
    "images": [
@@ -3768,7 +3787,8 @@
     }
    ],
    "badges": [
-    "new"
+    "new",
+    "sale"
    ],
    "featured": false,
    "status": "active",
@@ -3798,6 +3818,9 @@
      "s": "cpu",
      "c": "#c7c9cd",
      "l": "RYZEN 7"
+    },
+    "deal": {
+     "demo": true
     }
    }
   },
@@ -4677,8 +4700,8 @@
     "sq": "Shumë VRAM dhe performancë e fortë në 1440p për çmimin.",
     "en": "Shumë VRAM dhe performancë e fortë në 1440p për çmimin."
    },
-   "price": 529,
-   "salePrice": null,
+   "price": 599,
+   "salePrice": 529,
    "unit": "kom",
    "stock": 6,
    "images": [
@@ -4747,7 +4770,9 @@
      }
     }
    ],
-   "badges": [],
+   "badges": [
+    "sale"
+   ],
    "featured": false,
    "status": "active",
    "warrantyYears": 2,
@@ -4776,6 +4801,9 @@
      "s": "gpu",
      "c": "#1c1d21",
      "l": "3"
+    },
+    "deal": {
+     "demo": true
     }
    }
   },
