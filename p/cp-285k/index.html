@@ -77,6 +77,9 @@
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
             <span class="badge" id="wishCount" hidden>0</span>
           </button>
+          <button class="hbtn hbtn--menu" id="menuBtnM" aria-label="Menyja e kategorive" aria-controls="mega" aria-expanded="false">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
           <button class="hbtn hbtn--cart" id="cartBtn" aria-label="Hap shportën">
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
             <span class="hbtn__label"><small>Shporta</small><b id="cartTotalMini">0,00 €</b></span>
@@ -140,18 +143,23 @@
       </section>
 
       <!-- Raundi 03 (f. 04): kategoritë → Hot Deals → markat + produktet → koleksione kompakte → konfiguruesi + këshilla -->
-      <section class="container home-sec" id="hotSec" aria-labelledby="hotTitle">
-        <div class="home-sec__head">
-          <div><h2 class="home-sec__title" id="hotTitle">Hot Deals</h2><p class="home-sec__sub" id="hotSub">Zbritjet më të larta</p></div>
-          <a class="home-sec__link" href="#/ofertat" id="hotAll">Shiko të gjitha ofertat</a>
+      <section class="container hot" id="hotSec" aria-labelledby="hotTitle">
+        <div class="hot__inner">
+          <div class="hot__head">
+            <div>
+              <p class="hot__eyebrow" id="hotEyebrow">Oferta të përzgjedhura</p>
+              <h2 class="hot__title" id="hotTitle">Hot Deals<span aria-hidden="true">.</span></h2>
+              <p class="hot__sub" id="hotSub">Më shumë vlerë. Më pak kërkim.</p>
+            </div>
+            <div class="hot__ctrl">
+              <button type="button" class="hot__nav" id="hotPrev" aria-label="Oferta e mëparshme" aria-controls="hotDeals"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button type="button" class="hot__nav" id="hotNext" aria-label="Oferta tjetër" aria-controls="hotDeals"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+              <a class="hot__all" href="#/ofertat" id="hotAll">Shiko të gjitha ofertat</a>
+            </div>
+          </div>
+          <ul class="hot__track" id="hotDeals"></ul>
+          <p class="hot__note" id="hotNote" hidden></p>
         </div>
-        <div class="pgrid" id="hotDeals"></div>
-        <a class="btn btn--dark btn--block btn--lg hot-all-m" href="#/ofertat" id="hotAllM">Shiko të gjitha ofertat</a>
-      </section>
-
-      <section class="container brands-band" aria-labelledby="brandsTitle">
-        <h2 class="brands-band__title" id="brandsTitle">Markat që njeh</h2>
-        <ul class="brands-row" id="brandRow"></ul>
       </section>
 
       <section class="container home-sec" id="exploreSec" aria-labelledby="exploreTitle">
@@ -312,6 +320,22 @@
         </div>
       </div>
     </section>
+
+    <!-- Markat në katalog (Raundi 04, f. 15–17): brez para footer-it, logo me ngjyrat e tyre, lëvizje e qetë me pauzë -->
+    <section class="brandband" id="brandBand" aria-labelledby="brandBandTitle">
+      <div class="container brandband__head">
+        <p class="eyebrow">Markat në katalog</p>
+        <h2 id="brandBandTitle">Teknologjia që njeh.</h2>
+        <p class="brandband__sub">Gjej produktet sipas markës.</p>
+      </div>
+      <div class="brandband__viewport" id="brandViewport">
+        <ul class="brandband__track" id="brandTrack"></ul>
+      </div>
+      <div class="container brandband__foot">
+        <p class="brandband__note">Markat që shiten në ITCOM. Logot u përkasin pronarëve të tyre.</p>
+        <button type="button" class="btn btn--ghost brandband__pause" id="brandPause" aria-pressed="false">Pauzo lëvizjen</button>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
@@ -352,6 +376,14 @@
       <span class="footer__demo">Dyqan demonstrativ: porositë dhe pagesat ende nuk përpunohen automatikisht. Foto banerësh: ELLA DON, User_Pascal, ergonofis / Unsplash.</span>
     </div>
   </footer>
+
+  <!-- Navigimi i poshtëm në telefon (Raundi 04, f. 23): vetëm në ballinë dhe katalog; me safe-area -->
+  <nav class="bnav" id="bnav" aria-label="Navigimi i shpejtë">
+    <a class="bnav__item" href="#/" data-bnav="home"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Kreu</span></a>
+    <a class="bnav__item" href="#/kategorite" data-bnav="catalog"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg><span>Kategoritë</span></a>
+    <button type="button" class="bnav__item" id="bnavWishBtn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Të ruajturat</span><span class="badge" id="bnavWish" hidden>0</span></button>
+    <a class="bnav__item" href="#/shporta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg><span>Shporta</span><span class="badge" id="bnavCart" hidden>0</span></a>
+  </nav>
 
   <!-- Ndërtuesi i PC-së -->
   <section class="builder" id="builder" hidden aria-label="Ndërtuesi i PC-së">

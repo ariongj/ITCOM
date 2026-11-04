@@ -28,10 +28,25 @@ The store's interface and product content are in **Albanian** (prices formatted 
 
 **Hot Deals, product grid and phones** (visual report "Raundi 03", 1 November 2026)
 - Home order: hero with two promos → dark service boxes → "Gjej kategorinë tënde" → **Hot Deals** → brands → **Eksploro produktet** → compact collections → PC builder and "Këshilla para blerjes" → banner and footer
-- **Hot Deals are calculated, not labelled**: only products with a price, a real old price above it and stock. They are sorted by discount % (full value), then € saved, then SKU, and at most 4 are shown. With no real offers the row becomes "Produkte të përzgjedhura". No discount is ever invented, so today it shows the two real offers
+- **Hot Deals are calculated, not labelled**: only products with a price, a real old price above it and stock (details in Round 04 below). No discount is ever invented, so today it shows the two real offers
 - **Eksploro produktet**: 12 products (4×3 on desktop, 2 columns on phones) with quick filters Të gjitha / Laptopë / Komponentë / Aksesorë. "Shiko më shumë" adds 12 without moving the page and shows a loading state and "X nga N produkte"; at the end it says "Të gjitha produktet u shfaqën", and on error it offers a retry. Images load lazily. Catalogue pages use the same "Shiko më shumë"
 - Phones: 16 px body and form fields, 24 px titles, 20 px card prices, 44 px buttons (cards, Filtro/Rendit, sticky product CTA), the two promos side by side, services in a 2×2 grid, 2‑line card names
 - **Price on request** (`quote: true` or price 0): the card and product page say "Çmimi me ofertë" and offer "Kërko ofertë" instead of "Shto në shportë"; the request (quantity, contact) lands in the CMS inbox as a quote. These products cannot be added to the cart, are sorted after priced ones and have no `Offer` in their structured data
+
+**Premium Hot Deals, brands and phones** (visual report "Raundi 04", 3 November 2026)
+- **Hot Deals**: a midnight section with white cards (photo, two-line name, price, old price and "Kursen …" from the data, one "Shiko produktin" button). Desktop grid of 4 per row (4 × 2 with 8 offers, up to 12); with only 1–2 offers the cards become wide instead of repeating products. On phones the offers swipe sideways (scroll-snap, about 300 px per card, the next card peeks in) with previous/next buttons and "Shiko të gjitha ofertat"; no automatic rotation
+- Rules: price > 0, a higher previous price, stock, not excluded and still valid. Order: pinned by the team, then discount %, then € saved, then freshness. In the CMS (Produktet → product → **Hot Deals**) the team can pin an offer (1 = first), set the last day it is valid, or exclude it; the card also says whether the product qualifies and why not
+- **Brands**: no longer between the offers and the catalogue. A full-width band before the footer ("Markat në katalog") shows logos in their original colours, moving slowly from right to left (about 25 px/s, seamless loop). It pauses on hover and keyboard focus and with "Pauzo lëvizjen" (remembered), stops while off screen, and is a static scrollable list with reduced motion. Clicking a logo opens the catalogue filtered by that brand. 27 of the 51 brands have a logo (Simple Icons, official colours); the others show their name until a proper SVG or transparent PNG is supplied
+- **Phones**: header with logo, account, cart and a menu button (the category bar moves into the menu); while scrolling, only the search stays visible (the header slides up without moving the page). Bottom navigation (Kreu, Kategoritë, Të ruajturat, Shporta) on the home page and catalogue only, with safe-area padding, hidden when the comparison bar is open; never on product, cart or checkout pages
+- Catalogue on phones: under 480 px the cards are horizontal (photo 112 px, short name, configuration line, price, button); 6 products first and "Shfaq më shumë" adds 6 (desktop 12 + 12). Coming back from a product keeps the filters, sort, loaded products and scroll position. Cards show a short brand + model name; the full name and SKU stay on the product page
+- Product page on phones: the title comes before the photo, the photo is about 240 px high and the price + button stay fixed at the bottom
+- Footer link groups open as an accordion on phones; the "Këshilla" cards are compact
+- **Payments**: only methods confirmed by ITCOM are shown (CMS → Cilësimet → Pagesat). None is confirmed yet, so checkout says the payment method is confirmed by phone, and no instalments, banks or cards are promised anywhere. Instalments appear only when `installments` in `window.STORE` is set after an agreement with a provider
+
+**Catalogue listing**
+- Quick filters above the results (Në stok, Në zbritje, Dërgesë falas, Me çmim) with live counts; picture tiles for the category's type (e.g. laptops: Biznes, Ultrabook, Gaming, 2‑në‑1)
+- Grid / list switch (remembered); the list view shows the key specifications next to price, stock and button
+- "Shikuar së fundi" (recently viewed) on the catalogue and product pages, with "Pastro listën"
 
 **Demo data and automatic checks** (report "Raundi 03", p. 17–18)
 - Demo prices and stock are marked visibly: a "Demo" bar above the header and a note under the price on product pages. Set `demo: false` in `window.STORE` (`js/products.js`) once real inventory is connected
@@ -184,7 +199,7 @@ Photos on a white or transparent background look best. If an image is missing, t
 | --- | --- |
 | Products, prices, stock, specs, photos | `js/products.js` (`PRODUCTS`) |
 | Filters shown per category | `js/products.js` (`FACETS`) |
-| Currency, VAT, delivery fees, instalments, phone | `window.STORE` in `js/products.js` |
+| Currency, VAT, delivery fees, instalments, payment methods, phone | `window.STORE` in `js/products.js` (payment methods also in CMS → Cilësimet) |
 | Hero slides and promo tiles | CMS → Online Store → Slides, or `SLIDES` / `renderHero()` in `js/app.js` |
 | Static product pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes; runs the catalogue check first) |
 | Catalogue check | `node scripts/check-catalog.mjs` |

@@ -2225,3 +2225,163 @@ button.navbar__link { border: 0; background: none; font: inherit; font-size: 14p
   .pgrid--list .pcard__buy { padding-left: 0; border-left: 0; margin-top: 8px; }
   .recent ul { grid-auto-columns: 78%; }
 }
+
+/* ============ Raundi 04: Hot Deals premium (f. 10–12) ============ */
+.hot { margin-top: 34px; }
+.hot__inner { position: relative; padding: 32px 32px 28px; border-radius: 28px; color: #fff; overflow: hidden;
+  background: radial-gradient(120% 140% at 88% -10%, rgb(10 108 223 / .38), transparent 55%), linear-gradient(160deg, #0b1424 0%, #0d1a33 60%, #0a1222 100%); }
+.hot__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 22px; }
+.hot__eyebrow { margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgb(255 255 255 / .62); }
+.hot__title { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+.hot__title span { color: #4b93ff; }
+.hot__sub { margin: 4px 0 0; font-size: 16px; color: rgb(255 255 255 / .74); }
+.hot__ctrl { display: flex; align-items: center; gap: 8px; flex: none; }
+.hot__nav { display: none; place-items: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / .28); border-radius: 999px; background: transparent; color: #fff; cursor: pointer; }
+.hot__nav:disabled { opacity: .35; cursor: default; }
+.hot__nav .icon { width: 20px; height: 20px; }
+.hot__all { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid rgb(255 255 255 / .3); border-radius: 999px; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.hot__all:hover { background: rgb(255 255 255 / .08); }
+.hot__track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.hot__note { margin: 14px 0 0; font-size: 13px; color: rgb(255 255 255 / .6); }
+.dcard { display: flex; flex-direction: column; min-width: 0; padding: 14px; border-radius: 20px; background: #fff; color: var(--ink); }
+.dcard__top { display: flex; justify-content: space-between; align-items: center; min-height: 32px; }
+.dcard__pct { padding: 3px 10px; border-radius: 999px; background: #e8f1ff; color: #0a58c2; font-size: 13px; font-weight: 800; }
+.dcard__pct--pick { background: var(--surface-2); color: var(--ink-2); font-weight: 700; }
+.dcard__media { display: block; aspect-ratio: 4 / 3; margin: 6px 0 10px; }
+.dcard__media .media { width: 100%; height: 100%; }
+.dcard__media img, .dcard__media svg { width: 100%; height: 100%; object-fit: contain; }
+.dcard__body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.dcard__brand { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.dcard__title { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.3; min-height: 2.6em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.dcard__title a { color: inherit; text-decoration: none; }
+.dcard__specs { margin: 0; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dcard__price { margin-top: auto; padding-top: 8px; }
+.dcard__price b { display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.01em; }
+.dcard__price span { font-size: 13px; color: var(--muted); }
+.dcard__price s { margin-right: 6px; }
+.dcard__stock { margin: 2px 0 8px; font-size: 13px; }
+.dcard__cta { min-height: 44px; }
+/* 1–2 oferta: karta të gjera, foto majtas */
+.hot--wide .hot__track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hot--wide .dcard { display: grid; grid-template-columns: 44% minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 22px; padding: 18px 22px 20px; }
+.hot--wide .dcard__top { grid-column: 1 / -1; }
+.hot--wide .dcard__media { grid-column: 1; grid-row: 2; margin: 0; align-self: center; }
+.hot--wide .dcard__body { grid-column: 2; grid-row: 2; }
+.hot--wide .dcard__title { font-size: 18px; }
+.hot--wide .dcard__specs { white-space: normal; }
+.hot--wide .dcard__price b { font-size: 28px; }
+@media (max-width: 1024px) {
+  .hot__track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hot--wide .dcard { grid-template-columns: 1fr; }
+  .hot--wide .dcard__media, .hot--wide .dcard__body { grid-column: 1; grid-row: auto; }
+  .hot--wide .dcard__media { margin: 6px 0 10px; }
+}
+@media (max-width: 760px) {
+  #hotAll { display: inline-flex; }
+  .hot { margin-top: 26px; }
+  .hot__inner { padding: 22px 16px 18px; border-radius: 22px; }
+  .hot__head { flex-wrap: wrap; align-items: flex-start; margin-bottom: 16px; }
+  .hot__title { font-size: 28px; }
+  .hot__ctrl { width: 100%; }
+  .hot__all { margin-left: auto; }
+  .hot__nav { display: grid; }
+  .hot--static .hot__nav { display: none; }
+  .hot__track, .hot--wide .hot__track { display: flex; gap: 12px; margin: 0 -16px; padding: 0 16px 4px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .hot__track::-webkit-scrollbar { display: none; }
+  .dcard, .hot--wide .dcard { flex: 0 0 min(300px, 80%); display: flex; flex-direction: column; scroll-snap-align: start; padding: 14px; }
+  .dcard__title, .hot--wide .dcard__title { font-size: 17px; }
+  .dcard__price b, .hot--wide .dcard__price b { font-size: 28px; }
+  .dcard__cta { min-height: 48px; }
+}
+
+/* ============ Raundi 04: brezi i markave para footer-it (f. 15–17) ============ */
+.brandband { margin-top: 40px; padding: 40px 0 26px; background: var(--surface); border-top: 1px solid var(--line); }
+.brandband__head h2 { margin: 4px 0 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+.brandband__sub { margin: 4px 0 0; color: var(--muted); }
+.brandband__viewport { margin-top: 24px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+.brandband__track { display: flex; width: max-content; margin: 0; padding: 6px 0; list-style: none; animation: bb-scroll var(--bb-dur, 80s) linear infinite; will-change: transform; }
+.brandband__track li { flex: none; padding: 0 26px; }
+@keyframes bb-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.brandband:hover .brandband__track, .brandband.is-paused .brandband__track, .brandband.is-off .brandband__track { animation-play-state: paused; }
+/* Me tastierë: lëvizja ndalet dhe lista bëhet e rrëshqitshme, që elementi me fokus të jetë gjithmonë i dukshëm. */
+.brandband.is-manual .brandband__track { animation: none; }
+.brandband.is-manual .brandband__viewport, .brandband.is-static .brandband__viewport { overflow-x: auto; scrollbar-width: thin; }
+.brandband.is-static .brandband__track { animation: none; }
+.bb__item { display: flex; align-items: center; justify-content: center; height: 64px; min-width: 112px; padding: 0 6px; border: 0; border-radius: 12px; background: none; font: inherit; font-size: 44px; color: inherit; cursor: pointer; }
+.bb__item:focus-visible { outline: 3px solid var(--brand-2); outline-offset: 2px; }
+.bb__item:hover .blogo, .bb__item:hover .wordmark { opacity: .8; }
+.blogo { display: block; }
+.wordmark { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; color: var(--ink-2); white-space: nowrap; }
+.brandband__foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+.brandband__note { margin: 0; font-size: 13px; color: var(--muted); }
+.brandband__pause { min-height: 44px; }
+@media (max-width: 760px) {
+  .brandband { padding: 30px 0 20px; margin-top: 30px; }
+  .brandband__head h2 { font-size: 24px; }
+  .brandband__track li { padding: 0 16px; }
+  .bb__item { height: 52px; min-width: 88px; font-size: 34px; }
+  .wordmark { font-size: 17px; }
+  .brandband__foot { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { .brandband__track { animation: none; } .brandband__viewport { overflow-x: auto; } }
+
+/* ============ Raundi 04: telefoni (f. 13, 19, 23) ============ */
+.hbtn--menu { display: none; }
+.bnav { display: none; }
+.pp__head { display: none; }
+@media (max-width: 760px) {
+  /* Header: logo / llogaria / shporta / menyja + kërkimi; shiriti i kategorive zëvendësohet nga butoni i menysë */
+  .hbtn--menu { display: grid; }
+  #compareBtn, #wishlistBtn { display: none; }
+  .navbar { display: none; }
+  .header__inner { gap: 8px 6px; }
+  /* Header kompakt: rreshti i logos rrëshqet lart me transform (pa lëvizur përmbajtjen), kërkimi mbetet i dukshëm */
+  .header { transition: transform .2s ease; }
+  body.hdr-compact[data-view="home"] .header, body.hdr-compact[data-view="catalog"] .header { transform: translateY(calc(-1 * var(--hdr-shift, 56px))); }
+  .mega { max-height: calc(100vh - 140px); }
+
+  /* Navigimi i poshtëm: vetëm ballina dhe katalogu; fshihet kur ka shirit krahasimi (pa dy shirita poshtë) */
+  body[data-view="home"] .bnav, body[data-view="catalog"] .bnav { display: grid; }
+  body.has-tray .bnav, body.builder-open .bnav { display: none; }
+  .bnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 34; grid-template-columns: repeat(4, 1fr); padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); background: rgb(255 255 255 / .97); backdrop-filter: blur(16px); border-top: 1px solid var(--line); }
+  .bnav__item { position: relative; display: grid; justify-items: center; align-content: center; gap: 2px; min-height: 52px; border: 0; background: none; font: inherit; font-size: 11.5px; font-weight: 600; color: var(--muted); text-decoration: none; cursor: pointer; }
+  .bnav__item .icon { width: 22px; height: 22px; }
+  .bnav__item[aria-current="page"] { color: var(--brand-2); }
+  .bnav__item .badge { position: absolute; top: 4px; left: calc(50% + 6px); }
+  body[data-view="home"]:not(.has-tray), body[data-view="catalog"]:not(.has-tray) { padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
+  body[data-view="home"]:not(.has-tray) .toast, body[data-view="catalog"]:not(.has-tray) .toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+
+  /* Footer: grupet si accordion */
+  .footer__toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .footer__toggle .icon { width: 18px; height: 18px; transition: transform .2s; }
+  .footer__toggle[aria-expanded="true"] .icon { transform: rotate(180deg); }
+  .footer__acc ul { display: none; }
+  .footer__acc.is-open ul { display: grid; padding-bottom: 10px; }
+  .footer__grid { gap: 0; }
+  .footer__acc { border-bottom: 1px solid rgb(255 255 255 / .1); }
+
+  /* Faqja e produktit: titulli para fotos, foto rreth 240 px */
+  .pp__head { display: block; padding: 0 2px; }
+  .pp__head-title { margin: 4px 0 2px; font-size: 24px; font-weight: 800; line-height: 1.2; letter-spacing: -0.015em; color: var(--ink); }
+  .pp__info > .eyebrow, .pp__info > h1, .pp__info > .pp__sub { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .pp__main { padding: 12px; }
+  .pp__main .media { aspect-ratio: auto; height: 240px; }
+  .pp__caption { font-size: 12px; }
+
+  /* Këshillat: më kompakte në ballinë */
+  #blogPosts { gap: 10px; }
+  #blogPosts .post-card { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; }
+  #blogPosts .post-card__img { height: 100%; min-height: 96px; aspect-ratio: auto; }
+  #blogPosts .post-card__body { padding: 12px 14px; }
+  #blogPosts .post-card__body p { display: none; }
+  #blogPosts .post-card__body h3 { font-size: 15px; line-height: 1.3; }
+}
+@media (max-width: 479px) {
+  /* Karta horizontale e katalogut: foto 112 px, emri i shkurtër, konfigurimi në një rresht */
+  .pgrid--list .pcard__more { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .header { transition: none; } }
+#hotDeals:empty { min-height: 320px; }
+@media (max-width: 1100px) { #hotDeals:empty { min-height: 600px; } }
+@media (max-width: 760px) { #hotDeals:empty { min-height: 500px; } #explore:empty { min-height: 1200px; } }

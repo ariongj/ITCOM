@@ -104,6 +104,15 @@
 
   const LOGOS = window.BRAND_LOGOS || {};
   const logoSvg = (name, cls = "") => (LOGOS[name] ? `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${LOGOS[name].path}"/></svg>` : "");
+  // Logo me ngjyrën zyrtare dhe kutinë e saktë të vizatimit (brezi i markave): madhësi optike e balancuar, gjerësia max 3,4×lartësia.
+  const logoColor = (name) => {
+    const l = LOGOS[name];
+    if (!l) return `<span class="wordmark">${esc(name)}</span>`;
+    const [, , w, h] = (l.vb || "0 0 24 24").split(" ").map(Number);
+    const ratio = w / h;
+    const H = ratio > 3.4 ? 3.4 / ratio : ratio > 1.6 ? 0.75 : 0.95;
+    return `<svg class="blogo" viewBox="${l.vb || "0 0 24 24"}" style="height:${(H).toFixed(3)}em;width:${(H * ratio).toFixed(3)}em" aria-hidden="true"><path fill="${l.hex}" d="${l.path}"/></svg>`;
+  };
   const brandMark = (name) => `<span class="bmark ${LOGOS[name] ? "" : "bmark--text"}">${logoSvg(name)}<span>${esc(name)}</span></span>`;
 
 
@@ -152,7 +161,9 @@
   // Koleksionet nga CMS-i (Produktet → Koleksionet): grupe produktesh me adresën e vet (#/koleksioni/<slug>).
   const COLLECTIONS = window.CMS?.collections || [];
   const colBySlug = (slug) => COLLECTIONS.find((c) => c.slug === slug);
-  const state = Object.assign(blankFilters(), { sort: "featured", per: 24, page: 1 });
+  // Raundi 04, f. 13: 6 produkte në telefon, pastaj +6; desktop 12 + 12.
+  const perPage = () => (innerWidth <= 760 ? 6 : 12);
+  const state = Object.assign(blankFilters(), { sort: "featured", per: perPage(), page: 1 });
   const closedFacets = new Set(saved.get("closedFacets", []));
   const expandedFacets = new Set();
 
@@ -351,6 +362,21 @@
   };
   const shortSpecs = (p) => keySpecs(p).slice(0, 3).join(" · ") || p.specs.slice(0, 2).join(" · ");
 
+  // Emër i shkurtër në kartë (Raundi 04, f. 5 dhe 13): markë + model; emri i plotë dhe SKU-ja mbeten në faqen e produktit.
+  function shortName(p) {
+    let s = p.name.split(/\s+[-–|/]\s+/)[0].replace(/\s*\([^)]*\)\s*$/, "").trim();
+    if (s.length > 42 && s.includes(", ")) s = s.split(", ")[0];
+    if (s.length < 8) return p.name;
+    const pack = /\b(PIB|WOF|Box)\b/i.test(p.name) ? " (Box)" : /\b(OEM|Tray)\b/i.test(p.name) ? " (OEM)" : "";
+    return s + (s.includes(pack.trim()) ? "" : pack);
+  }
+  // Mënyrat e pagesës që ITCOM ka konfirmuar (CMS → Cilësimet); asnjë metodë e sajuar (Raundi 04, f. 21).
+  const PAY_METHODS = [
+    ["cod", "Pagesë në dorëzim", "me para në dorë te korrieri"],
+    ["card", "Me kartelë te korrieri", "me kartelë bankare në dorëzim"],
+    ["bank", "Transfertë bankare", "faturë pro‑forma me email; porosia niset pas pagesës"],
+  ];
+  const payMethods = () => PAY_METHODS.filter(([k]) => S.payments?.[k]);
   // Kësti mujor në kartë: vetëm për produkte me çmim nga 200 € e lart.
   const INST_FROM = 200;
   // Pamja listë: specifikimet kryesore të modelit (nga filtrat e kategorisë), të fshehura në pamjen rrjetë.
@@ -374,7 +400,7 @@
         <a class="pcard__media" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true">${media(p)}</a>
         <div class="pcard__body">
           <span class="pcard__brand">${esc(p.brand)}</span>
-          <h3 class="pcard__title"><a href="${productHref(p.id)}">${esc(p.name)}</a></h3>
+          <h3 class="pcard__title"><a href="${productHref(p.id)}" ${shortName(p) !== p.name ? `title="${esc(p.name)}"` : ""}>${esc(shortName(p))}</a></h3>
           <p class="pcard__specs">${esc(shortSpecs(p))}</p>
           ${listSpecs(p)}
           <div class="pcard__buy">
@@ -426,15 +452,17 @@
     ["freeShip", "Dërgesë falas", (p) => !isQuote(p) && p.price >= S.freeShippingFrom],
     ["priced", "Me çmim", (p) => !isQuote(p)],
   ];
-  let viewMode = saved.get("viewMode", "grid") === "list" ? "list" : "grid";
+  // Nën 480 px pamja listë është e rekomanduara (f. 13); zgjedhja e personit ruhet dhe ka përparësi.
+  let viewPref = ["list", "grid"].includes(saved.get("viewMode", "")) ? saved.get("viewMode", "") : "";
+  const viewModeNow = () => viewPref || (innerWidth < 480 ? "list" : "grid");
   function renderQuick() {
     $("#quick").innerHTML = QUICK.map(([k, label, test]) => {
       const n = PRODUCTS.filter((p) => matches(p, k) && test(p)).length;
       const on = !!state[k];
       return `<button type="button" class="quick__btn" data-quick="${k}" aria-pressed="${on}" ${!n && !on ? "disabled" : ""}>${esc(label)} <small>${n}</small></button>`;
     }).join("");
-    $$("[data-view-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.viewMode === viewMode)));
-    $("#grid").classList.toggle("pgrid--list", viewMode === "list");
+    $$("[data-view-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.viewMode === viewModeNow())));
+    $("#grid").classList.toggle("pgrid--list", viewModeNow() === "list");
   }
   function renderTiles() {
     const host = $("#typeTiles");
@@ -450,7 +478,7 @@
       return `<li><button type="button" class="tile" data-tile="${esc(v)}" aria-pressed="${on}" ${!items.length && !on ? "disabled" : ""}>${media(pic)}<b>${esc(v)}</b><small>${plural(items.length, "produkt", "produkte")}</small></button></li>`;
     }).join("")}</ul>`;
   }
-  const recentChip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(x.name)}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
+  const recentChip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(shortName(x))}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
   function recentHTML(exclude = "") {
     const list = recent.filter((id) => id !== exclude && PRODUCTS.some((p) => p.id === id)).slice(0, 8).map((id) => byId[id]);
     if (!list.length) return "";
@@ -462,6 +490,7 @@
     const grid = $("#grid");
     try {
       const list = PRODUCTS.filter((p) => matches(p)).sort(SORTS[state.sort]);
+      state.per = perPage();
       const pages = Math.max(1, Math.ceil(list.length / state.per));
       state.page = Math.min(state.page, pages);
       // "Shiko më shumë" (Raundi 03, f. 14): faqet shtohen poshtë njëra-tjetrës; filtrat mbeten aktivë.
@@ -503,7 +532,7 @@
 
       const pager = $("#pager");
       pager.innerHTML = slice.length < list.length
-        ? `<button type="button" class="btn btn--cta btn--lg" data-page="${state.page + 1}">Shiko më shumë</button><p class="muted">${slice.length} nga ${list.length} produkte</p>`
+        ? `<button type="button" class="btn btn--cta btn--lg" data-page="${state.page + 1}">Shfaq më shumë</button><p class="muted">${slice.length} nga ${list.length} produkte</p>`
         : list.length > state.per ? `<p class="muted">Të gjitha produktet u shfaqën (${list.length}).</p>` : "";
       $("#sort").value = state.sort;
       $("#applyFilters").textContent = `Shfaq ${plural(list.length, "rezultat", "rezultate")}`;
@@ -630,46 +659,99 @@
   /* Hot Deals (Raundi 03, f. 08): nga të dhënat, jo nga etiketa. Kualifikohen: çmim pozitiv, çmimi i vjetër më i madh,
      produkt në stok. Renditja: përqindja e plotë (zbritëse), pastaj kursimi në euro, pastaj kodi. Deri në 4; nëse ka
      vetëm dy, shfaqen vetëm dy. Pa oferta aktive: "Produkte të përzgjedhura". */
+  const TODAY = new Date().toISOString().slice(0, 10);
+  const HOT_MAX = 12;
   const hotDeals = () => PRODUCTS
-    .filter((p) => !isQuote(p) && p.price > 0 && p.old > p.price && p.stock > 0)
-    .map((p) => ({ p, pct: ((p.old - p.price) / p.old) * 100, save: p.old - p.price }))
-    .sort((a, b) => b.pct - a.pct || b.save - a.save || a.p.id.localeCompare(b.p.id))
-    .slice(0, 4)
+    .filter((p) => !isQuote(p) && p.price > 0 && p.old > p.price && p.stock > 0 && !p.dealExclude && !(p.dealUntil && p.dealUntil < TODAY))
+    .map((p) => ({ p, pin: p.dealPin > 0 ? p.dealPin : 1e9, pct: ((p.old - p.price) / p.old) * 100, save: p.old - p.price, fresh: p.fresh || 0 }))
+    .sort((a, b) => a.pin - b.pin || b.pct - a.pct || b.save - a.save || b.fresh - a.fresh || a.p.id.localeCompare(b.p.id))
+    .slice(0, HOT_MAX)
     .map((x) => x.p);
   let HOT = [];
+  // Karta e ofertës: foto e madhe, emri në dy rreshta, çmimi, çmimi i mëparshëm dhe kursimi nga të dhënat, një CTA.
+  function dealCard(p) {
+    const w = wish.has(p.id);
+    const d = p.old > p.price;
+    return `<li class="dcard">
+      <div class="dcard__top">${d ? `<span class="dcard__pct">−${discount(p)}%</span>` : `<span class="dcard__pct dcard__pct--pick">Përzgjedhje</span>`}
+        <button type="button" class="pcard__icon ${w ? "is-active" : ""}" data-wish="${p.id}" aria-pressed="${w}" aria-label="${w ? "Hiq nga" : "Ruaj te"} të ruajturat: ${esc(p.name)}">${svg(ICON.heart)}</button></div>
+      <a class="dcard__media" href="${productHref(p.id)}" tabindex="-1" aria-hidden="true">${media(p)}</a>
+      <div class="dcard__body">
+        <span class="dcard__brand">${esc(p.brand)}</span>
+        <h3 class="dcard__title"><a href="${productHref(p.id)}">${esc(shortName(p))}</a></h3>
+        <p class="dcard__specs">${esc(shortSpecs(p))}</p>
+        <div class="dcard__price"><b>${fmt(p.price)}</b>${d ? `<span><s>${fmt(p.old)}</s> Kursen ${fmt(p.old - p.price)}</span>` : ""}</div>
+        <p class="dcard__stock">${stockLabel(p)}</p>
+        <a class="btn btn--cta btn--block dcard__cta" href="${productHref(p.id)}">Shiko produktin</a>
+      </div>
+    </li>`;
+  }
   function renderHotDeals() {
     HOT = hotDeals();
     const deals = HOT.length > 0;
     const cmsPicks = window.CMS?.featured?.filter((id) => byId[id] && PRODUCTS.includes(byId[id]));
     const list = deals ? HOT : (cmsPicks?.length ? cmsPicks : PICKS).map((id) => byId[id]).filter((p) => p && !isQuote(p)).slice(0, 4);
-    $("#hotTitle").textContent = deals ? "Hot Deals" : "Produkte të përzgjedhura";
-    $("#hotSub").textContent = deals ? "Zbritjet më të larta" : "Përzgjedhja e ekipit ITCOM";
+    $("#hotEyebrow").textContent = deals ? "Oferta të përzgjedhura" : "Përzgjedhja e ekipit";
+    $("#hotTitle").innerHTML = deals ? `Hot Deals<span aria-hidden="true">.</span>` : "Produkte të përzgjedhura";
+    $("#hotSub").textContent = deals ? "Më shumë vlerë. Më pak kërkim." : "Produkte që ekipi ITCOM rekomandon.";
     $("#hotAll").hidden = !deals;
-    $("#hotAllM").hidden = !deals;
-    $("#hotDeals").classList.toggle("pgrid--few", list.length < 4);
-    $("#hotDeals").innerHTML = list.map((p) => card(p, { pick: !deals })).join("");
+    const sec = $("#hotSec");
+    // Me 1–2 oferta: karta më të gjera, pa përsëritur produkte për të mbushur boshllëkun (f. 11, A).
+    sec.classList.toggle("hot--wide", list.length <= 2);
+    sec.dataset.count = list.length;
+    $("#hotDeals").innerHTML = list.map(dealCard).join("");
+    const note = $("#hotNote");
+    note.hidden = !deals || HOT.length >= 8;
+    note.textContent = deals ? `${plural(HOT.length, "ofertë aktive", "oferta aktive")} sipas çmimit dhe stokut aktual.` : "";
+    syncHot();
+  }
+  // Rrëshqitja në telefon: scroll-snap manual, butona të mëparshme/tjetra, pa rrotullim automatik.
+  function syncHot() {
+    const t = $("#hotDeals");
+    const max = t.scrollWidth - t.clientWidth;
+    $("#hotPrev").disabled = t.scrollLeft <= 2;
+    $("#hotNext").disabled = t.scrollLeft >= max - 2;
+    $("#hotSec").classList.toggle("hot--static", max <= 2);
+  }
+
+  /* Brezi i markave (Raundi 04, f. 15–17): logo me ngjyra nga e djathta në të majtë, cikël i vazhdueshëm me track të dyfishuar,
+     pauzë në hover/fokus dhe me buton; kopja është aria-hidden; reduced-motion = listë statike; jashtë ekranit nuk lëviz. */
+  function renderBrandBand() {
+    const count = {};
+    PRODUCTS.forEach((p) => { count[p.brand] = (count[p.brand] || 0) + 1; });
+    const brands = Object.keys(count).sort((a, b) => (LOGOS[b] ? 1 : 0) - (LOGOS[a] ? 1 : 0) || count[b] - count[a] || a.localeCompare(b));
+    const item = (b, copy) => copy
+      ? `<li aria-hidden="true"><span class="bb__item">${logoColor(b)}</span></li>`
+      : `<li><button type="button" class="bb__item" data-brand="${esc(b)}" aria-label="${esc(b)}: ${plural(count[b], "produkt", "produkte")}" title="${esc(b)}">${logoColor(b)}</button></li>`;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const track = $("#brandTrack");
+    track.innerHTML = brands.map((b) => item(b)).join("") + (reduce ? "" : brands.map((b) => item(b, true)).join(""));
+    const band = $("#brandBand");
+    band.classList.toggle("is-static", reduce);
+    $("#brandPause").hidden = reduce;
+    if (!reduce) requestAnimationFrame(() => track.style.setProperty("--bb-dur", `${Math.round(track.scrollWidth / 2 / 25)}s`));
   }
 
   /* Eksploro produktet (f. 09–11): 12 produkte (4 × 3), "Shiko më shumë" shton 12 të tjera pa lëvizur faqen,
      filtrat e shpejtë e kthejnë listën në fillim; Hot Deals nuk përsëriten kur ka mjaft produkte. */
-  const EXPLORE_STEP = 12;
+  const exploreStep = perPage;
   const EXPLORE_TABS = [
     ["all", "Të gjitha", null],
     ["laptops", "Laptopë", ["laptope-kompjutere"]],
     ["components", "Komponentë", ["komponente-pc"]],
     ["accessories", "Aksesorë", ["periferike-gaming", "audio-video", "aksesore-energji", "monitore-imazh"]],
   ];
-  const explore = { tab: "all", shown: EXPLORE_STEP };
+  const explore = { tab: "all", shown: exploreStep() };
   function exploreList() {
     const tab = EXPLORE_TABS.find((t) => t[0] === explore.tab);
     const cats = tab[2] ? new Set(tab[2].flatMap((slug) => groupBySlug(slug)?.cats || [])) : null;
     let list = PRODUCTS.filter((p) => !cats || cats.has(p.cat)).sort(SORTS.featured);
     const noHot = list.filter((p) => !HOT.includes(p));
-    if (noHot.length >= EXPLORE_STEP) list = noHot;
+    if (noHot.length >= exploreStep()) list = noHot;
     return list;
   }
   function renderExplore(reset = false) {
-    if (reset) explore.shown = EXPLORE_STEP;
+    if (reset) explore.shown = exploreStep();
     $("#exploreTabs").innerHTML = EXPLORE_TABS.map(([k, label]) => `<button type="button" class="explore-tab" data-explore="${k}" aria-pressed="${explore.tab === k}">${label}</button>`).join("");
     const list = exploreList();
     const grid = $("#explore");
@@ -683,7 +765,7 @@
     more.hidden = done;
     more.disabled = false;
     more.textContent = "Shiko më shumë produkte";
-    $("#exploreCount").textContent = done ? (list.length > EXPLORE_STEP ? `Të gjitha produktet u shfaqën (${list.length}).` : plural(list.length, "produkt", "produkte")) : `${show.length} nga ${list.length} produkte`;
+    $("#exploreCount").textContent = done ? (list.length > exploreStep() ? `Të gjitha produktet u shfaqën (${list.length}).` : plural(list.length, "produkt", "produkte")) : `${show.length} nga ${list.length} produkte`;
   }
 
   function renderStrip() {
@@ -724,7 +806,7 @@
     renderHotDeals();
     renderExplore(true);
 
-    $("#brandRow").innerHTML = brands.map(([b]) => `<li><button type="button" data-brand="${esc(b)}">${logoSvg(b, "icon")}<span>${esc(b)}</span></button></li>`).join("");
+    renderBrandBand();
     $("#year").textContent = new Date().getFullYear();
   }
 
@@ -759,6 +841,7 @@
     const was = btn.getAttribute("aria-expanded") === "true";
     const on = open ?? !was;
     btn.setAttribute("aria-expanded", on);
+    $("#menuBtnM")?.setAttribute("aria-expanded", String(on));
     $("#mega").hidden = !on;
     if (on && focus) $("#mega a, #mega summary")?.focus();
     if (!on && was && focus) btn.focus();
@@ -956,11 +1039,18 @@
   let infoBack = "";
   const VIEWS = { home: "#viewHome", catalog: "#viewCatalog", product: "#viewProduct", cart: "#viewCart", checkout: "#viewCheckout", done: "#viewDone", page: "#viewPage" };
   const META_DESC = $('meta[name="description"]')?.getAttribute("content") || "";
+  // Kur personi kthehet nga produkti te katalogu: ruhen filtri, renditja, produktet e ngarkuara dhe pozicioni (f. 13).
+  let catMemory = null;
+  let fromHistory = false;
   function showView(name, title, desc) {
+    if (view === "catalog" && name !== "catalog") catMemory = { key: location.pathname === BASE ? location.hash : catMemory?.key, y: window.scrollY, page: state.page };
     const changed = view !== name;
     view = name;
     for (const [k, sel] of Object.entries(VIEWS)) $(sel).hidden = k !== name;
     $("#business").hidden = name !== "home";
+    $("#brandBand").hidden = name !== "home";
+    $$(".bnav__item[data-bnav]").forEach((x) => x.toggleAttribute("aria-current", x.dataset.bnav === name));
+    $$(".bnav__item[aria-current]").forEach((x) => x.setAttribute("aria-current", "page"));
     document.body.dataset.view = name;
     document.title = title || "ITCOM — Laptopë, procesorë dhe kartela grafike";
     $('meta[name="description"]')?.setAttribute("content", desc || META_DESC);
@@ -1039,9 +1129,16 @@
     showView("home"); scrollTop();
   }
   // Ndryshimet e adresës (para/prapa, #…): një herë për çdo adresë, edhe kur shfletuesi njofton dy herë.
-  const onNav = () => { if (location.pathname + location.hash === routed) return; route(); $("#main").focus({ preventScroll: true }); };
+  const onNav = () => {
+    if (location.pathname + location.hash === routed) return;
+    const back = fromHistory && catMemory && location.pathname === BASE && location.hash === catMemory.key;
+    if (back) state.page = Math.max(state.page, catMemory.page || 1);
+    route();
+    $("#main").focus({ preventScroll: true });
+    if (back && view === "catalog") { renderResults(); const y = catMemory.y; requestAnimationFrame(() => window.scrollTo({ top: y, behavior: "instant" })); }
+  };
   window.addEventListener("hashchange", onNav);
-  window.addEventListener("popstate", onNav);
+  window.addEventListener("popstate", () => { fromHistory = true; try { onNav(); } finally { fromHistory = false; } });
   // Lidhjet e dyqanit hapen pa ringarkim; Ctrl/Cmd+klik ose skeda e re punojnë si lidhje të zakonshme.
   document.addEventListener("click", (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -1123,12 +1220,10 @@
     installments: {
       title: "Pagesat",
       html: () => `
-        <p class="lead">Zgjidh mënyrën e pagesës kur përfundon porosinë. Asnjë pagesë nuk merret online.</p>
-        <ul>
-          <li><b>Pagesë në dorëzim</b> — me para në dorë ose me kartelë te korrieri.</li>
-          <li><b>Transfertë bankare</b> — ju dërgojmë faturë pro‑forma me email; porosia nisë pas pagesës.</li>
-          ${S.installments ? `<li><b>Me këste</b> — deri në ${S.installments} muaj me kartelat e bankave partnere. Kushtet e sakta varen nga banka dhe konfirmohen para dërgesës.</li>` : ""}
-        </ul>
+        <p class="lead">Asnjë pagesë nuk merret online. ${payMethods().length ? "Zgjidh mënyrën e pagesës kur përfundon porosinë." : "Mënyrën e pagesës e konfirmojmë me telefon kur ju kontaktojmë për porosinë."}</p>
+        ${payMethods().length ? `<ul>${payMethods().map(([, t, sub]) => `<li><b>${t}</b> — ${sub}.</li>`).join("")}
+          ${S.installments ? `<li><b>Me këste</b> — deri në ${S.installments} muaj. Kushtet e sakta varen nga banka dhe konfirmohen para dërgesës.</li>` : ""}
+        </ul>` : `<p>Shfaqim vetëm mënyrat e pagesës që janë konfirmuar dhe punojnë realisht, me kostot dhe kushtet e tyre.</p>`}
         <p>Çmimet përfshijnë TVSH ${Math.round(S.vatRate * 100)}%. Për kompani lëshojmë faturë me TVSH.</p>`,
     },
     contact: {
@@ -1366,7 +1461,7 @@
       if (me.rad) note(`Kontrolloni që kasa të mbajë radiator ${me.rad} mm në pjesën e përparme ose sipër.`);
     }
     const slot = BSPEC[p.id]?.slot;
-    const chip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(x.name)}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
+    const chip = (x) => `<li><a class="cmpt__item" href="${productHref(x.id)}">${media(x)}<span><b>${esc(shortName(x))}</b><small>${isQuote(x) ? "Çmimi me ofertë" : fmt(x.price)}</small></span></a></li>`;
     return `<section class="cmpt" aria-labelledby="cmptTitle">
       <div class="cmpt__head"><h2 id="cmptTitle">${lucide("puzzle")}Përputhshmëria</h2>${slot ? `<a class="btn btn--ghost" href="#builder" data-builder data-part="${slot}:${p.id}">${lucide("box")}Provoje në konfiguruesin 3D</a>` : ""}</div>
       <dl class="cmpt__rows">${rows.filter((r) => r[0]).map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
@@ -1410,6 +1505,7 @@
     $("#viewProduct").innerHTML = `
       <nav class="crumbs" aria-label="Navigimi">${crumbs.join('<span aria-hidden="true">/</span>')}</nav>
       <div class="pp">
+        <div class="pp__head" aria-hidden="true"><span class="eyebrow">${esc(p.brand)} / ${esc(p.cat)}</span><p class="pp__head-title">${esc(p.name)}</p><p class="pp__sub">${esc(shortSpecs(p))}</p></div>
         <div class="pp__gallery">
           <div class="pp__main" id="ppMain">${media(p, "", true)}</div>
           <p class="pp__caption">Foto nga prodhuesi · varianti përfundimtar verifikohet sipas kodit të artikullit</p>
@@ -1847,9 +1943,8 @@
             </fieldset>
             <fieldset class="options">
               <legend>Pagesa</legend>
-              <label class="option"><input type="radio" name="pay" value="cod" checked /><span>Pagesë në dorëzim<small>Me para në dorë ose me kartelë te korrieri</small></span></label>
-              <label class="option"><input type="radio" name="pay" value="bank" /><span>Transfertë bankare<small>Faturë pro‑forma me email</small></span></label>
-              ${S.installments ? `<label class="option"><input type="radio" name="pay" value="inst" /><span>Me këste mujore<small>Deri në ${S.installments} muaj · kushtet i konfirmon ekipi para dërgesës</small></span></label>` : ""}
+              ${payMethods().length ? payMethods().map(([k, t, sub], i) => `<label class="option"><input type="radio" name="pay" value="${k}" ${i ? "" : "checked"} /><span>${t}<small>${sub[0].toUpperCase() + sub.slice(1)}</small></span></label>`).join("") : `<input type="hidden" name="pay" value="confirm" /><p class="options__note">Mënyrën e pagesës e konfirmojmë me telefon kur ju kontaktojmë për porosinë. Shfaqim vetëm metodat e konfirmuara.</p>`}
+              ${S.installments && payMethods().length ? `<label class="option"><input type="radio" name="pay" value="inst" /><span>Me këste mujore<small>Deri në ${S.installments} muaj · kushtet i konfirmon ekipi para dërgesës</small></span></label>` : ""}
             </fieldset>
           </section>
         </div>
@@ -1905,7 +2000,7 @@
       if (promo && !t.code) { $("#promoCode")?.focus(); announce("Kodi i zbritjes nuk vlen. Hiqeni ose ndryshojeni."); return; }
       if (e.submitter?.value === "wa" && S.whatsapp) {
         // Porosia dërgohet si mesazh WhatsApp te dyqani; shporta mbetet derisa klienti ta konfirmojë.
-        const payLabel = { cod: "Pagesë në dorëzim", inst: "Me këste mujore", bank: "Transfertë bankare" }[form.pay.value];
+        const payLabel = { cod: "Pagesë në dorëzim", card: "Me kartelë te korrieri", inst: "Me këste mujore", bank: "Transfertë bankare", confirm: "Pagesa konfirmohet me telefon" }[form.elements.pay.value];
         const delLabel = { standard: "Dërgesë standarde", express: "Dërgesë e shpejtë", pickup: "Marrje në dyqan" }[delivery()];
         const lines = [
           "Përshëndetje ITCOM, dua të porosis:",
@@ -1922,7 +2017,7 @@
         toast("U hap WhatsApp me porosinë tuaj. Dërgojeni mesazhin për ta përfunduar.");
         return;
       }
-      const number = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty })), form: fields, totals: t, delivery: delivery(), pay: form.pay.value })
+      const number = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty })), form: fields, totals: t, delivery: delivery(), pay: form.elements.pay.value })
         || "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
       try { sessionStorage.setItem("itcom:last-order", JSON.stringify({ number, total: t.total, email: fields.email, items: cart.map((l) => `${l.qty} × ${byId[l.id].name}`), delivery: delivery() })); } catch { /* ignore */ }
       cart = [];
@@ -1964,6 +2059,23 @@
       $(".footer__grid").insertAdjacentHTML("beforeend", m.footer.slice(0, 4).map((col) =>
         `<div><h2>${esc(col.label)}</h2><ul>${col.children.map((it) => `<li>${menuLink(it)}</li>`).join("")}</ul></div>`).join(""));
     }
+    footerAccordion();
+  }
+  // Footer në telefon (Raundi 04, f. 23): grupet e lidhjeve si accordion; në desktop mbeten të hapura.
+  function footerAccordion() {
+    $$(".footer__grid > div:not(.footer__acc)").forEach((col, i) => {
+      const h = col.querySelector("h2");
+      const list = col.querySelector("ul");
+      if (!h || !list) return;
+      list.id ||= `footGrp${i}-${Math.random().toString(36).slice(2, 6)}`;
+      h.innerHTML = `<button type="button" class="footer__toggle" aria-controls="${list.id}">${esc(h.textContent)}${svg('<path d="m6 9 6 6 6-6"/>')}</button>`;
+      col.classList.add("footer__acc");
+    });
+    syncFooter();
+  }
+  function syncFooter() {
+    const small = matchMedia("(max-width: 760px)").matches;
+    $$(".footer__acc").forEach((col) => col.querySelector(".footer__toggle").setAttribute("aria-expanded", String(!small || col.classList.contains("is-open"))));
   }
   function renderAnnouncements() {
     const list = window.CMS?.announcements || [];
@@ -2370,7 +2482,7 @@
       const before = $("#explore").children.length;
       requestAnimationFrame(() => {
         try {
-          explore.shown += EXPLORE_STEP;
+          explore.shown += exploreStep();
           renderExplore();
           $("#explore").children[before]?.querySelector(".pcard__title a")?.focus({ preventScroll: true });
           announce($("#exploreCount").textContent);
@@ -2401,7 +2513,7 @@
     if (e.target.closest("[data-promo-remove]")) { applyPromo(""); return; }
     const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-mega],[data-slide],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-builder],[data-business],[data-ask],[data-account],[data-build-open],[data-build-cart],[data-build-del]");
     if (!e.target.closest(".search")) hideSuggest();
-    if (!e.target.closest("#mega, #megaBtn")) toggleMega(false);
+    if (!e.target.closest("#mega, #megaBtn, #menuBtnM")) toggleMega(false);
     if (!t) return;
     const d = t.dataset;
     if (d.add) addToCart(d.add);
@@ -2451,7 +2563,7 @@
       state.page = 1; render(); $(`[data-tile="${CSS.escape(v)}"]`)?.focus(); return;
     }
     const m = e.target.closest("[data-view-mode]");
-    if (m) { viewMode = m.dataset.viewMode; saved.set("viewMode", viewMode); renderQuick(); announce(viewMode === "list" ? "Pamja listë" : "Pamja rrjetë"); return; }
+    if (m) { viewPref = m.dataset.viewMode; saved.set("viewMode", viewPref); renderQuick(); announce(viewPref === "list" ? "Pamja listë" : "Pamja rrjetë"); return; }
     if (e.target.closest("[data-recent-clear]")) { recent = []; saved.set("recent", recent); $$(".recent").forEach((x) => { x.hidden = true; }); }
   });
 
@@ -2580,6 +2692,57 @@
   window.addEventListener("resize", () => syncStrip());
   $("#stripPrev").addEventListener("click", () => strip.scrollBy({ left: -strip.clientWidth * 0.85, behavior: reducedMotion() ? "auto" : "smooth" }));
   $("#stripNext").addEventListener("click", () => strip.scrollBy({ left: strip.clientWidth * 0.85, behavior: reducedMotion() ? "auto" : "smooth" }));
+
+  // Telefoni (Raundi 04, f. 23): navigimi i poshtëm vetëm në ballinë dhe katalog; numrat ndjekin shportën dhe të ruajturat.
+  const mirror = (from, to) => { const a = $(from), b = $(to); if (!a || !b) return; const sync = () => { b.textContent = a.textContent; b.hidden = a.hidden; }; sync(); new MutationObserver(sync).observe(a, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["hidden"] }); };
+  mirror("#cartCount", "#bnavCart");
+  mirror("#wishCount", "#bnavWish");
+  $("#bnavWishBtn").addEventListener("click", openWishlist);
+  $("#menuBtnM").addEventListener("click", () => { const on = $("#megaBtn").getAttribute("aria-expanded") !== "true"; toggleMega(on, on); });
+  // Header kompakt gjatë scroll-it në telefon: mbetet vetëm kërkimi (rreth 64 px); kthehet i plotë afër fillimit.
+  let compact = false;
+  window.addEventListener("scroll", () => {
+    const y = window.scrollY;
+    const next = compact ? y > 60 : y > 180;
+    if (next !== compact) {
+      compact = next;
+      // Sa duhet të ngjitet header-i që të mbetet vetëm kërkimi: nga maja e header-it te fusha e kërkimit (pa ndryshuar faqen).
+      if (compact) document.documentElement.style.setProperty("--hdr-shift", `${Math.max(0, Math.round($(".search").getBoundingClientRect().top - $(".header").getBoundingClientRect().top - 8))}px`);
+      document.body.classList.toggle("hdr-compact", compact);
+    }
+  }, { passive: true });
+  // Footer: grupet e lidhjeve bëhen accordion në telefon.
+  const smallScreen = matchMedia("(max-width: 760px)");
+  footerAccordion();
+  smallScreen.addEventListener?.("change", () => { syncFooter(); renderQuick(); });
+  window.addEventListener("resize", () => { if (!viewPref) renderQuick(); });
+  $(".footer").addEventListener("click", (e) => {
+    const b = e.target.closest(".footer__toggle");
+    if (!b || !smallScreen.matches) return;
+    b.closest(".footer__acc").classList.toggle("is-open");
+    syncFooter();
+  });
+
+  // Hot Deals: butonat e mëparshme/tjetra lëvizin një kartë; pa animacion me reduced-motion.
+  const hotTrack = $("#hotDeals");
+  const hotStep = () => (hotTrack.querySelector(".dcard")?.getBoundingClientRect().width || 300) + 12;
+  $("#hotPrev").addEventListener("click", () => hotTrack.scrollBy({ left: -hotStep(), behavior: reducedMotion() ? "auto" : "smooth" }));
+  $("#hotNext").addEventListener("click", () => hotTrack.scrollBy({ left: hotStep(), behavior: reducedMotion() ? "auto" : "smooth" }));
+  hotTrack.addEventListener("scroll", () => syncHot(), { passive: true });
+  window.addEventListener("resize", () => syncHot());
+
+  // Brezi i markave: pauzë me buton (ruhet), në hover/fokus me CSS; jashtë ekranit animacioni ndalet.
+  const band = $("#brandBand");
+  const setBandPaused = (on) => {
+    band.classList.toggle("is-paused", on);
+    $("#brandPause").setAttribute("aria-pressed", String(on));
+    $("#brandPause").textContent = on ? "Vazhdo lëvizjen" : "Pauzo lëvizjen";
+  };
+  setBandPaused(saved.get("brandPaused", false));
+  $("#brandPause").addEventListener("click", () => { const on = !band.classList.contains("is-paused"); setBandPaused(on); saved.set("brandPaused", on); });
+  if ("IntersectionObserver" in window) new IntersectionObserver((es) => es.forEach((e) => band.classList.toggle("is-off", !e.isIntersecting))).observe(band);
+  band.addEventListener("focusin", (e) => { if (e.target.closest(".bb__item")) band.classList.add("is-manual"); });
+  band.addEventListener("focusout", (e) => { if (!band.contains(e.relatedTarget)) band.classList.remove("is-manual"); });
   let sx = null, swiped = false;
   slider.addEventListener("pointerdown", (e) => { sx = e.clientX; swiped = false; });
   slider.addEventListener("pointerup", (e) => {

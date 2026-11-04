@@ -49,7 +49,8 @@ export const ITCOM_SETTINGS: Settings = {
     },
   ],
   pickupAddress: 'Dyqani ITCOM, Prishtinë',
-  payments: { cod: true, bank: true, card: true },
+  // Raundi 04 (f. 21): asnjë mënyrë pagese nuk është konfirmuar ende — aktivizohen këtu kur punojnë realisht.
+  payments: { cod: false, bank: false, card: false },
   languages: { me: false, sq: true, en: true },
   announcements: [
     T('Dërgesë falas mbi 300 €', 'Free delivery over €300'),

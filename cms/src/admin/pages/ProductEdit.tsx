@@ -6,6 +6,7 @@ import { Button, ButtonLink, buttonClass } from '@/components/ui/Button';
 import { FieldError } from '@/components/ui/Field';
 import { EmptyState } from '@/components/ui/misc';
 import { Card, PageHeader, SaveBar, confirmDialog } from '@/admin/components/kit';
+import { Checkbox, Hint, Input, Label } from '@/components/ui/Field';
 import { L10nInput } from '@/admin/components/L10nInput';
 import { GalleryField } from '@/admin/components/media';
 import { pd } from '@/admin/components/products/dict';
@@ -491,6 +492,44 @@ function Editor({ source }: { source?: ProductX }) {
                 onUnit={(unit) => setP({ unit, packSize: unit === 'm2' ? form.p.packSize || 1 : form.p.packSize })}
                 onPackSize={(v) => setP({ packSize: v ?? undefined })}
               />
+              {form.p.itcom && (
+                // ITCOM Hot Deals (Raundi 04, f. 11): the shop picks offers from the data; the team can pin, exclude or end one here.
+                <Card className="mt-3" title="Hot Deals" description="Seksioni në ballinë zgjedh vetë ofertat: çmim > 0, çmim i mëparshëm më i lartë, stok dhe afat i vlefshëm. Renditja: të fiksuarat, pastaj përqindja, kursimi dhe freskia.">
+                  {(() => {
+                    const deal = form.p.itcom?.deal ?? {};
+                    const setDeal = (patch: Partial<NonNullable<typeof deal>>) => setP({ itcom: { ...form.p.itcom!, deal: { ...deal, ...patch } } });
+                    const today = new Date().toISOString().slice(0, 10);
+                    const price = form.price ?? 0;
+                    const reasons: string[] = [];
+                    if (!(price > 0) || form.p.template === 'quote') reasons.push('pa çmim të ITCOM');
+                    if (!(form.compareAt != null && form.compareAt > price)) reasons.push('pa çmim të mëparshëm më të lartë');
+                    if (!(form.p.stock > 0)) reasons.push('pa stok');
+                    if (deal.exclude) reasons.push('e përjashtuar');
+                    if (deal.until && deal.until < today) reasons.push('afati ka kaluar');
+                    return (
+                      <div className="grid gap-4">
+                        <p className={`rounded-lg px-3 py-2 text-[13px] ${reasons.length ? 'bg-canvas text-muted' : 'bg-emerald-50 text-emerald-800'}`}>
+                          {reasons.length ? `Nuk shfaqet te Hot Deals: ${reasons.join(', ')}.` : `Kualifikohet për Hot Deals: −${Math.round((1 - price / (form.compareAt || 1)) * 100)}%, kursim ${(Number(form.compareAt) - price).toLocaleString('de-DE', { minimumFractionDigits: 2 })} €.`}
+                        </p>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div>
+                            <Label htmlFor="deal-pin">Renditja e fiksuar</Label>
+                            <Input id="deal-pin" type="number" min={1} max={12} inputMode="numeric" placeholder="Automatike" value={deal.pin ?? ''}
+                              onChange={(e) => setDeal({ pin: e.target.value ? Math.max(1, Math.round(Number(e.target.value))) : null })} />
+                            <Hint>1 = e para. Bosh = sipas përqindjes së zbritjes.</Hint>
+                          </div>
+                          <div>
+                            <Label htmlFor="deal-until">Oferta vlen deri më</Label>
+                            <Input id="deal-until" type="date" value={deal.until ?? ''} onChange={(e) => setDeal({ until: e.target.value || null })} />
+                            <Hint>Pas kësaj date oferta hiqet vetë nga Hot Deals.</Hint>
+                          </div>
+                        </div>
+                        <Checkbox checked={!!deal.exclude} onChange={(v) => setDeal({ exclude: v })} label="Përjashto nga Hot Deals" description="Zbritja mbetet në produkt dhe në katalog, por nuk shfaqet në seksionin e ballinës." />
+                      </div>
+                    );
+                  })()}
+                </Card>
+              )}
             </div>
 
             <div id="sec-variants" className="scroll-mt-24">

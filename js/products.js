@@ -19,7 +19,10 @@ window.STORE = {
   freeShippingFrom: 300,
   shippingFee: 3,
   expressFee: 5,
-  installments: 12,
+  // Këstet shfaqen vetëm kur ka marrëveshje të konfirmuar me bankë/ofrues (Raundi 04, f. 21): 0 = pa këste.
+  installments: 0,
+  // Mënyrat e pagesës që punojnë realisht (CMS → Cilësimet → Pagesat). Pa konfirmim: asnjë, pagesa konfirmohet me telefon.
+  payments: { cod: false, card: false, bank: false },
   phone: "+383 44 000 000",
   // Dyqan demo: shirit sipër dhe shënim te produkti që çmimet/stoku janë demonstrim. Vendos false kur lidhet inventari real.
   demo: true,

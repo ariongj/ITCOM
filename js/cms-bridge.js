@@ -121,6 +121,11 @@
         reviews: x.reviews || 0,
         badge: badge || undefined,
         quote: quote || undefined,
+        // Hot Deals nga CMS-i: renditja e fiksuar, përjashtimi dhe afati i ofertës; freskia nga data e ndryshimit.
+        dealPin: x.deal && x.deal.pin > 0 ? x.deal.pin : undefined,
+        dealExclude: x.deal && x.deal.exclude ? true : undefined,
+        dealUntil: x.deal && x.deal.until ? x.deal.until : undefined,
+        fresh: Date.parse(p.updatedAt || p.createdAt || "") || 0,
         art: x.art || base.art || { s: builder ? "box" : p.categoryId === "cat-gpu" ? "gpu" : p.categoryId === "cat-cpu" ? "cpu" : "laptop", c: "#2b2d31" },
         attrs: x.attrs || base.attrs || {},
         specs: (p.specs || []).map(function (s) { var l = sq(s.label), v = sq(s.value); return l ? l + ": " + v : v; }).filter(Boolean),
@@ -146,6 +151,7 @@
     S.whatsapp = String(s.whatsapp || "").replace(/\D/g, "") || S.whatsapp;
     if (typeof s.vatRate === "number") S.vatRate = s.vatRate / 100;
     if (typeof s.freeShippingThreshold === "number") S.freeShippingFrom = s.freeShippingThreshold;
+    if (s.payments) S.payments = { cod: !!s.payments.cod, card: !!s.payments.card, bank: !!s.payments.bank };
     if ((s.shippingZones || []).length) S.zones = s.shippingZones;
     var zone = (s.shippingZones || [])[0];
     if (zone && typeof zone.fee === "number") S.shippingFee = zone.fee;
@@ -419,6 +425,7 @@
     var notes = [];
     if (o.delivery === "express") notes.push("Dërgesë e shpejtë (+" + window.STORE.expressFee + " €)");
     if (o.pay === "inst") notes.push("Klienti zgjodhi pagesë me këste");
+    if (o.pay === "confirm") notes.push("Mënyra e pagesës konfirmohet me telefon");
     if (o.form.zip) notes.push("Kodi postar: " + o.form.zip);
     var order = {
       id: "o_" + Date.now().toString(36),
@@ -431,7 +438,7 @@
       },
       items: items,
       delivery: { method: o.delivery === "pickup" ? "pickup" : "delivery", fee: o.totals.shipping },
-      payment: { method: o.pay === "bank" ? "bank" : o.pay === "inst" ? "card" : "cod", status: "pending" },
+      payment: { method: o.pay === "bank" ? "bank" : o.pay === "card" || o.pay === "inst" ? "card" : "cod", status: "pending" },
       coupon: o.totals.code ? { code: o.totals.code, discount: round2(o.totals.discount || 0) } : null,
       subtotal: round2(o.totals.subtotal),
       installationTotal: 0,
