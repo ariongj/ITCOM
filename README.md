@@ -57,6 +57,12 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Photos: every product photo also exists at 480 and 720 px (`python3 scripts/build-thumbs.py` after adding photos); cards, offers, gallery and thumbnails use `srcset`/`sizes`, so desktop pages download about half the image data (home 956 → 541 KB, catalogue 853 → 339 KB)
 - **Payments**: only methods confirmed by ITCOM are shown (CMS → Cilësimet → Pagesat). None is confirmed yet, so checkout says the payment method is confirmed by phone, and no instalments, banks or cards are promised anywhere. Instalments appear only when `installments` in `window.STORE` is set after an agreement with a provider
 
+**Search**
+- Works without Albanian letters ("kartele grafike" = "kartelë grafike", "procesore") and with numbers written together or apart ("rtx4070" = "RTX 4070", "32gb" = "32 GB")
+- Albanian/English synonyms: gpu → kartela grafike, laptop → laptopë, mouse → maus, headphones → kufje, ram → memorie, printer → printerë, and more (`SYN` in `js/app.js`)
+- Small typos are tolerated for longer words ("lenvo", "macbok", "zenbok"); numbers must match, so "4070" never finds "4060"
+- Results are ordered by relevance: name before brand, category and specifications; a word that names a category ("gpu", "ram") brings that category first. Suggestions highlight matches even without diacritics, and an empty result offers "A keni parasysh …?" when a close word exists
+
 **Catalogue listing**
 - Quick filters above the results (Në stok, Në zbritje, Dërgesë falas, Me çmim) with live counts; picture tiles for the category's type (e.g. laptops: Biznes, Ultrabook, Gaming, 2‑në‑1)
 - Grid / list switch (remembered); the list view shows the key specifications next to price, stock and button

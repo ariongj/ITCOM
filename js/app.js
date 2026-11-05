@@ -152,9 +152,111 @@
       .slice(0, 4);
   }
 
-  const searchHay = Object.fromEntries(PRODUCTS.map((p) => [p.id, [p.name, p.brand, p.cat, p.id, ...p.specs, ...Object.values(p.attrs)].join(" ").toLowerCase()]));
-  const tokens = (q) => q.toLowerCase().split(/\s+/).filter(Boolean);
-  const textMatch = (p, q) => tokens(q).every((t) => searchHay[p.id].includes(t));
+  /* ================================================================ kërkimi
+     Pa shenja (ë→e, ç→c), shkronjat ndahen nga numrat ("rtx4070" = "RTX 4070", "32gb" = "32 GB"),
+     sinonime shqip/anglisht, gabime të vogla shtypi dhe renditje sipas përshtatjes (emri > marka > kategoria > specifikat). */
+  const fold = (s) => String(s ?? "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const words = (s) => fold(s).replace(/([a-z])(\d)/g, "$1 $2").replace(/(\d)([a-z])/g, "$1 $2").split(/[^a-z0-9]+/).filter(Boolean);
+  const tokens = (q) => words(q);
+  const SYN = {
+    laptop: ["laptope", "notebook"], laptope: ["laptop"], notebook: ["laptope", "laptop"], kompjuter: ["pc", "desktop"], pc: ["kompjuter", "desktop"],
+    gpu: ["grafike", "geforce", "radeon", "rtx"], grafike: ["gpu"], videokarte: ["grafike"], kartele: ["kartela"], kartela: ["kartele"],
+    cpu: ["procesor", "procesore", "ryzen", "core"], procesor: ["procesore", "cpu"], procesore: ["procesor", "cpu"],
+    ram: ["memorie", "ddr"], memorie: ["ram"], memoria: ["ram", "memorie"],
+    mouse: ["maus"], maus: ["mouse"], mi: ["maus"], keyboard: ["tastiera", "tastiere"], tastiere: ["tastiera"], tastiera: ["tastiere"],
+    headphones: ["kufje"], headset: ["kufje"], kufje: ["headset", "headphones"], degjuese: ["kufje"],
+    monitor: ["monitore"], monitore: ["monitor"], ekran: ["monitor", "monitore", "ekrani"],
+    printer: ["printere", "multifunksionale"], printere: ["printer"], shtypes: ["printer", "printere"],
+    router: ["routere", "ruter"], ruter: ["router", "routere"], wifi: ["wi", "fi"], switch: ["switch"],
+    phone: ["telefona", "telefon"], telefon: ["telefona"], celular: ["telefona"], tablet: ["tablete"], tablete: ["tablet"],
+    disk: ["ssd", "hdd", "disqe"], ssd: ["disk"], kase: ["kasa"], case: ["kasa"], psu: ["furnizues"], napajanje: ["furnizues"],
+    ftohes: ["ftohje", "cooler"], cooler: ["ftohje", "ftohes"], kamera: ["kamere"], webcam: ["kamere", "webcam"],
+    karikues: ["charger"], charger: ["karikues"], kabell: ["kabllo"], kabllo: ["kabell", "cable"], cable: ["kabllo"],
+  };
+  // Indeksi: çdo fjalë me peshën e fushës ku gjendet (emri 5, marka 4, kategoria 3, kodi 2, specifikat 1).
+  const searchIndex = Object.fromEntries(PRODUCTS.map((p) => {
+    const m = new Map();
+    const add = (text, w) => words(text).forEach((x) => { if ((m.get(x) || 0) < w) m.set(x, w); });
+    add(p.name, 5); add(p.brand, 4); add(p.cat, 3); add(p.id, 2);
+    (p.specs || []).forEach((s) => add(s, 1));
+    Object.values(p.attrs || {}).forEach((v) => add(v, 1));
+    return [p.id, { m, name: fold(p.name) }];
+  }));
+  // Qëllimi i kërkimit: kur një fjalë (ose sinonimi i saj) emërton një kategori, produktet e asaj kategorie dalin të parat
+  // ("gpu" → kartela grafike, "ram" → memorie RAM), edhe kur emri i një laptopi përmend "GPU".
+  const CAT_WORDS = Object.fromEntries([...new Set(PRODUCTS.map((p) => p.cat))].map((c) => [c, new Set(words(c))]));
+  const intentCats = (q) => {
+    const out = new Set();
+    for (const t of tokens(q)) for (const c of [t, ...(SYN[t] || [])]) for (const [cat, ws] of Object.entries(CAT_WORDS)) if (ws.has(c) && !/^\d+$/.test(c)) out.add(cat);
+    return out;
+  };
+  const VOCAB = [...new Set(Object.values(searchIndex).flatMap((x) => [...x.m.keys()]).filter((w) => w.length >= 3 && !/^\d+$/.test(w)))];
+  function lev(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      let best = i;
+      for (let j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (cur[j] < best) best = cur[j];
+      }
+      if (best > max) return max + 1;
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  // Sa mirë përputhet një fjalë e kërkimit me produktin: e plotë > fillim fjale > brenda fjale > gabim i vogël shtypi.
+  function tokenScore(idx, t) {
+    let best = 0;
+    for (const c of [t, ...(SYN[t] || [])]) {
+      const num = /^\d+$/.test(c);
+      for (const [w, weight] of idx.m) {
+        let s = 0;
+        if (w === c) s = 3;
+        else if (w.startsWith(c) && (c.length >= 2 || num)) s = num ? 1.5 : 2;
+        else if (!num && c.length >= 4 && w.includes(c)) s = 1;
+        else if (!num && c.length >= 5 && !/\d/.test(w) && lev(w, c, c.length >= 8 ? 2 : 1) <= (c.length >= 8 ? 2 : 1)) s = 0.6;
+        if (c !== t) s *= 0.8;
+        if (s * weight > best) best = s * weight;
+      }
+    }
+    return best;
+  }
+  let scoreCache = { q: null, m: new Map(), cats: new Set() };
+  function searchScore(p, q) {
+    if (scoreCache.q !== q) scoreCache = { q, m: new Map(), cats: intentCats(q) };
+    if (scoreCache.m.has(p.id)) return scoreCache.m.get(p.id);
+    const idx = searchIndex[p.id];
+    const ts = tokens(q);
+    let total = 0;
+    if (!idx || !ts.length) total = 0;
+    else {
+      for (const t of ts) { const s = tokenScore(idx, t); if (!s) { total = 0; break; } total += s; }
+      if (total) {
+        const fq = fold(q).trim();
+        if (idx.name.startsWith(fq)) total += 8; else if (idx.name.includes(fq)) total += 4;
+        if (scoreCache.cats.has(p.cat)) total += 12;
+        if (p.stock > 0 && !isQuote(p)) total += 0.5;
+      }
+    }
+    scoreCache.m.set(p.id, total);
+    return total;
+  }
+  const textMatch = (p, q) => searchScore(p, q) > 0;
+  // "A keni parasysh …?": fjala më e afërt nga markat, kategoritë dhe emrat e produkteve.
+  function didYouMean(q) {
+    const out = tokens(q).map((t) => {
+      if (/^\d+$/.test(t) || VOCAB.includes(t) || SYN[t]) return t;
+      let best = null, bd = 9;
+      const max = t.length >= 7 ? 2 : 1;
+      for (const w of VOCAB) { const d = lev(t, w, max); if (d < bd || (d === bd && best && w.length < best.length)) { bd = d; best = w; } }
+      return bd <= max ? best : null;
+    });
+    if (out.some((x) => !x)) return "";
+    const s = out.join(" ");
+    return s !== tokens(q).join(" ") ? s : "";
+  }
 
   function deliveryDate(workdays) {
     const d = new Date();
@@ -508,7 +610,8 @@
   function renderResults() {
     const grid = $("#grid");
     try {
-      const list = PRODUCTS.filter((p) => matches(p)).sort(SORTS[state.sort]);
+      const byRelevance = (a, b) => searchScore(b, state.q) - searchScore(a, state.q) || SORTS.featured(a, b);
+      const list = PRODUCTS.filter((p) => matches(p)).sort(state.q && state.sort === "featured" ? byRelevance : SORTS[state.sort]);
       state.per = perPage();
       const pages = Math.max(1, Math.ceil(list.length / state.per));
       state.page = Math.min(state.page, pages);
@@ -520,6 +623,9 @@
       renderTiles();
       $("#recentSec").innerHTML = recentHTML();
       $("#empty").hidden = list.length > 0;
+      const dym = !list.length && state.q ? didYouMean(state.q) : "";
+      const hint = $("#emptyHint");
+      if (hint) hint.innerHTML = dym ?`A keni parasysh <button type="button" class="link-btn" data-dym="${esc(dym)}">“${esc(dym)}”</button>?` : "";
 
       const title = state.col ? state.col.title : state.grp ? state.grp.name : state.q ? `Rezultatet për “${state.q}”` : state.onSale && state.cat === "All" ? "Ofertat" : state.cat === "All" ? "Të gjitha produktet" : state.cat;
       $("#resultsDesc").hidden = true;
@@ -888,18 +994,24 @@
   /* ================================================================ sugjerimet e kërkimit */
   let sgActive = -1;
   function highlight(text, q) {
-    const ts = tokens(q).filter((t) => t.length > 1).map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    const ts = tokens(q).filter((t) => t.length > 1);
     if (!ts.length) return esc(text);
-    return text.split(new RegExp(`(${ts.join("|")})`, "gi")).map((part, i) => (i % 2 ? `<mark>${esc(part)}</mark>` : esc(part))).join("");
+    const chars = [...text];
+    const folded = chars.map((c) => fold(c));
+    if (folded.some((c) => c.length !== 1)) return esc(text);
+    const f = folded.join("");
+    const on = new Array(chars.length).fill(false);
+    for (const t of ts) { let i = f.indexOf(t); while (i >= 0) { for (let k = i; k < i + t.length; k++) on[k] = true; i = f.indexOf(t, i + t.length); } }
+    let out = "", open = false;
+    chars.forEach((c, i) => { if (on[i] && !open) { out += "<mark>"; open = true; } if (!on[i] && open) { out += "</mark>"; open = false; } out += esc(c); });
+    return out + (open ? "</mark>" : "");
   }
   function renderSuggest() {
     const q = $("#search").value.trim();
     const box = $("#suggest");
     sgActive = -1;
     if (!q) { box.hidden = true; return; }
-    const ql = q.toLowerCase();
-    const score = (p) => (p.name.toLowerCase().startsWith(ql) ? 4 : 0) + (p.name.toLowerCase().includes(ql) ? 2 : 0) + (p.brand.toLowerCase() === ql ? 1 : 0) + (p.stock ? 0.5 : 0);
-    const hits = PRODUCTS.filter((p) => textMatch(p, q)).sort((a, b) => score(b) - score(a));
+    const hits = PRODUCTS.filter((p) => textMatch(p, q)).sort((a, b) => searchScore(b, q) - searchScore(a, q));
     const cats = {};
     hits.forEach((p) => { cats[p.cat] = (cats[p.cat] || 0) + 1; });
     box.innerHTML = hits.length
@@ -907,7 +1019,7 @@
          <div class="suggest__label">Produktet</div>
          ${hits.slice(0, 6).map((p) => `<button type="button" class="sg-item" role="option" data-open="${p.id}">${media(p, "", false, "thumb")}<span><b>${highlight(p.name, q)}</b><small>${esc(p.cat)} · ${stockLabel(p).replace(/<[^>]+>/g, "")}</small></span>${isQuote(p) ? `<span class="price price--quote">Me kërkesë</span>` : `<span class="price ${p.old ? "price--sale" : ""}">${fmt(p.price)}</span>`}</button>`).join("")}
          <button type="button" class="suggest__all" data-sgall>Shiko të gjitha rezultatet (${hits.length}) për “${esc(q)}”</button>`
-      : `<div class="suggest__none">Nuk u gjet asnjë produkt për “${esc(q)}”. Provoni një markë, model ose specifikë, p.sh. “Wi‑Fi 7” ose “32 GB”.</div>`;
+      : `<div class="suggest__none">Nuk u gjet asnjë produkt për “${esc(q)}”.${didYouMean(q) ? ` A keni parasysh <button type="button" class="link-btn" data-dym="${esc(didYouMean(q))}">“${esc(didYouMean(q))}”</button>?` : " Provoni një markë, model ose specifikë, p.sh. “Wi‑Fi 7” ose “32 GB”."}</div>`;
     box.hidden = false;
   }
   function hideSuggest() { $("#suggest").hidden = true; }
@@ -2551,6 +2663,8 @@
       openRequest({ title: "Na trego çfarë të duhet", intro: "Shkruaj si do ta përdorësh pajisjen dhe buxhetin e përafërt. Ekipi ITCOM të sugjeron zgjedhjen, zakonisht brenda ditës së punës.", type: "contact", tags: ["ndihme-zgjedhje"] });
       return;
     }
+    const dym = e.target.closest("[data-dym]");
+    if (dym) { applySearch(dym.dataset.dym); return; }
     const notifyBtn = e.target.closest("[data-notify]");
     if (notifyBtn) { const p = byId[notifyBtn.dataset.notify]; if (p) { closeModal(); openNotify(p); } return; }
     const quoteBtn = e.target.closest("[data-quote]");
