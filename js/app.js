@@ -1278,6 +1278,7 @@
       showView("catalog"); render(); scrollTop(); return;
     }
     if (parts[0] === "oferta") { renderOffer(parts[1]); scrollTop(); return; }
+    if (parts[0] === "lista") { renderSharedList(parts.slice(1).join("/")); scrollTop(); return; }
     if (parts[0] === "blog") { if (parts[1]) renderPost(parts[1]); else renderBlog(); scrollTop(); return; }
     if (parts[0] === "servisi") { renderServices(parts[1] || ""); scrollTop(); return; }
     if (parts[0] === "shporta") { renderCartPage(); scrollTop(); return; }
@@ -2015,11 +2016,53 @@
     toast(wish.has(id) ? `U ruajt në listën e dëshirave: <b>${esc(byId[id].name)}</b>` : "U hoq nga lista e dëshirave");
   }
   function renderWishCount() { const el = $("#wishCount"); el.textContent = wish.size; el.hidden = !wish.size; }
+  // Lista e ruajtur: mund të ndahet me lidhje (#/lista/…) ose të dërgohet si kërkesë oferte (p.sh. për ekipin ose kompaninë).
+  const listHref = (ids) => `${location.origin}${BASE}#/lista/${ids.map(encodeURIComponent).join(",")}`;
   function openWishlist() {
     const items = PRODUCTS.filter((p) => wish.has(p.id));
     openModal(`<div class="wishlist"><h2>Lista e dëshirave</h2>${items.length
-      ? `<div class="grid">${items.map(card).join("")}</div>`
+      ? `<div class="wishlist__actions"><button type="button" class="btn btn--cta" data-wish-quote>${lucide("headset")}Kërko ofertë për listën</button><button type="button" class="btn btn--ghost" data-wish-share>${lucide("layers")}Kopjo lidhjen e listës</button></div>
+         <div class="grid">${items.map(card).join("")}</div>`
       : `<div class="empty">${svg(ICON.heart, "icon icon--xl")}<h3>Ende nuk keni ruajtur asgjë</h3><p class="muted">Prekni zemrën te çdo produkt për ta ruajtur këtu.</p></div>`}</div>`, "modal--wish");
+  }
+
+  function wishQuote(ids) {
+    const items = ids.map((id) => byId[id]).filter(Boolean);
+    closeModal();
+    openForm({
+      title: "Kërko ofertë për listën",
+      intro: `${plural(items.length, "produkt", "produkte")} nga lista juaj. Ndryshoni sasitë në shënim; ekipi ITCOM ju kthen ofertën me çmime, disponueshmëri dhe afate, zakonisht brenda ditës së punës.`,
+      submit: "Dërgo kërkesën",
+      fields: [
+        { id: "company", label: "Kompania", optional: true, attrs: 'autocomplete="organization"' },
+        { id: "name", label: "Emri", value: me()?.name, attrs: 'autocomplete="name"' },
+        { id: "phone", label: "Telefoni", type: "tel", attrs: 'autocomplete="tel"' },
+        { id: "email", label: "Email-i", type: "email", optional: true, value: me()?.email, attrs: 'autocomplete="email"' },
+        { id: "message", label: "Artikujt dhe sasitë", type: "textarea", full: true, value: items.map((p) => `1 × ${p.name} (${p.id.toUpperCase()})`).join("\n") },
+      ],
+      onSubmit: (v) => {
+        const ok = window.CMS?.saveInquiry({ type: "quote", company: v.company, name: v.name, phone: v.phone, email: v.email, message: v.message, tags: ["lista-e-ruajtur"] });
+        closeModal();
+        toast(ok ? "Faleminderit! Kërkesa për ofertë u dërgua." : "Kërkesa nuk u dërgua. Provoni përsëri.");
+      },
+    });
+  }
+  async function wishShare(ids) {
+    const url = listHref(ids);
+    try { await navigator.clipboard.writeText(url); toast("Lidhja e listës u kopjua"); }
+    catch { window.prompt("Kopjoni lidhjen e listës:", url); }
+  }
+  // Faqja e një liste të ndarë (#/lista/id1,id2,…): produktet, "Ruaj të gjitha" dhe kërkesa për ofertë.
+  function renderSharedList(raw) {
+    const ids = [...new Set(decodeURIComponent(raw || "").split(",").map((x) => x.trim()).filter((id) => PRODUCTS.some((p) => p.id === id)))].slice(0, 40);
+    showView("page", "Lista e ndarë · ITCOM", "Një listë produktesh e ndarë nga një klient i ITCOM.");
+    $("#viewPage").innerHTML = `
+      ${crumbsHTML([["Ballina", "#/"], ["Lista e ndarë"]])}
+      <h1 class="page-title">Lista e ndarë</h1>
+      ${ids.length ? `<p class="muted page-sub">${plural(ids.length, "produkt", "produkte")} · çmimet dhe stoku sipas të dhënave aktuale të dyqanit.</p>
+        <div class="wishlist__actions"><button type="button" class="btn btn--cta" data-list-save="${esc(ids.join(","))}">${svg(ICON.heart)}Ruaj të gjitha te lista ime</button><button type="button" class="btn btn--ghost" data-list-quote="${esc(ids.join(","))}">${lucide("headset")}Kërko ofertë për këtë listë</button></div>
+        <div class="pgrid pgrid--catalog">${ids.map((id) => card(byId[id])).join("")}</div>`
+      : `<div class="state"><h2>Lista është bosh ose produktet nuk janë më në dyqan</h2><a class="btn btn--primary" href="#/produktet">Shiko produktet</a></div>`}`;
   }
 
   /* ================================================================ shporta, porosia, konfirmimi */
@@ -2663,6 +2706,12 @@
       openRequest({ title: "Na trego çfarë të duhet", intro: "Shkruaj si do ta përdorësh pajisjen dhe buxhetin e përafërt. Ekipi ITCOM të sugjeron zgjedhjen, zakonisht brenda ditës së punës.", type: "contact", tags: ["ndihme-zgjedhje"] });
       return;
     }
+    if (e.target.closest("[data-wish-quote]")) { wishQuote([...wish].filter((id) => PRODUCTS.some((p) => p.id === id))); return; }
+    if (e.target.closest("[data-wish-share]")) { wishShare([...wish].filter((id) => PRODUCTS.some((p) => p.id === id))); return; }
+    const ls = e.target.closest("[data-list-save]");
+    if (ls) { ls.dataset.listSave.split(",").forEach((id) => wish.add(id)); saved.set("wish", [...wish]); renderWishCount(); refreshCards(); toast("Produktet u ruajtën te lista juaj"); return; }
+    const lq = e.target.closest("[data-list-quote]");
+    if (lq) { wishQuote(lq.dataset.listQuote.split(",")); return; }
     const dym = e.target.closest("[data-dym]");
     if (dym) { applySearch(dym.dataset.dym); return; }
     const notifyBtn = e.target.closest("[data-notify]");
