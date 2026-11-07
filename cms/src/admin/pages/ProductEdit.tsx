@@ -264,7 +264,15 @@ function Editor({ source }: { source?: ProductX }) {
       createdAt: next0.createdAt || now,
       sold: isNew ? 0 : next0.sold,
     };
+    const before = useDb.getState().products.find((x) => x.id === pid);
+    const prevStock = before ? Math.max(0, (before.stock || 0) - (before.unavailable || 0)) : 0;
     upsertProduct(next);
+    // Kërkesat "Më njofto kur vjen": kur produkti rikthehet në stok, ekipi kujtohet t'i njoftojë klientët.
+    const waitingNow = useDb.getState().inquiries.filter((q) => q.productId === pid && (q.tags ?? []).includes('njoftim-stoku') && q.status !== 'done');
+    const nowStock = Math.max(0, (next.stock || 0) - (next.unavailable || 0));
+    if (!isNew && prevStock === 0 && nowStock > 0 && waitingNow.length) {
+      toast.info(`${waitingNow.length} ${waitingNow.length === 1 ? 'klient pret' : 'klientë presin'} njoftim për këtë produkt`, { description: 'Shihni kartën “Njoftimet për stok” dhe kontaktojini.' });
+    }
 
     // manual collections toggled in "Organizimi"
     if (canCollections) {
@@ -533,6 +541,8 @@ function Editor({ source }: { source?: ProductX }) {
               )}
             </div>
 
+            {source && <StockRequestsCard productId={source.id} inStock={Math.max(0, (form.p.stock || 0) - (form.p.unavailable || 0)) > 0} />}
+
             <div id="sec-variants" className="scroll-mt-24">
               <VariantsCard
                 product={composed}
@@ -650,5 +660,33 @@ function Editor({ source }: { source?: ProductX }) {
         }}
       />
     </div>
+  );
+}
+
+/** Kërkesat "Më njofto kur vjen" nga dyqani (etiketa njoftim-stoku) për këtë produkt. */
+function StockRequestsCard({ productId, inStock }: { productId: string; inStock: boolean }) {
+  const inquiries = useDb((st) => st.inquiries);
+  const updateInquiry = useDb((st) => st.updateInquiry);
+  const list = inquiries.filter((q) => q.productId === productId && (q.tags ?? []).includes('njoftim-stoku'));
+  const waiting = list.filter((q) => q.status !== 'done');
+  if (!list.length) return null;
+  return (
+    <Card className="mt-3" title={`Njoftimet për stok (${waiting.length})`}
+      description={inStock && waiting.length ? 'Produkti është në stok: kontaktoni klientët që presin dhe shënojini si të njoftuar.' : 'Klientë që kërkuan t’i njoftojmë kur produkti të vijë në stok.'}>
+      <ul className="grid gap-2" data-stock-requests>
+        {list.map((q) => (
+          <li key={q.id} className={cn('flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line px-3 py-2 text-[13px]', q.status === 'done' && 'opacity-60')}>
+            <span className="min-w-0">
+              <b className="text-ink">{q.name}</b> · <a className="underline" href={`tel:${q.phone.replace(/[^+\d]/g, '')}`}>{q.phone}</a>{q.email ? ` · ${q.email}` : ''}
+              <span className="block text-[12px] text-muted">{date(q.createdAt)}{q.status === 'done' ? ' · u njoftua' : ''}</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <ButtonLink to={`/admin/kontakti?id=${encodeURIComponent(q.id)}`} variant="outline" size="sm">Hap</ButtonLink>
+              {q.status !== 'done' && <Button size="sm" variant="primary" onClick={() => updateInquiry(q.id, { status: 'done', seen: true })}>Shëno të njoftuar</Button>}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }

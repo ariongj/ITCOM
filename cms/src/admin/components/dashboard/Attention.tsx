@@ -1,13 +1,13 @@
 import { useMemo, type ComponentType } from 'react';
 import { Link } from 'react-router';
-import { CalendarClock, CheckCheck, ChevronRight, CreditCard, Hourglass, PackageMinus, Truck, Undo2, UserX } from 'lucide-react';
+import { BellRing, CalendarClock, CheckCheck, ChevronRight, CreditCard, Hourglass, PackageMinus, Truck, Undo2, UserX } from 'lucide-react';
 import { Card } from '@/admin/components/kit';
 import { useDict, useL, useLang } from '@/i18n';
 import { common } from '@/i18n/common';
 import { useDb } from '@/store/db';
 import { useCan } from '@/store/hooks';
 import { money, timeAgo, unitLabel } from '@/lib/format';
-import type { Lang } from '@/lib/types';
+import type { Lang, Product } from '@/lib/types';
 import { daysUntil, expiringOffers, lowStockProducts, openReturns, pendingBookings, pendingPayments, unassignedContacts, unfulfilledOrders } from './data';
 import { fmtDate } from './dates';
 import { D, pluralKey } from './i18n';
@@ -52,6 +52,20 @@ function useAttentionItems(now: Date): Item[] {
         const p = low[0];
         const qty = `${p.stock} ${p.unit === 'm2' ? tc('packs') : unitLabel(p.unit, lang)}`;
         out.push({ id: 'low', icon: PackageMinus, text: plural('low', low.length), detail: t('d_low', { name: l(p.name), n: qty }), to: '/admin/proizvodi?zalihe=low' });
+      }
+    }
+    // 1b · "Më njofto kur vjen" requests from the shop: products back in stock first (those customers can be told now)
+    if (can('contacts') && can('products')) {
+      const waiting = inquiries.filter((q) => q.productId && (q.tags ?? []).includes('njoftim-stoku') && q.status !== 'done');
+      if (waiting.length) {
+        const ids = [...new Set(waiting.map((q) => q.productId as string))];
+        const ready = ids.map((pid) => products.find((x) => x.id === pid)).filter((x): x is Product => !!x && Math.max(0, (x.stock || 0) - (x.unavailable || 0)) > 0);
+        const first = ready[0] ?? products.find((x) => x.id === waiting[0].productId);
+        const en = lang === 'en';
+        const text = ready.length
+          ? (en ? `${ready.length} product${ready.length === 1 ? ' is' : 's are'} back in stock: customers are waiting to be told` : `${ready.length} ${ready.length === 1 ? 'produkt u kthye' : 'produkte u kthyen'} në stok: klientë presin njoftim`)
+          : (en ? `${waiting.length} “notify me” request${waiting.length === 1 ? '' : 's'} waiting for stock` : `${waiting.length} ${waiting.length === 1 ? 'kërkesë' : 'kërkesa'} “Më njofto kur vjen” në pritje të stokut`);
+        out.push({ id: 'notify', icon: BellRing, text, detail: first ? l(first.name) : undefined, to: first ? `/admin/proizvodi/${first.id}` : '/admin/kontakti' });
       }
     }
     // 2 · bookings awaiting confirmation
