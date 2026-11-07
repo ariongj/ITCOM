@@ -181,17 +181,29 @@
 
       <section class="container home-banner" id="homeBanner" aria-label="Oferta" hidden></section>
 
-      <section class="container builder-band" aria-label="Ndërto PC">
-        <div class="duo__builder">
-          <div class="duo__copy">
-            <span class="eyebrow">Ndërto PC</span>
-            <h2>Ndërtuar për mënyrën si luan dhe punon.</h2>
-            <button type="button" class="btn btn--cta" data-builder>Hap konfiguruesin 3D</button>
+      <section class="container builder-band" aria-labelledby="bpTitle">
+        <div class="bp">
+          <div class="bp__copy">
+            <span class="eyebrow">Ndërto PC · konfigurues 3D</span>
+            <h2 id="bpTitle">Ndërtuar për mënyrën si luan dhe punon.</h2>
+            <p class="bp__lead">Zgjidh një konfigurim, rrotulloje në 3D dhe ndryshoje pjesë për pjesë. Përputhshmëria e soketit, memories, furnizimit dhe kasës kontrollohet vetë.</p>
+            <div class="bp__presets" id="bpPresets" role="group" aria-label="Konfigurime të gatshme"></div>
+            <p class="bp__note" id="bpNote"></p>
+            <ul class="bp__parts" id="bpParts"></ul>
+            <div class="bp__foot">
+              <div class="bp__total"><small>Çmimi i pjesëve</small><b id="bpTotal"></b></div>
+              <button type="button" class="btn btn--cta btn--lg" id="bpOpen">Hap konfiguruesin 3D</button>
+            </div>
           </div>
-          <picture class="duo__photo">
-            <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 560px" />
-            <img src="assets/photos/gaming-1600.jpg" alt="Kompjuter gaming me ndriçim RGB (foto ambienti)" width="1600" height="1065" loading="lazy" decoding="async" />
-          </picture>
+          <div class="bp__stage" id="bpStage" role="img" aria-label="Pamje 3D e PC-së">
+            <picture class="bp__poster">
+              <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 640px" />
+              <img src="assets/photos/gaming-1600.jpg" alt="" width="1600" height="1065" loading="lazy" decoding="async" />
+            </picture>
+            <div class="bp__canvas" id="bpCanvas"></div>
+            <span class="bp__hint" aria-hidden="true">Tërhiqe për ta rrotulluar</span>
+            <span class="bp__loading" aria-hidden="true">Duke ngarkuar modelin 3D…</span>
+          </div>
         </div>
       </section>
 
@@ -308,10 +320,14 @@
 
     <!-- ITCOM BUSINESS (në ballinë) -->
     <section class="container biz" id="business" hidden aria-labelledby="bizTitle">
-      <picture class="biz__photo">
-        <source type="image/webp" srcset="assets/photos/workspace-800.webp 800w, assets/photos/workspace-1600.webp 1600w" sizes="(max-width: 1024px) 100vw, 560px" />
-        <img src="assets/photos/workspace-1600.jpg" alt="Hapësirë pune me laptop dhe tavolinë ergonomike" width="1600" height="1067" loading="lazy" decoding="async" />
-      </picture>
+      <div class="biz__kit" role="img" aria-label="Pajisje për një vend pune: monitor, laptop, kufje, maus dhe hub USB-C">
+        <img class="kit kit--monitor" src="assets/products/real/720/lg-34u511a-b-34-wfhd-ips-5.webp" alt="" loading="lazy" decoding="async" />
+        <img class="kit kit--laptop" src="assets/products/photo/720/lp-x1c12.webp" alt="" loading="lazy" decoding="async" />
+        <img class="kit kit--headset" src="assets/products/real/480/poly-headset-blackwire-3220-black-stereo-usb.webp" alt="" loading="lazy" decoding="async" />
+        <img class="kit kit--mouse" src="assets/products/real/480/logitech-mx-master-4-business.webp" alt="" loading="lazy" decoding="async" />
+        <img class="kit kit--hub" src="assets/products/real/480/unitek-usb-c-hub.webp" alt="" loading="lazy" decoding="async" />
+        <span class="biz__tags"><span>Laptopë</span><span>Monitorë</span><span>Kufje</span><span>Aksesorë</span></span>
+      </div>
       <div class="biz__copy">
         <span class="eyebrow">ITCOM Business</span>
         <h2 id="bizTitle">Pajisje për ekipin.<br />Zgjidhje e menduar.</h2>

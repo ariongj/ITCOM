@@ -508,8 +508,10 @@ export function buildPart(kind, spec = {}, rgb = null) {
 /* ------------------------------------------------------------------ viewer */
 // Dark product studio: graded backdrop, glossy reflective floor, key + rim lights,
 // and bloom so RGB lighting glows like it does in a real build.
-export function createViewer(container) {
-  const small = (container.clientWidth || innerWidth) < 760;
+export function createViewer(container, opts = {}) {
+  // preview: pamja e lehtë në ballinë (pa zmadhim me rrotën e miut, pa AO, scroll vertikal i lirë në telefon)
+  const preview = !!opts.preview;
+  const small = preview || (container.clientWidth || innerWidth) < 760;
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -569,6 +571,7 @@ export function createViewer(container) {
   controls.minPolarAngle = 0.25;
   controls.maxPolarAngle = Math.PI / 2 - 0.04;
   controls.autoRotateSpeed = 0.8;
+  if (preview) { controls.enableZoom = false; renderer.domElement.style.touchAction = "pan-y"; }
   const home = () => { camera.position.set(58, 46, 108); controls.target.set(0, 21, 0); controls.update(); };
   home();
 

@@ -160,15 +160,16 @@
 
   /* ------------------------------------------------------------ 3D */
   let viewer = null, loading = null, pending = false;
-  function scene() {
-    const b = { rgb: st.rgb };
-    for (const s of SLOTS) if (st.parts[s.key]) b[s.key] = spec(st.parts[s.key]);
-    const cs = spec(st.parts.case);
-    b.caseColor = cs?.colors?.[st.color] || "#16171a";
-    const gp = byId[st.parts.gpu];
+  function sceneOf(s) {
+    const b = { rgb: s.rgb };
+    for (const sl of SLOTS) if (s.parts[sl.key]) b[sl.key] = spec(s.parts[sl.key]);
+    const cs = spec(s.parts.case);
+    b.caseColor = cs?.colors?.[s.color || 0] || "#16171a";
+    const gp = byId[s.parts.gpu];
     b.gpuLabel = gp ? (/radeon/i.test(gp.name) ? "RADEON" : "GEFORCE RTX") : "";
     return b;
   }
+  const scene = () => sceneOf(st);
   function update3d() {
     if (!viewer || pending) return;
     pending = true;
@@ -222,6 +223,61 @@
     if (location.hash === "#builder") { try { history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ } }
   }
   A.openBuilder = open;
+
+  /* ------------------------------------------------------------ pamja 3D në ballinë
+     Konfigurime të gatshme si çipe, pjesët dhe çmimi; modeli 3D ngarkohet vetëm kur seksioni afrohet në ekran,
+     ndalet kur del nga ekrani ose kur hapet konfiguruesi; pa WebGL mbetet fotoja. */
+  (function landingPreview() {
+    const stage = $("#bpStage");
+    if (!stage) return;
+    const presets = PRESETS.filter((p) => Object.values(p.parts).every((id) => byId[id] && SPECS[id]));
+    if (!presets.length) return;
+    let cur = presets.find((p) => p.key === "g1440") || presets[0];
+    let pv = null, started = false, visible = false;
+    const fmtEur = (n) => n.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+    const LABEL = Object.fromEntries(SLOTS.map((s) => [s.key, s.label]));
+    function paint() {
+      $("#bpPresets").innerHTML = presets.map((p) => `<button type="button" class="bp__chip" data-bp="${p.key}" aria-pressed="${p === cur}">${p.name}</button>`).join("");
+      const keys = ["cpu", "gpu", "ram", "ssd", "case"].filter((k) => cur.parts[k]);
+      $("#bpParts").innerHTML = keys.map((k) => `<li><small>${LABEL[k] || k}</small><b>${byId[cur.parts[k]].name}</b></li>`).join("");
+      const total = Object.values(cur.parts).reduce((s, id) => s + (byId[id]?.price || 0), 0);
+      $("#bpTotal").textContent = fmtEur(total);
+      $("#bpNote").textContent = cur.note || "";
+      stage.setAttribute("aria-label", `Pamje 3D e PC-së: ${cur.name}`);
+      if (pv) pv.setBuild(sceneOf(cur));
+    }
+    const webgl = (() => { try { const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); } catch { return false; } })();
+    function start() {
+      if (started || !webgl) return;
+      started = true;
+      stage.classList.add("is-loading");
+      import(BASE + "pc3d.js").then((mod) => {
+        pv = mod.createViewer($("#bpCanvas"), { preview: true });
+        pv.setBuild(sceneOf(cur));
+        pv.setAutoRotate(true);
+        if (!visible || !root.hidden) pv.pause();
+        stage.classList.remove("is-loading");
+        stage.classList.add("is-live");
+      }).catch(() => { stage.classList.remove("is-loading"); });
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((es) => es.forEach((e) => {
+        visible = e.isIntersecting;
+        if (visible) start();
+        if (pv) { if (visible && root.hidden) pv.resume(); else pv.pause(); }
+      }), { rootMargin: "200px 0px" }).observe(stage);
+    } else start();
+    $("#bpPresets").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-bp]");
+      if (!b) return;
+      cur = presets.find((p) => p.key === b.dataset.bp) || cur;
+      paint();
+    });
+    $("#bpOpen").addEventListener("click", () => { pv?.pause(); open({ parts: { ...cur.parts }, color: cur.color || 0, rgb: cur.rgb }); });
+    // Kur mbyllet konfiguruesi, pamja në ballinë vazhdon nëse është në ekran.
+    new MutationObserver(() => { if (pv) { if (root.hidden && visible) pv.resume(); else pv.pause(); } }).observe(root, { attributes: true, attributeFilter: ["hidden"] });
+    paint();
+  })();
   A.closeBuilder = close;
 
   /* ------------------------------------------------------------ actions */
