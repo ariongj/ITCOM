@@ -404,7 +404,8 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
       const f = fan(12, { frame: fanCol, blades: blade, rgb });
       f.rotation.y = -Math.PI / 2; f.position.set(D / 2 - 2.6, y, 0); g.add(f);
     }
-    if (front === "glass") for (const x of [-8, 5, 18]) { const f = fan(12, { frame: fanCol, blades: blade, rgb }); f.rotation.x = -Math.PI / 2; f.position.set(x, 10.6, 3); g.add(f); }
+    // three 120 mm fans centred on the shroud, inside the front glass (D/2 = 22.5)
+    if (front === "glass") for (const x of [-13, 0, 13]) { const f = fan(12, { frame: fanCol, blades: blade, rgb }); f.rotation.x = -Math.PI / 2; f.position.set(x, 10.6, 3); g.add(f); }
   }
   return g;
 }
@@ -463,9 +464,16 @@ export function assemble(b) {
     root.add(gpu);
     if (b.psu) {
       const p = gpu.userData.power.clone().add(gpu.position);
-      cable(root, [p, new THREE.Vector3(p.x, p.y + 0.3, p.z + 2.2), new THREE.Vector3(p.x + 1.5, 13.5, p.z + 1.2), new THREE.Vector3(p.x + 2.5, 9.4, zb + 3.5)], 6, new THREE.Vector3(1, 0, 0), sleeve(b), 0.15);
-      // rubber grommet in the PSU shroud where the cable goes through
-      add(root, RB(3.4, 0.24, 1.6, 0.1, 2), M.plastic("#07080a", 0.8), p.x + 2.5, 10.05, zb + 3.5);
+      if (cs.front === "glass") {
+        // fans on the shroud (O11 style): the cable goes back through a grommet in the motherboard tray, below the board
+        const tz = -W / 2 + 0.62;
+        cable(root, [p, new THREE.Vector3(p.x, p.y + 0.3, p.z + 2.2), new THREE.Vector3(p.x + 1.5, 13.2, p.z + 0.6), new THREE.Vector3(p.x + 2.5, 12.3, tz + 0.1)], 6, new THREE.Vector3(1, 0, 0), sleeve(b), 0.15);
+        add(root, RB(3.4, 1.3, 0.24, 0.3, 2), M.plastic("#07080a", 0.8), p.x + 2.5, 12.3, tz);
+      } else {
+        cable(root, [p, new THREE.Vector3(p.x, p.y + 0.3, p.z + 2.2), new THREE.Vector3(p.x + 1.5, 13.5, p.z + 1.2), new THREE.Vector3(p.x + 2.5, 9.4, zb + 3.5)], 6, new THREE.Vector3(1, 0, 0), sleeve(b), 0.15);
+        // rubber grommet in the PSU shroud where the cable goes through
+        add(root, RB(3.4, 0.24, 1.6, 0.1, 2), M.plastic("#07080a", 0.8), p.x + 2.5, 10.05, zb + 3.5);
+      }
     }
   }
   if (b.mb && b.psu) {
