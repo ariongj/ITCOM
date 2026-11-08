@@ -2603,8 +2603,9 @@ p.footer__demo { margin-block: 0; margin-inline: auto; }
 .bp__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; width: 100%; margin-top: 8px; padding-top: 14px; border-top: 1px solid rgb(255 255 255 / .12); }
 .bp__total small { display: block; font-size: 12.5px; color: rgb(255 255 255 / .6); }
 .bp__total b { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
-.bp__stage { position: relative; min-height: 420px; overflow: hidden; }
-.bp__poster, .bp__poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .6s ease; }
+/* Sfondi i njëjtë me atë të modelit 3D; fotoja e konfigurimit (render i të njëjtit model) shfaqet "contain" në të njëjtin kuadër. */
+.bp__stage { position: relative; min-height: 420px; overflow: hidden; background: radial-gradient(75% 75% at 50% 42%, #2a2e37 0%, #15171c 45%, #060709 100%); }
+.bp__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .6s ease; }
 .bp__canvas { position: absolute; inset: 0; cursor: grab; }
 .bp__canvas:active { cursor: grabbing; }
 .bp__canvas canvas { display: block; width: 100% !important; height: 100% !important; }
@@ -2612,10 +2613,10 @@ p.footer__demo { margin-block: 0; margin-inline: auto; }
 .bp__hint, .bp__loading { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); padding: 6px 12px; border-radius: 999px; background: rgb(0 0 0 / .5); color: #fff; font-size: 12.5px; white-space: nowrap; opacity: 0; transition: opacity .3s; pointer-events: none; }
 .bp__stage.is-live .bp__hint { opacity: 1; }
 .bp__stage.is-loading .bp__loading { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .bp__poster, .bp__poster img, .bp__hint, .bp__loading { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .bp__poster, .bp__hint, .bp__loading { transition: none; } }
 @media (max-width: 900px) {
   .bp { grid-template-columns: 1fr; }
-  .bp__stage { order: -1; min-height: 300px; }
+  .bp__stage { order: -1; min-height: 0; height: clamp(300px, 64vw, 480px); }
 }
 @media (max-width: 760px) {
   .bp__copy { padding: 20px 18px 22px; }
@@ -2650,3 +2651,9 @@ p.footer__demo { margin-block: 0; margin-inline: auto; }
 .seo-list { list-style: none; margin: 18px 0 40px; padding: 0; display: grid; gap: 8px; }
 .seo-list li { padding: 10px 14px; border: 1px solid var(--line, #e5e7eb); border-radius: 10px; color: var(--muted, #555); }
 .seo-list a { color: var(--ink, #111); font-weight: 600; }
+
+/* Konfiguruesi në telefon: shënimi nuk shkon nën butonat e rrotullimit; totali në një rresht */
+@media (max-width: 760px) {
+  .builder__hint { max-width: calc(100% - 76px); }
+  .btotal b { white-space: nowrap; }
+}

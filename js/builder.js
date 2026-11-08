@@ -154,7 +154,8 @@
     $("#bPower").innerHTML = `<div class="bpower__row"><span>Konsumi i vlerësuar</span><b>${w} W${psu ? ` / ${psu.watt} W` : ""}</b></div><div class="bpower__bar"><i style="width:${pct}%" class="${pct > 83 ? "hot" : pct > 71 ? "warm" : ""}"></i></div>`;
     const asm = byId["srv-assembly"];
     $("#bAssembly").innerHTML = asm ? `<label class="check"><input type="checkbox" id="bAsm" ${st.assembly ? "checked" : ""} /> <span>Montim dhe testim profesional <b>+${fmt(asm.price)}</b></span></label>` : "";
-    $("#bTotal").innerHTML = `<small>Totali</small><b>${fmt(total())}</b><span>ose ${window.STORE.installments} × ${fmt(total() / window.STORE.installments)} në muaj</span>`;
+    const inst = window.STORE.installments;
+    $("#bTotal").innerHTML = `<small>Totali</small><b>${fmt(total())}</b>${inst > 0 ? `<span>ose ${inst} × ${fmt(total() / inst)} në muaj</span>` : ""}`;
     $("#bAdd").disabled = errs.length > 0 || missing.length > 0;
   }
 
@@ -199,6 +200,10 @@
   }
 
   /* ------------------------------------------------------------ open / close */
+  // Konfiguruesi është dialog në ekran të plotë: faqja pas tij bëhet inerte (Tab nuk del jashtë) dhe fokusi kthehet aty ku ishte.
+  const KEEP = new Set(["builder", "modal", "toast", "announce", "cart", "overlay"]);
+  let opener = null;
+  const setBackground = (off) => [...document.body.children].forEach((el) => { if (!KEEP.has(el.id) && el.tagName !== "SCRIPT") el.inert = off; });
   function open(saved) {
     // Nga faqja e produktit: "Provoje në konfigurues" vendos këtë pjesë në konfigurimin aktual ("cpu:cp-7800x3d").
     if (saved && saved.part) {
@@ -208,7 +213,9 @@
     }
     if (saved && saved.parts) st = { ...st, parts: validParts(saved.parts), color: saved.color || 0, rgb: saved.rgb ?? st.rgb, assembly: saved.assembly ?? st.assembly };
     A.closeModal();
+    if (root.hidden) opener = document.activeElement;
     root.hidden = false;
+    setBackground(true);
     document.body.classList.add("builder-open");
     if (location.hash !== "#builder") { try { history.replaceState(null, "", location.pathname + location.search + "#builder"); } catch { /* ignore */ } }
     renderPresets();
@@ -218,11 +225,15 @@
   }
   function close() {
     root.hidden = true;
+    setBackground(false);
     document.body.classList.remove("builder-open");
+    if (opener && opener.isConnected && opener !== document.body) opener.focus({ preventScroll: true });
+    opener = null;
     viewer?.pause();
     if (location.hash === "#builder") { try { history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ } }
   }
   A.openBuilder = open;
+  A.builder = { presets: PRESETS, sceneOf };
 
   /* ------------------------------------------------------------ pamja 3D në ballinë
      Konfigurime të gatshme si çipe, pjesët dhe çmimi; modeli 3D ngarkohet vetëm kur seksioni afrohet në ekran,
@@ -234,6 +245,8 @@
     if (!presets.length) return;
     let cur = presets.find((p) => p.key === "g1440") || presets[0];
     let pv = null, started = false, visible = false;
+    const poster = $("#bpPoster");
+    const posterFor = (p) => { if (!poster) return; const f = `assets/builds/${p.key}`; poster.srcset = `${f}-720.webp 720w, ${f}-1200.webp 1200w`; poster.src = `${f}-1200.webp`; };
     const fmtEur = (n) => n.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
     const LABEL = Object.fromEntries(SLOTS.map((s) => [s.key, s.label]));
     function paint() {
@@ -244,29 +257,33 @@
       $("#bpTotal").textContent = fmtEur(total);
       $("#bpNote").textContent = cur.note || "";
       stage.setAttribute("aria-label", `Pamje 3D e PC-së: ${cur.name}`);
-      if (pv) pv.setBuild(sceneOf(cur));
+      if (pv) { pv.setBuild(sceneOf(cur)); if (!visible) pv.renderOnce(); } else posterFor(cur);
     }
     const webgl = (() => { try { const c = document.createElement("canvas"); return !!(c.getContext("webgl2") || c.getContext("webgl")); } catch { return false; } })();
+    // Modeli i gjallë zëvendëson foton e të njëjtit konfigurim pa u vënë re (i njëjti kënd dhe kuadër).
     function start() {
       if (started || !webgl) return;
       started = true;
-      stage.classList.add("is-loading");
+      if (visible) stage.classList.add("is-loading");
       import(BASE + "pc3d.js").then((mod) => {
-        pv = mod.createViewer($("#bpCanvas"), { preview: true });
+        pv = mod.createViewer($("#bpCanvas"), { preview: true, onFirstFrame: () => { stage.classList.remove("is-loading"); stage.classList.add("is-live"); } });
         pv.setBuild(sceneOf(cur));
         pv.setAutoRotate(true);
-        if (!visible || !root.hidden) pv.pause();
-        stage.classList.remove("is-loading");
-        stage.classList.add("is-live");
+        if (!visible || !root.hidden) { pv.pause(); pv.renderOnce(); }
       }).catch(() => { stage.classList.remove("is-loading"); });
     }
+    // Ngarkohet kur faqja është e qetë pas hapjes (ose më herët, nëse seksioni afrohet), jo vetëm kur arrihet aty.
+    const conn = navigator.connection || {};
+    const light = conn.saveData || /(^|-)2g$/.test(conn.effectiveType || "");
+    if (!light) addEventListener("load", () => (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(start, { timeout: 4000 }), { once: true });
+    // Dy vëzhgues: njëri ngarkon modelin para se seksioni të arrijë (600 px), tjetri e vizaton vetëm kur shihet vërtet.
     if ("IntersectionObserver" in window) {
+      new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) start(); }), { rootMargin: "600px 0px" }).observe(stage);
       new IntersectionObserver((es) => es.forEach((e) => {
         visible = e.isIntersecting;
-        if (visible) start();
         if (pv) { if (visible && root.hidden) pv.resume(); else pv.pause(); }
-      }), { rootMargin: "200px 0px" }).observe(stage);
-    } else start();
+      })).observe(stage);
+    } else { visible = true; start(); }
     $("#bpPresets").addEventListener("click", (e) => {
       const b = e.target.closest("[data-bp]");
       if (!b) return;

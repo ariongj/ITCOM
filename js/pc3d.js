@@ -90,7 +90,6 @@ function cable(parent, pts, strands, spread, color, r = 0.17) {
   }
 }
 
-const spinners = new Set(); // fan blade groups that rotate while the viewer runs
 
 /* ------------------------------------------------------------------ fan */
 // A fan facing +z, centred at the origin. size in cm (12 / 14).
@@ -122,7 +121,7 @@ function fan(size = 12, { frame = "#16171a", blades = "#1d1f23", rgb = null, dep
   }
   add(rotor, CYL(r * 0.32, r * 0.32, depth * 0.8, 32), M.plastic(shade(blades, 0.06), 0.4)).rotation.x = Math.PI / 2;
   add(rotor, CYL(r * 0.2, r * 0.2, 0.05, 32), M.plastic("#2a2c31", 0.3), 0, 0, depth * 0.41).rotation.x = Math.PI / 2;
-  spinners.add(rotor);
+  rotor.userData.spin = true; // the viewer that shows this fan turns it
   // RGB ring on the front edge
   if (rgb) {
     add(g, new THREE.TorusGeometry(r + 0.15, 0.22, 10, 72), M.glow(rgb, 2.6), 0, 0, depth / 2);
@@ -464,7 +463,9 @@ export function assemble(b) {
     root.add(gpu);
     if (b.psu) {
       const p = gpu.userData.power.clone().add(gpu.position);
-      cable(root, [p, new THREE.Vector3(p.x, p.y + 0.3, p.z + 2.2), new THREE.Vector3(p.x + 1.5, 13.5, p.z + 1.2), new THREE.Vector3(p.x + 2.5, 10.2, zb + 3.5)], 6, new THREE.Vector3(1, 0, 0), sleeve(b), 0.15);
+      cable(root, [p, new THREE.Vector3(p.x, p.y + 0.3, p.z + 2.2), new THREE.Vector3(p.x + 1.5, 13.5, p.z + 1.2), new THREE.Vector3(p.x + 2.5, 9.4, zb + 3.5)], 6, new THREE.Vector3(1, 0, 0), sleeve(b), 0.15);
+      // rubber grommet in the PSU shroud where the cable goes through
+      add(root, RB(3.4, 0.24, 1.6, 0.1, 2), M.plastic("#07080a", 0.8), p.x + 2.5, 10.05, zb + 3.5);
     }
   }
   if (b.mb && b.psu) {
@@ -511,6 +512,9 @@ export function buildPart(kind, spec = {}, rgb = null) {
 export function createViewer(container, opts = {}) {
   // preview: pamja e lehtë në ballinë (pa zmadhim me rrotën e miut, pa AO, scroll vertikal i lirë në telefon)
   const preview = !!opts.preview;
+  // Ballina: kamera largohet kur kutia është më e ngushtë se 1.2:1, që kasa të mos pritet anash
+  // (i njëjti kuadër si fotot statike assets/builds/*.webp, që shfaqen para modelit).
+  const FIT_ASPECT = 1.2;
   const small = preview || (container.clientWidth || innerWidth) < 760;
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
@@ -567,12 +571,14 @@ export function createViewer(container, opts = {}) {
   controls.dampingFactor = 0.08;
   controls.enablePan = false;
   controls.minDistance = 60;
-  controls.maxDistance = 170;
+  controls.maxDistance = preview ? 400 : 170;
   controls.minPolarAngle = 0.25;
   controls.maxPolarAngle = Math.PI / 2 - 0.04;
   controls.autoRotateSpeed = 0.8;
   if (preview) { controls.enableZoom = false; renderer.domElement.style.touchAction = "pan-y"; }
-  const home = () => { camera.position.set(58, 46, 108); controls.target.set(0, 21, 0); controls.update(); };
+  const HOME = new THREE.Vector3(58, 46, 108), TARGET = new THREE.Vector3(0, 21, 0);
+  let fit = 1;
+  const home = () => { camera.position.copy(HOME).sub(TARGET).multiplyScalar(fit).add(TARGET); controls.target.copy(TARGET); controls.update(); };
   home();
 
   let composer = null, bloom = null, ao = null;
@@ -593,7 +599,7 @@ export function createViewer(container, opts = {}) {
     composer.addPass(new OutputPass());
   } catch (e) { composer = null; }
 
-  let pc = null;
+  let pc = null, spin = [];
   function disposeTree(o) {
     o.traverse((n) => {
       if (n.geometry) n.geometry.dispose();
@@ -601,9 +607,11 @@ export function createViewer(container, opts = {}) {
     });
   }
   function setBuild(b) {
-    if (pc) { scene.remove(pc); disposeTree(pc); spinners.clear(); }
+    if (pc) { scene.remove(pc); disposeTree(pc); }
     pc = assemble(b);
+    spin = [];
     pc.traverse((o) => {
+      if (o.userData.spin) spin.push(o);
       if (!o.isMesh) return;
       const m = o.material;
       o.castShadow = !m.transparent && !(m.emissiveIntensity > 1);
@@ -618,22 +626,33 @@ export function createViewer(container, opts = {}) {
     renderer.setSize(w, h, false);
     if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
-    camera.fov = w < 520 ? 38 : 30;
+    camera.fov = !preview && w < 520 ? 38 : 30;
     camera.updateProjectionMatrix();
+    const ms = preview ? 0.45 : 0.6; // pasqyrimi i dyshemesë: më i lehtë në ballinë
+    mirror.getRenderTarget().setSize(Math.max(1, Math.round(w * ms)), Math.max(1, Math.round(h * ms)));
+    if (preview) {
+      const k = Math.max(1, FIT_ASPECT / camera.aspect);
+      if (k !== fit) { camera.position.sub(controls.target).multiplyScalar(k / fit).add(controls.target); fit = k; controls.update(); }
+    }
   }
   const ro = new ResizeObserver(resize);
   ro.observe(container);
   resize();
 
-  let running = true, last = performance.now();
+  let running = true, last = performance.now(), frames = 0;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  function loop(now) {
-    if (!running) return;
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (!reduce) spinners.forEach((r) => { r.rotation.z += dt * 9; });
+  function draw() {
     controls.update();
     if (composer) composer.render(); else renderer.render(scene, camera);
+    if (!frames++ && opts.onFirstFrame) opts.onFirstFrame();
+  }
+  function loop(now) {
+    if (!running) return;
     requestAnimationFrame(loop);
+    if (preview && now - last < 30) return; // ballina: deri në ~30 kuadro/s mjaftojnë për rrotullimin e ngadaltë
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!reduce) spin.forEach((r) => { r.rotation.z += dt * 9; });
+    draw();
   }
   requestAnimationFrame(loop);
 
@@ -641,7 +660,9 @@ export function createViewer(container, opts = {}) {
     setBuild,
     setAutoRotate(v) { controls.autoRotate = !!v && !reduce; },
     resetView: home,
-    snapshot: () => renderer.domElement.toDataURL("image/jpeg", 0.85),
+    snapshot: (type = "image/jpeg", q = 0.85) => renderer.domElement.toDataURL(type, q),
+    // one frame without starting the loop: compiles the shaders while the model is still off screen
+    renderOnce: draw,
     pause() { running = false; },
     resume() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(loop); } },
     dispose() { running = false; ro.disconnect(); controls.dispose(); if (pc) disposeTree(pc); composer?.dispose?.(); renderer.dispose(); renderer.domElement.remove(); },
