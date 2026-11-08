@@ -198,10 +198,7 @@
             </div>
           </div>
           <div class="bp__stage" id="bpStage" role="img" aria-label="Pamje 3D e PC-së">
-            <picture class="bp__poster">
-              <source type="image/webp" srcset="assets/photos/gaming-800.webp 800w, assets/photos/gaming-1600.webp 1600w" sizes="(max-width: 760px) 100vw, 640px" />
-              <img src="assets/photos/gaming-1600.jpg" alt="" width="1600" height="1065" loading="lazy" decoding="async" />
-            </picture>
+            <img class="bp__poster" id="bpPoster" src="assets/builds/g1440-1200.webp" srcset="assets/builds/g1440-720.webp 720w, assets/builds/g1440-1200.webp 1200w" sizes="(max-width: 900px) 100vw, 680px" alt="" width="1200" height="1000" decoding="async" />
             <div class="bp__canvas" id="bpCanvas"></div>
             <span class="bp__hint" aria-hidden="true">Tërhiqe për ta rrotulluar</span>
             <span class="bp__loading" aria-hidden="true">Duke ngarkuar modelin 3D…</span>
@@ -322,13 +319,10 @@
 
     <!-- ITCOM BUSINESS (në ballinë) -->
     <section class="container biz" id="business" hidden aria-labelledby="bizTitle">
-      <div class="biz__kit" role="img" aria-label="Pajisje për një vend pune: monitor, laptop, kufje, maus dhe hub USB-C">
-        <img class="kit kit--monitor" src="assets/products/real/720/lg-34u511a-b-34-wfhd-ips-5.webp" alt="" loading="lazy" decoding="async" />
-        <img class="kit kit--laptop" src="assets/products/photo/720/lp-x1c12.webp" alt="" loading="lazy" decoding="async" />
-        <img class="kit kit--headset" src="assets/products/real/480/poly-headset-blackwire-3220-black-stereo-usb.webp" alt="" loading="lazy" decoding="async" />
-        <img class="kit kit--mouse" src="assets/products/real/480/logitech-mx-master-4-business.webp" alt="" loading="lazy" decoding="async" />
-        <img class="kit kit--hub" src="assets/products/real/480/unitek-usb-c-hub.webp" alt="" loading="lazy" decoding="async" />
-        <span class="biz__tags"><span>Laptopë</span><span>Monitorë</span><span>Kufje</span><span>Aksesorë</span></span>
+      <div class="biz__kit">
+        <a class="kit-tile kit-tile--wide" href="p/lg-34wr50qk-b/"><img src="assets/products/real/720/lg-34wr50qk-b.webp" alt="" width="720" height="720" loading="lazy" decoding="async" /><span><small>Monitor ultrawide</small><b>LG 34WR50QK-B 34" WQHD</b></span></a>
+        <a class="kit-tile" href="p/lp-x1c12/"><img src="assets/products/photo/480/lp-x1c12.webp" alt="" width="480" height="480" loading="lazy" decoding="async" /><span><small>Laptop</small><b>Lenovo ThinkPad X1 Carbon Gen 12</b></span></a>
+        <a class="kit-tile" href="p/hp-poly-blackwire-3320-stereo-usb-c/"><img src="assets/products/real/480/hp-poly-blackwire-3320-stereo-usb-c.webp" alt="" width="480" height="480" loading="lazy" decoding="async" /><span><small>Kufje për thirrje</small><b>Poly Blackwire 3320 USB-C</b></span></a>
       </div>
       <div class="biz__copy">
         <span class="eyebrow">ITCOM Business</span>
@@ -418,10 +412,10 @@
   </nav>
 
   <!-- Ndërtuesi i PC-së -->
-  <section class="builder" id="builder" hidden aria-label="Ndërtuesi i PC-së">
+  <section class="builder" id="builder" hidden role="dialog" aria-modal="true" aria-labelledby="bTitle">
     <header class="builder__bar">
       <button class="builder__back" id="bClose"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Dyqani</span></button>
-      <div class="builder__title"><b>Ndërto PC‑në tënde</b><span>Konfiguruesi 3D i ITCOM</span></div>
+      <div class="builder__title"><b id="bTitle">Ndërto PC‑në tënde</b><span>Konfiguruesi 3D i ITCOM</span></div>
       <div class="builder__presets"><span>Fillo nga:</span><div id="bPresets"></div></div>
     </header>
     <div class="builder__main">
@@ -439,9 +433,9 @@
           <span class="builder__lookv" id="bLookLabel"></span>
         </div>
       </div>
-      <aside class="builder__panel" aria-label="Pjesët">
+      <div class="builder__panel" role="group" aria-label="Pjesët">
         <div class="builder__steps" id="bSteps"></div>
-      </aside>
+      </div>
     </div>
     <footer class="builder__summary">
       <ul class="bchecks" id="bChecks"></ul>
