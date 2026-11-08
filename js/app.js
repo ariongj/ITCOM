@@ -28,6 +28,8 @@
   // Rrënja e dyqanit (p.sh. /ITCOM/). Çdo produkt ka adresën e vet: /ITCOM/p/<id>/ (faqe statike, e indeksueshme).
   const BASE = new URL(document.baseURI).pathname;
   const productHref = (id) => `${BASE}p/${encodeURIComponent(id)}/`;
+  // Faqet statike të kategorive (/ITCOM/kategoria/<slug>/) hapen si katalogu përkatës.
+  const pathCategory = () => { const m = location.pathname.slice(BASE.length).match(/^kategoria\/([^/]+)\/?$/); return m ? decodeURIComponent(m[1]) : null; };
   const pathProduct = () => { const m = location.pathname.slice(BASE.length).match(/^p\/([^/]+)\/?$/); return m ? decodeURIComponent(m[1]) : null; };
   // Navigimi mes pamjeve (ballina, katalogu, produkti, shporta, porosia) bëhet me hash, që Back të punojë.
   // Navigim brenda dyqanit: adresat #/… në rrënjë, faqet e produkteve me adresën e tyre (pa ringarkim).
@@ -1221,6 +1223,11 @@
   function route() {
     let h = decodeURIComponent(location.hash.slice(1));
     const pid = productId(pathProduct() || "");
+    // /ITCOM/kategoria/<slug>/ → #/kategoria/<slug>; /ITCOM/?q=… (kërkimi nga motorët e kërkimit) → #/kerko/…
+    const pcat = !h ? pathCategory() : null;
+    const qParam = !h && location.pathname === BASE ? new URLSearchParams(location.search).get("q") : null;
+    if (pcat) { history.replaceState(null, "", `${BASE}#/kategoria/${encodeURIComponent(pcat)}`); h = `/kategoria/${pcat}`; }
+    else if (qParam) { history.replaceState(null, "", `${BASE}#/kerko/${encodeURIComponent(qParam)}`); h = `/kerko/${qParam}`; }
     // Adresat #/… i përkasin rrënjës; nga një faqe produkti e pastrojmë adresën.
     if (location.pathname !== BASE && h.startsWith("/")) history.replaceState(null, "", BASE + location.hash);
     else if (location.pathname !== BASE && !pid) history.replaceState(null, "", BASE + location.hash);

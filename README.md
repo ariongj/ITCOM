@@ -101,6 +101,8 @@ The store's interface and product content are in **Albanian** (prices formatted 
 - Laptops whose RAM/SSD depend on the configuration say so; the placeholder phone number is never shown as real; the footer marks the shop as a demo
 - Static product pages (`p/<id>/index.html`) with their own title, description, canonical URL, Open Graph tags and `Product` + `BreadcrumbList` JSON‑LD, readable without JavaScript; `sitemap.xml` lists them. Regenerate both after changing products: `node scripts/build-pages.mjs`
 - Products added later in the CMS (no static page yet) still open: `404.html` sends `/ITCOM/p/<id>/` to the shop
+- Static category and group pages (`kategoria/<slug>/index.html`, 37 of them) with title, description (count, brands, starting price), canonical URL, `CollectionPage` + `ItemList` + `BreadcrumbList` JSON‑LD and a plain list of product links; the shop opens them as the matching catalogue. Product breadcrumbs link to these pages and `sitemap.xml` lists them
+- The home page carries `WebSite` (with a `SearchAction`) and `Organization` JSON‑LD; `/ITCOM/?q=<term>` opens the search results
 
 Responsive from 360 px phones to wide screens with no sideways scrolling, keyboard accessible (visible focus, the slider pauses on hover and focus), respects reduced motion.
 
@@ -155,7 +157,7 @@ Without a backend, an order placed by a visitor stays in that visitor's browser.
 
 ```bash
 cd cms && npm ci && npm run site   # → admin/index.html, cms-assets/, fonts/
-node scripts/build-pages.mjs       # product pages + sitemap (after changing index.html or products)
+node scripts/build-pages.mjs       # product + category pages + sitemap (after changing index.html or products)
 ```
 
 Deep links such as `/ITCOM/admin/narudzbe` work through `404.html`, which reopens the CMS on that screen. Bump `DB_VERSION` in `cms/src/data/seed.ts` when the seed changes (browsers then reload the demo data).
@@ -225,7 +227,7 @@ Photos on a white or transparent background look best. If an image is missing, t
 | Filters shown per category | `js/products.js` (`FACETS`) |
 | Currency, VAT, delivery fees, instalments, payment methods, phone | `window.STORE` in `js/products.js` (payment methods also in CMS → Cilësimet) |
 | Hero slides and promo tiles | CMS → Online Store → Slides, or `SLIDES` / `renderHero()` in `js/app.js` |
-| Static product pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes; runs the catalogue check first) |
+| Static product + category pages + sitemap | `node scripts/build-pages.mjs` (after product or `index.html` changes; runs the catalogue check first) |
 | Catalogue check | `node scripts/check-catalog.mjs` |
 | Smaller photo versions (480/720 px) | `python3 scripts/build-thumbs.py` |
 | Demo marking on/off | `demo` in `window.STORE` (`js/products.js`) |

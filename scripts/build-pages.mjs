@@ -16,6 +16,8 @@ const ctx = { window: {} };
 vm.runInNewContext(readFileSync(root + 'js/products.js', 'utf8'), ctx);
 // Produktet me foto reale (pa çmim të ITCOM ende): faqe pa çmim dhe pa Offer në të dhënat e strukturuara.
 vm.runInNewContext(readFileSync(root + 'js/products-real.js', 'utf8'), ctx);
+// Grupet dhe nënkategoritë e menysë (për faqet statike të kategorive).
+vm.runInNewContext(readFileSync(root + 'js/categories.js', 'utf8'), ctx);
 const { PRODUCTS, STORE: S, FACETS } = ctx.window;
 const template = readFileSync(root + 'index.html', 'utf8');
 
@@ -71,13 +73,13 @@ function page(p) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Ballina', item: S.siteUrl },
-      { '@type': 'ListItem', position: 2, name: p.cat, item: `${S.siteUrl}#/kategoria/${slug(p.cat)}` },
+      { '@type': 'ListItem', position: 2, name: p.cat, item: `${S.siteUrl}kategoria/${slug(p.cat)}/` },
       { '@type': 'ListItem', position: 3, name: p.name, item: url },
     ],
   };
   // Përmbajtja e lexueshme pa JavaScript; dyqani e zëvendëson me faqen e plotë kur ngarkohet.
   const body = `
-      <nav class="crumbs" aria-label="Navigimi"><a href="#/">Ballina</a><span aria-hidden="true">/</span><a href="#/kategoria/${slug(p.cat)}">${esc(p.cat)}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(p.name)}</span></nav>
+      <nav class="crumbs" aria-label="Navigimi"><a href="#/">Ballina</a><span aria-hidden="true">/</span><a href="kategoria/${slug(p.cat)}/">${esc(p.cat)}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(p.name)}</span></nav>
       <div class="pp">
         <div class="pp__gallery"><div class="pp__main"><div class="media"><img src="${esc(imgOf(p))}" alt="${esc(p.name)}" /></div></div></div>
         <div class="pp__info">
@@ -116,6 +118,65 @@ function page(p) {
   return html;
 }
 
+/* Faqet statike të kategorive dhe grupeve: /ITCOM/kategoria/<slug>/ me titull, përshkrim, adresë kanonike,
+   CollectionPage + ItemList + BreadcrumbList dhe lidhje të lexueshme te produktet (pa JavaScript).
+   Dyqani i hap si katalogun përkatës (#/kategoria/<slug>). */
+function categoryPage({ slugName, name, list, intro, parent }) {
+  const url = `${S.siteUrl}kategoria/${slugName}/`;
+  const brands = [...new Set(list.map((p) => p.brand))].slice(0, 6);
+  const priced = list.filter((p) => !p.quote && p.price > 0).map((p) => p.price);
+  const from = priced.length ? Math.min(...priced) : 0;
+  const title = `${name} · ITCOM`;
+  const desc = `${name} në ITCOM: ${list.length} produkte${brands.length ? ` nga ${brands.join(', ')}` : ''}. ${from ? `Nga ${fmt(from)} me TVSH. ` : ''}Krahaso specifikimet dhe disponueshmërinë; dërgesë në gjithë Kosovën.`;
+  const image = list[0] ? new URL(imgOf(list[0]), S.siteUrl).href : `${S.siteUrl}assets/og-image.jpg`;
+  const ld = [
+    { '@context': 'https://schema.org', '@type': 'CollectionPage', name, description: desc, url,
+      mainEntity: { '@type': 'ItemList', numberOfItems: list.length, itemListElement: list.slice(0, 60).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${S.siteUrl}p/${p.id}/`, name: p.name })) } },
+    { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Ballina', item: S.siteUrl },
+      ...(parent ? [{ '@type': 'ListItem', position: 2, name: parent.name, item: `${S.siteUrl}kategoria/${parent.slug}/` }] : []),
+      { '@type': 'ListItem', position: parent ? 3 : 2, name, item: url },
+    ] },
+  ];
+  const body = `
+      <nav class="crumbs" aria-label="Navigimi"><a href="./">Ballina</a><span aria-hidden="true">/</span>${parent ? `<a href="kategoria/${parent.slug}/">${esc(parent.name)}</a><span aria-hidden="true">/</span>` : ''}<span aria-current="page">${esc(name)}</span></nav>
+      <h1 class="page-title">${esc(name)}</h1>
+      <p class="muted page-sub">${esc(intro || desc)}</p>
+      <ul class="seo-list">${list.map((p) => `<li><a href="p/${p.id}/">${esc(p.name)}</a> · ${(!p.quote && p.price > 0) ? fmt(p.price) : 'Çmimi me kërkesë'}</li>`).join('')}</ul>`;
+  let html = template;
+  html = html.replace(/\s*<script>\s*\/\/ Faqet e produkteve[\s\S]*?<\/script>/, `\n  <base href="${new URL(S.siteUrl).pathname}" />`);
+  html = html.replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`);
+  html = setAttr(html, /(<meta name="description" content=")[^"]*(")/, desc);
+  html = setAttr(html, /(<link rel="canonical" href=")[^"]*(")/, url);
+  html = setAttr(html, /(<meta property="og:title" content=")[^"]*(")/, title);
+  html = setAttr(html, /(<meta property="og:description" content=")[^"]*(")/, desc);
+  html = setAttr(html, /(<meta property="og:url" content=")[^"]*(")/, url);
+  html = setAttr(html, /(<meta property="og:image" content=")[^"]*(")/, image);
+  html = html.replace(/\s*<meta property="og:image:(width|height)"[^>]*>/g, '');
+  html = replaceOnce(html, '</head>', ld.map((x) => `  <script type="application/ld+json">${JSON.stringify(x).replace(/</g, '\\u003c')}</script>`).join('\n') + '\n</head>');
+  html = replaceOnce(html, '<div class="view" id="viewHome" data-view="home">', '<div class="view" id="viewHome" data-view="home" hidden>');
+  html = replaceOnce(html, '<section class="view container" id="viewPage" data-view="page" hidden></section>', `<section class="view container" id="viewPage" data-view="page">${body}\n    </section>`);
+  html = replaceOnce(html, '<section class="container biz" id="business"', '<section class="container biz" id="business" hidden');
+  return html;
+}
+const catDir = root + 'kategoria/';
+if (existsSync(catDir)) rmSync(catDir, { recursive: true });
+const catPages = [];
+const writeCat = (cfg) => { mkdirSync(`${catDir}${cfg.slugName}`, { recursive: true }); writeFileSync(`${catDir}${cfg.slugName}/index.html`, categoryPage(cfg)); catPages.push(cfg.slugName); };
+const groups = ctx.window.CATEGORY_GROUPS || [];
+const shopCats = [...new Set(PRODUCTS.map((p) => p.cat))];
+const groupOf = (cat) => groups.find((g) => g.subs.some((x) => (x.cat || x.name) === cat));
+for (const cat of shopCats) {
+  const g = groupOf(cat);
+  writeCat({ slugName: slug(cat), name: cat, list: PRODUCTS.filter((p) => p.cat === cat), parent: g ? { name: g.name, slug: g.slug } : null });
+}
+for (const g of groups) {
+  const cats = new Set(g.subs.map((x) => x.cat || x.name));
+  const list = PRODUCTS.filter((p) => cats.has(p.cat));
+  if (!list.length || catPages.includes(g.slug)) continue;
+  writeCat({ slugName: g.slug, name: g.name, list, intro: `${g.name}: ${[...cats].filter((c) => shopCats.includes(c)).join(', ')}. ${list.length} produkte në ITCOM.` });
+}
+
 // Faqet e vjetra të produkteve që nuk ekzistojnë më hiqen.
 const dir = root + 'p/';
 if (existsSync(dir)) rmSync(dir, { recursive: true });
@@ -125,10 +186,10 @@ for (const p of PRODUCTS) {
 }
 
 const today = new Date().toISOString().slice(0, 10);
-const urls = [S.siteUrl, ...PRODUCTS.map((p) => `${S.siteUrl}p/${p.id}/`)];
+const urls = [S.siteUrl, ...catPages.map((c) => `${S.siteUrl}kategoria/${c}/`), ...PRODUCTS.map((p) => `${S.siteUrl}p/${p.id}/`)];
 writeFileSync(root + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `);
-console.log(`faqe produktesh: ${PRODUCTS.length}, sitemap: ${urls.length} adresa`);
+console.log(`faqe produktesh: ${PRODUCTS.length}, faqe kategorish: ${catPages.length}, sitemap: ${urls.length} adresa`);
