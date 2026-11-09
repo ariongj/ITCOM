@@ -124,10 +124,14 @@
           const why = oid === id ? null : conflict(s.key, oid);
           const stop = why && blocked(s.key, oid);
           const delta = p && oid !== id ? o.price - p.price : 0;
-          return `<button type="button" class="bopt ${oid === id ? "is-sel" : ""} ${stop ? "is-bad" : why ? "is-warn" : ""}" data-bpick="${s.key}|${oid}" ${stop ? 'aria-disabled="true"' : ""}>
-            ${A.media(o)}
-            <span class="bopt__info"><b>${esc(o.name)}</b><small>${esc(shortSpecs(o))}</small>${why ? `<em>${esc(why)}${stop ? "" : " Do t’ju propozojmë pjesët që përputhen."}</em>` : ""}</span>
-            <span class="bopt__price"><b>${fmt(o.price)}</b>${delta ? `<small class="${delta > 0 ? "up" : "down"}">${delta > 0 ? "+" : "−"}${fmt(Math.abs(delta))}</small>` : oid === id ? `<small class="sel">${svg('<path d="M20 6 9 17l-5-5"/>')} E zgjedhur</small>` : ""}</span>
+          // Raundi 07: emri në dy rreshta, specifikimet, pastaj gjendja (e zgjedhur / diferenca nga zgjedhja / konflikti); çmimi në kolonën e vet.
+          const state = oid === id
+            ? `<small class="bopt__state sel">${svg('<path d="M20 6 9 17l-5-5"/>')} E zgjedhur</small>`
+            : delta ? `<small class="bopt__state ${delta > 0 ? "up" : "down"}">${delta > 0 ? "+" : "−"}${fmt(Math.abs(delta))} nga zgjedhja</small>` : "";
+          return `<button type="button" class="bopt ${oid === id ? "is-sel" : ""} ${stop ? "is-bad" : why ? "is-warn" : ""}" data-bpick="${s.key}|${oid}" ${stop ? 'aria-disabled="true"' : ""} ${oid === id ? 'aria-current="true"' : ""}>
+            ${A.media(o, "", false, "thumb")}
+            <span class="bopt__info"><b>${esc(o.name)}</b><small>${esc(shortSpecs(o))}</small>${state}${why ? `<em>${esc(why)}${stop ? "" : " Do t’ju propozojmë pjesët që përputhen."}</em>` : ""}</span>
+            <span class="bopt__price"><b>${fmt(o.price)}</b></span>
           </button>`;
         }).join("")}</div>` : ""}
       </section>`;
@@ -171,10 +175,20 @@
     return b;
   }
   const scene = () => sceneOf(st);
+  // Gjatë ndërrimit pamja e mëparshme zbehet me një shënim të shkurtër, që të mos ngatërrohet me zgjedhjen e re.
+  let updTimer = 0;
   function update3d() {
     if (!viewer || pending) return;
     pending = true;
-    requestAnimationFrame(() => { pending = false; try { viewer.setBuild(scene()); } catch (e) { console.error(e); } });
+    const stage = root.querySelector(".builder__stage");
+    const t0 = performance.now();
+    stage.classList.add("is-updating");
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      pending = false;
+      try { viewer.setBuild(scene()); } catch (e) { console.error(e); }
+      clearTimeout(updTimer);
+      updTimer = setTimeout(() => stage.classList.remove("is-updating"), Math.max(0, 260 - (performance.now() - t0)));
+    }));
   }
   function load3d() {
     if (loading) return loading;
@@ -186,7 +200,12 @@
       $("#bLoading").hidden = true;
     }).catch((err) => {
       console.error(err);
-      $("#bLoading").innerHTML = "Pamja 3D nuk mund të ngarkohet në këtë pajisje. Mund ta ndërtoni PC‑në edhe pa të.";
+      // Pa WebGL: fotoja e konfigurimit me të njëjtën kasë (render i të njëjtit model), me emrin e saktë; lista mbetet funksionale.
+      const ref = PRESETS.find((p) => p.parts.case === st.parts.case);
+      const caseName = byId[st.parts.case]?.name || "";
+      $("#bLoading").innerHTML = ref
+        ? `<figure class="builder__poster"><img src="assets/builds/${ref.key}-720.webp" alt="Pamje orientuese e PC-së në kasën ${esc(caseName)}" width="720" height="600" /><figcaption>Pamje orientuese · ${esc(caseName)}. Pamja 3D nuk ngarkohet në këtë pajisje; konfigurimi funksionon njësoj.</figcaption></figure>`
+        : "Pamja 3D nuk mund të ngarkohet në këtë pajisje. Mund ta ndërtoni PC‑në edhe pa të.";
     });
     return loading;
   }
@@ -222,6 +241,7 @@
     renderAll();
     load3d().then(() => { viewer?.resume(); update3d(); });
     $("#bClose").focus();
+    requestAnimationFrame(() => { if (!root.hidden && !root.contains(document.activeElement)) $("#bClose").focus(); });
   }
   function close() {
     root.hidden = true;
@@ -233,6 +253,11 @@
     if (location.hash === "#builder") { try { history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ } }
   }
   A.openBuilder = open;
+  // Kur fokusi bie në faqe (p.sh. pas rindërtimit të pamjes pas konfiguruesit), kthehet te butoni "Dyqani".
+  root.addEventListener("focusout", (e) => {
+    if (root.hidden || (e.relatedTarget && root.contains(e.relatedTarget))) return;
+    setTimeout(() => { if (!root.hidden && (document.activeElement === document.body || !document.activeElement)) $("#bClose").focus({ preventScroll: true }); }, 0);
+  });
   A.builder = { presets: PRESETS, sceneOf };
 
   /* ------------------------------------------------------------ pamja 3D në ballinë

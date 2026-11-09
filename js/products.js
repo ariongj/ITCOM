@@ -21,6 +21,8 @@ window.STORE = {
   expressFee: 5,
   // Këstet shfaqen vetëm kur ka marrëveshje të konfirmuar me bankë/ofrues (Raundi 04, f. 21): 0 = pa këste.
   installments: 0,
+  // Profilet sociale: shto adresat kur krijohen. Pa adresë, në demo ikonat shfaqen si "së shpejti" (pa lidhje bosh).
+  social: { instagram: "", facebook: "", linkedin: "" },
   // Mënyrat e pagesës që punojnë realisht (CMS → Cilësimet → Pagesat). Pa konfirmim: asnjë, pagesa konfirmohet me telefon.
   payments: { cod: false, card: false, bank: false },
   phone: "+383 44 000 000",

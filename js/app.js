@@ -2307,6 +2307,20 @@
     if (!h) return `<span class="${cls}">${esc(it.label)}</span>`;
     return `<a class="${cls}" href="${esc(h)}">${esc(it.label)}</a>`;
   };
+  // Raundi 07: ikonat sociale të një familjeje me emër të lexueshëm; pa adresë → "së shpejti", jo lidhje bosh.
+  function renderSocial() {
+    const el = $("#footerSocial");
+    if (!el) return;
+    const soc = S.social || {};
+    const NAMES = [["instagram", "Instagram"], ["facebook", "Facebook"], ["linkedin", "LinkedIn"]];
+    const items = NAMES.filter(([k]) => soc[k] || S.demo);
+    el.hidden = !items.length;
+    el.innerHTML = items.map(([k, n]) => soc[k]
+      ? `<li><a href="${esc(soc[k])}" target="_blank" rel="noopener">${lucide(k)}<span>${n}</span></a></li>`
+      : `<li><span class="is-soon" title="Profili ${n} së shpejti">${lucide(k)}<span>${n}</span></span></li>`).join("");
+  }
+  renderSocial();
+
   function renderMenus() {
     const m = window.CMS?.menus;
     if (m?.main?.length) $("#navLinks").innerHTML = m.main.map((it) => menuLink(it, "navbar__link")).join("");
@@ -2969,6 +2983,22 @@
   window.addEventListener("resize", () => syncStrip());
   $("#stripPrev").addEventListener("click", () => strip.scrollBy({ left: -strip.clientWidth * 0.85, behavior: reducedMotion() ? "auto" : "smooth" }));
   $("#stripNext").addEventListener("click", () => strip.scrollBy({ left: strip.clientWidth * 0.85, behavior: reducedMotion() ? "auto" : "smooth" }));
+  // Raundi 07: tërheqje me mouse (prek dhe trackpad e kanë vetë); klikimi pas tërheqjes nuk hap kategorinë.
+  (function dragScroll(el) {
+    let x0 = 0, s0 = 0, down = false, moved = false;
+    el.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse" || e.button !== 0) return; down = true; moved = false; x0 = e.clientX; s0 = el.scrollLeft; });
+    el.addEventListener("pointermove", (e) => {
+      if (!down) return;
+      const dx = e.clientX - x0;
+      if (!moved && Math.abs(dx) > 6) { moved = true; el.classList.add("is-dragging"); try { el.setPointerCapture(e.pointerId); } catch { /* ignore */ } }
+      if (moved) el.scrollLeft = s0 - dx;
+    });
+    const end = () => { down = false; el.classList.remove("is-dragging"); };
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+    el.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    el.addEventListener("dragstart", (e) => e.preventDefault());
+  })(strip);
 
   // Telefoni (Raundi 04, f. 23): navigimi i poshtëm vetëm në ballinë dhe katalog; numrat ndjekin shportën dhe të ruajturat.
   const mirror = (from, to) => { const a = $(from), b = $(to); if (!a || !b) return; const sync = () => { b.textContent = a.textContent; b.hidden = a.hidden; }; sync(); new MutationObserver(sync).observe(a, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["hidden"] }); };

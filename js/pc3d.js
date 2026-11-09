@@ -122,7 +122,8 @@ function fan(size = 12, { frame = "#16171a", blades = "#1d1f23", rgb = null, dep
   add(rotor, CYL(r * 0.32, r * 0.32, depth * 0.8, 32), M.plastic(shade(blades, 0.06), 0.4)).rotation.x = Math.PI / 2;
   add(rotor, CYL(r * 0.2, r * 0.2, 0.05, 32), M.plastic("#2a2c31", 0.3), 0, 0, depth * 0.41).rotation.x = Math.PI / 2;
   rotor.userData.spin = true; // the viewer that shows this fan turns it
-  // RGB ring on the front edge
+  // RGB ring on the front edge; without RGB a satin rim keeps the fan readable against a dark case
+  if (!rgb) add(g, new THREE.TorusGeometry(r + 0.15, 0.12, 8, 72), M.metal(isLight(frame) ? "#b9bdc6" : "#4a4e57", 0.35, 0.6), 0, 0, depth / 2);
   if (rgb) {
     add(g, new THREE.TorusGeometry(r + 0.15, 0.22, 10, 72), M.glow(rgb, 2.6), 0, 0, depth / 2);
     add(g, CYL(r * 0.22, r * 0.22, 0.06, 24), M.glow(rgb, 1.2), 0, 0, depth * 0.42).rotation.x = Math.PI / 2;
@@ -355,7 +356,19 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   add(g, RB(D, t, W, 0.25), shell, 0, H - t / 2, 0);                      // top
   add(g, RB(D, t, W, 0.25), shell, 0, t / 2, 0);                          // bottom
   add(g, RB(t, H, W, 0.25), shell, -D / 2 + t / 2, H / 2, 0);             // rear
-  for (const [x, z] of [[-D / 2 + 3, -W / 2 + 3], [-D / 2 + 3, W / 2 - 3], [D / 2 - 3, -W / 2 + 3], [D / 2 - 3, W / 2 - 3]]) add(g, RB(4, 1.2, 3, 0.4), M.plastic("#0c0d0f"), x, -0.5, z);
+  const front = spec.front || "mesh";
+  if (front === "glass") {
+    // O11: tall angled feet in the case colour, the panoramic glass "floats"
+    for (const [x, z] of [[-D / 2 + 3.5, -W / 2 + 2.6], [-D / 2 + 3.5, W / 2 - 2.6], [D / 2 - 3.5, -W / 2 + 2.6], [D / 2 - 3.5, W / 2 - 2.6]]) {
+      const foot = add(g, RB(5, 2.4, 3.6, 0.5), shell, x, -1, z);
+      foot.scale.set(1, 1, 1);
+    }
+  } else if (front === "perf") {
+    // H5 Flow: two slim rails
+    for (const z of [-W / 2 + 2.6, W / 2 - 2.6]) add(g, RB(D - 4, 0.9, 2.4, 0.4), M.plastic("#0c0d0f"), 0, -0.45, z);
+  } else {
+    for (const [x, z] of [[-D / 2 + 3, -W / 2 + 3], [-D / 2 + 3, W / 2 - 3], [D / 2 - 3, -W / 2 + 3], [D / 2 - 3, W / 2 - 3]]) add(g, RB(4, 1.2, 3, 0.4), M.plastic("#0c0d0f"), x, -0.5, z);
+  }
   // top dust filter
   const mesh = canvasTex(256, 256, (c, w, h) => { c.fillStyle = light ? "#c8cbd1" : "#0b0c0e"; c.fillRect(0, 0, w, h); c.fillStyle = light ? "#eef0f3" : "#202226"; for (let y = 0; y < h; y += 10) for (let x = (y / 10) % 2 ? 5 : 0; x < w; x += 10) { c.beginPath(); c.arc(x, y, 3.2, 0, 7); c.fill(); } });
   mesh.wrapS = mesh.wrapT = THREE.RepeatWrapping; mesh.repeat.set(4, 2);
@@ -364,24 +377,43 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   add(g, RB(0.2, 15, 6, 0.1), M.plastic("#0b0c0e"), -D / 2 - 0.02, H - 11, -W / 2 + 6);
 
   // front panel
-  const front = spec.front || "mesh";
   if (front === "glass") {
+    // panoramic: front glass meets the side glass at a thin corner, no front pillar
     add(g, RB(0.4, H - 1, W - 0.6, 0.1), glassMat(light), D / 2 - 0.2, H / 2, 0);
     add(g, RB(1, H, 1, 0.2), shell, D / 2 - 0.5, H / 2, -W / 2 + 0.5);
-    add(g, RB(1, H, 1, 0.2), shell, D / 2 - 0.5, H / 2, W / 2 - 0.5);
+    add(g, RB(0.35, H, 0.35, 0.1), shell, D / 2 - 0.2, H / 2, W / 2 - 0.2);
+    // top I/O strip on the front edge
+    add(g, RB(6, 0.25, 2.2, 0.1), M.plastic(light ? "#cfd2d8" : "#0b0c0e"), D / 2 - 5, H + 0.05, -W / 2 + 3);
   } else if (front === "wood") {
     add(g, RB(1.2, H, W, 0.3), shell, D / 2 - 0.6, H / 2, 0);
     const woodTex = canvasTex(64, 512, (c, w, h) => { c.fillStyle = "#6b4426"; c.fillRect(0, 0, w, h); for (let i = 0; i < 26; i++) { c.strokeStyle = `rgba(40,20,8,${0.15 + Math.random() * 0.25})`; c.lineWidth = 1 + Math.random() * 2; c.beginPath(); const x = Math.random() * w; c.moveTo(x, 0); c.bezierCurveTo(x + 6, h * 0.3, x - 6, h * 0.6, x + 3, h); c.stroke(); } });
     const wood = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.65 });
     for (let i = 0; i < 13; i++) add(g, RB(1.2, H - 3, 1.1, 0.25, 2), wood, D / 2 + 0.4, H / 2, -W / 2 + 1.6 + i * ((W - 3.2) / 12));
-  } else {
+  } else if (front === "mesh") {
+    // Corsair 4000D Airflow: a raised front face with a triangular perforation, framed by chamfered side strips
     add(g, RB(1.4, H, W, 0.4), shell, D / 2 - 0.7, H / 2, 0);
+    add(g, RB(1.1, H - 2.4, W - 5.2, 0.3), shell, D / 2 + 0.5, H / 2, 0);
     const pat = canvasTex(256, 512, (c, w, h) => {
-      c.fillStyle = light ? "#d2d5da" : "#0e0f11"; c.fillRect(0, 0, w, h); c.fillStyle = light ? "#f3f4f6" : "#26282d";
-      if (front === "mesh") for (let y = 0; y < h; y += 12) for (let x = (y / 12) % 2 ? 6 : 0; x < w; x += 12) { c.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 3 * k; c.lineTo(x + 4.5 * Math.cos(a), y + 4.5 * Math.sin(a)); } c.fill(); }
-      else for (let y = 20; y < h - 20; y += 10) for (let x = 0; x < 36; x += 10) { c.beginPath(); c.arc(x + 8, y, 2.5, 0, 7); c.fill(); }
+      c.fillStyle = light ? "#c9ccd2" : "#08090b"; c.fillRect(0, 0, w, h); c.fillStyle = light ? "#f3f4f6" : "#2a2c31";
+      const s = 14, hh = s * 0.866;
+      for (let row = 0, y = 0; y < h + hh; row++, y += hh) for (let x = -s; x < w + s; x += s) {
+        const o = row % 2 ? s / 2 : 0;
+        c.beginPath(); c.moveTo(x + o, y + hh - 2); c.lineTo(x + o + s / 2 - 1.5, y + 1.5); c.lineTo(x + o + s - 3, y + hh - 2); c.closePath(); c.fill();
+      }
     });
-    add(g, new THREE.PlaneGeometry(W - 3, H - 3), new THREE.MeshStandardMaterial({ map: pat, roughness: 0.75, metalness: 0.2 }), D / 2 + 0.02, H / 2, 0).rotation.y = Math.PI / 2;
+    add(g, new THREE.PlaneGeometry(W - 6, H - 3.4), new THREE.MeshStandardMaterial({ map: pat, roughness: 0.7, metalness: 0.25 }), D / 2 + 1.07, H / 2, 0).rotation.y = Math.PI / 2;
+    for (const z of [-W / 2 + 1.3, W / 2 - 1.3]) add(g, RB(1.6, H - 2.4, 1.6, 0.5), shell, D / 2 + 0.1, H / 2, z).rotation.y = z > 0 ? -0.5 : 0.5;
+  } else {
+    // NZXT H5 Flow: a clean solid face with a perforated intake strip down the side edge
+    add(g, RB(1.4, H, W, 0.4), shell, D / 2 - 0.7, H / 2, 0);
+    const pat = canvasTex(64, 512, (c, w, h) => {
+      c.fillStyle = light ? "#d2d5da" : "#0e0f11"; c.fillRect(0, 0, w, h); c.fillStyle = light ? "#f6f7f9" : "#2a2c31";
+      for (let y = 12; y < h - 12; y += 9) for (let x = 8; x < w - 4; x += 9) { c.beginPath(); c.arc(x, y, 2.6, 0, 7); c.fill(); }
+    });
+    add(g, new THREE.PlaneGeometry(4.2, H - 5), new THREE.MeshStandardMaterial({ map: pat, roughness: 0.7, metalness: 0.2 }), D / 2 + 0.02, H / 2, W / 2 - 3).rotation.y = Math.PI / 2;
+    // logo plate
+    const logo = canvasTex(256, 64, (c, w, h) => { c.fillStyle = light ? "rgba(0,0,0,.45)" : "rgba(255,255,255,.55)"; c.font = "bold 40px Arial"; c.fillText("ITCOM", 18, 46); });
+    add(g, new THREE.PlaneGeometry(5, 1.25), new THREE.MeshStandardMaterial({ map: logo, transparent: true }), D / 2 + 0.03, 3.4, -W / 2 + 6).rotation.y = Math.PI / 2;
   }
   // glass side panel + frame
   add(g, RB(D - 0.6, H - 0.6, 0.35, 0.15, 1), glassMat(light), 0, H / 2, W / 2 - 0.2);
@@ -399,10 +431,20 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
     const blade = light ? "#f4f5f7" : "#1b1c20";
     const rear = fan(12, { frame: fanCol, blades: blade, rgb });
     rear.rotation.y = Math.PI / 2; rear.position.set(-D / 2 + 1.8, H - 10, -1.5); g.add(rear);
-    for (const y of [16.5, 28.5, 40.5]) {
-      if (front === "glass") continue;
+    // front intake: three fans behind the 4000D mesh, two behind the H5 face
+    const frontYs = front === "mesh" ? [16.5, 28.5, 40.5] : front === "glass" ? [] : [22.5, 34.5];
+    for (const y of frontYs) {
       const f = fan(12, { frame: fanCol, blades: blade, rgb });
       f.rotation.y = -Math.PI / 2; f.position.set(D / 2 - 2.6, y, 0); g.add(f);
+    }
+    if (front === "perf") {
+      // H5 Flow signature: a 120 mm fan angled on the shroud, blowing at the graphics card
+      const f = fan(12, { frame: fanCol, blades: blade, rgb });
+      f.rotation.set(-Math.PI / 2 + 0.42, 0, 0); f.position.set(D / 2 - 9, 11, 2.5); g.add(f);
+    }
+    if (front === "glass") {
+      // O11 side bracket: two fans standing next to the motherboard, seen through both glass panels
+      for (const y of [18.6, 30.6]) { const f = fan(12, { frame: fanCol, blades: blade, rgb }); f.rotation.y = -Math.PI / 2; f.position.set(D / 2 - 4.2, y, 0); g.add(f); }
     }
     // three 120 mm fans centred on the shroud, inside the front glass (D/2 = 22.5)
     if (front === "glass") for (const x of [-13, 0, 13]) { const f = fan(12, { frame: fanCol, blades: blade, rgb }); f.rotation.x = -Math.PI / 2; f.position.set(x, 10.6, 3); g.add(f); }
@@ -483,7 +525,8 @@ export function assemble(b) {
     cable(root, [new THREE.Vector3(eps.x - 1, H - 1.2, zb + 0.2), new THREE.Vector3(eps.x - 0.5, H - 1.6, zb + 1.8), new THREE.Vector3(eps.x, eps.y + 0.8, zb + 1.4), eps], 8, new THREE.Vector3(1, 0, 0), sleeve(b), 0.13);
   }
   if (rgb) {
-    const glowLight = new THREE.PointLight(rgb, isLight(b.caseColor || "#16171a") ? 18 : 55, 60, 1.6);
+    // white cases bounce a lot of light: a weaker RGB fill keeps the parts readable
+    const glowLight = new THREE.PointLight(rgb, isLight(b.caseColor || "#16171a") ? 9 : 55, 60, 1.6);
     glowLight.position.set(0, 26, 4);
     root.add(glowLight);
   }
@@ -556,7 +599,7 @@ export function createViewer(container, opts = {}) {
   const mirror = new Reflector(new THREE.CircleGeometry(160, 64), {
     textureWidth: Math.round((container.clientWidth || 800) * 0.6),
     textureHeight: Math.round((container.clientHeight || 600) * 0.6),
-    color: 0x6b7280,
+    color: 0x4e5462, // a softer mirror: the reflection hints at the floor instead of doubling the PC
   });
   mirror.rotation.x = -Math.PI / 2; mirror.position.y = -1.15;
   scene.add(mirror);
@@ -617,6 +660,8 @@ export function createViewer(container, opts = {}) {
   function setBuild(b) {
     if (pc) { scene.remove(pc); disposeTree(pc); }
     pc = assemble(b);
+    const light = isLight(b.caseColor || "#16171a");
+    if (bloom) bloom.strength = light ? 0.22 : 0.38;
     spin = [];
     pc.traverse((o) => {
       if (o.userData.spin) spin.push(o);
@@ -624,7 +669,7 @@ export function createViewer(container, opts = {}) {
       const m = o.material;
       o.castShadow = !m.transparent && !(m.emissiveIntensity > 1);
       o.receiveShadow = !m.transparent;
-      if (!m.transparent) m.envMapIntensity = 0.6; // deeper blacks: less studio sheen on dark parts
+      if (!m.transparent) m.envMapIntensity = light ? 0.4 : 0.6; // deeper blacks; less glare on white cases
     });
     scene.add(pc);
   }
