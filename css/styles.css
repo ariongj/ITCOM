@@ -2730,3 +2730,26 @@ p.footer__demo { margin-block: 0; margin-inline: auto; }
 .builder__poster { margin: 0; display: grid; justify-items: center; gap: 10px; width: 100%; height: 100%; align-content: center; }
 .builder__poster img { max-width: 100%; max-height: calc(100% - 60px); object-fit: contain; }
 .builder__poster figcaption { max-width: 46ch; font-size: 13px; font-weight: 500; color: #a1a1a6; }
+
+/* ============ Konfigurimet PC në shportë: një grup me pjesët ============ */
+.pcgroup { display: grid; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); list-style: none; }
+.pcgroup--page { padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-lg, 16px); background: var(--surface); margin-bottom: 12px; }
+.pcgroup__head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.pcgroup__img { display: block; width: 64px; }
+.pcgroup__img .media { aspect-ratio: 1; }
+.pcgroup__title { display: grid; gap: 2px; min-width: 0; }
+.pcgroup__title small { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--brand-2, #0a6cdf); }
+.pcgroup__title h2, .pcgroup__title h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.pcgroup__title .muted { font-size: 13px; }
+.pcgroup__sum { font-size: 16px; white-space: nowrap; }
+.pcgroup__parts summary { cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--ink-2); min-height: 32px; display: flex; align-items: center; }
+.pcgroup__parts ul { display: grid; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+.pcgroup__parts li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; font-size: 13.5px; }
+.pcgroup__parts li small { grid-column: 1 / -1; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.pcgroup__parts li span { min-width: 0; overflow-wrap: anywhere; }
+.pcgroup__ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.pcgroup__parts summary { list-style: none; gap: 8px; }
+.pcgroup__parts summary::-webkit-details-marker { display: none; }
+.pcgroup__parts summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.pcgroup__parts[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+@media (prefers-reduced-motion: reduce) { .pcgroup__parts summary::after { transition: none; } }

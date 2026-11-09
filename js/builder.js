@@ -375,13 +375,13 @@
     $("#bcNo").addEventListener("click", () => A.closeModal());
   }
 
+  // Shporta e mban PC-në si një konfigurim me listën e saktë të pjesëve (Raundi 07, f. 20).
   function addAllToCart() {
     if (errors(st.parts).length) return;
-    const ids = SLOTS.map((s) => st.parts[s.key]).filter(Boolean);
-    if (st.assembly && byId["srv-assembly"]) ids.push("srv-assembly");
-    let n = 0;
-    for (const id of ids) if (A.addToCart(id, 1, true)) n++;
-    A.toast(`U shtuan ${n} artikuj në shportë — totali i PC‑së ${fmt(total())}`, { label: "Shiko shportën", fn: () => { close(); A.openCart(); } });
+    const preset = PRESETS.find((p) => SLOTS.every((s) => p.parts[s.key] === st.parts[s.key]));
+    const pc = A.addPc({ name: preset ? `PC ${preset.name}` : undefined, parts: { ...st.parts }, color: st.color, rgb: st.rgb, assembly: st.assembly });
+    if (!pc) return;
+    A.toast(`PC‑ja u shtua në shportë si një konfigurim — ${fmt(total())}`, { label: "Shiko shportën", fn: () => { close(); A.openCart(); } });
   }
 
   function thumbnail() {

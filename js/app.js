@@ -283,10 +283,15 @@
   const expandedFacets = new Set();
 
   let cart = saved.get("cart", []).filter((l) => byId[l.id] && byId[l.id].stock > 0);
+  // Konfigurimet PC nga ndërtuesi: pjesët mbeten rreshta të veçantë (çmimi, stoku, zbritjet), të shënuar me `pc`,
+  // dhe shfaqen si një grup me listën e saktë të pjesëve.
+  let pcs = saved.get("pcs", {});
+  cart = cart.filter((l) => !l.pc || pcs[l.pc]);
+  for (const k of Object.keys(pcs)) if (!cart.some((l) => l.pc === k)) delete pcs[k];
   let wish = new Set(saved.get("wish", []).filter((id) => byId[id]));
   let compare = saved.get("cmp", []).filter((id) => byId[id]);
   let recent = saved.get("recent", []).filter((id) => byId[id]);
-  const cartQty = (id) => cart.find((l) => l.id === id)?.qty || 0;
+  const cartQty = (id) => cart.reduce((n, l) => n + (l.id === id ? l.qty : 0), 0);
 
   /* ================================================================ filtrimi */
   function matches(p, skip = "") {
@@ -1036,14 +1041,14 @@
   }
 
   /* ================================================================ shporta */
-  const saveCart = () => saved.set("cart", cart);
+  const saveCart = () => { saved.set("cart", cart); saved.set("pcs", pcs); };
 
   function addToCart(id, qty = 1, quiet = false) {
     const p = byId[id];
     if (!p || !p.stock || isQuote(p)) return false;
-    const line = cart.find((l) => l.id === id);
+    const line = cart.find((l) => l.id === id && !l.pc);
     const cur = line ? line.qty : 0;
-    const next = Math.min(p.stock, cur + qty);
+    const next = Math.min(p.stock - (cartQty(id) - cur), cur + qty);
     if (next === cur) { toast(`Në stok kemi vetëm ${p.stock} copë nga ky produkt`); return false; }
     if (line) line.qty = next; else cart.push({ id, qty: next });
     saveCart();
@@ -1055,22 +1060,93 @@
   }
 
   function setQty(id, qty) {
-    const line = cart.find((l) => l.id === id);
+    const line = cart.find((l) => l.id === id && !l.pc);
     if (!line) return;
     if (qty <= 0) return removeLine(id);
-    line.qty = Math.min(qty, byId[id].stock);
+    line.qty = Math.min(qty, byId[id].stock - (cartQty(id) - line.qty));
     saveCart();
     renderCart();
   }
 
   function removeLine(id) {
-    const idx = cart.findIndex((l) => l.id === id);
+    const idx = cart.findIndex((l) => l.id === id && !l.pc);
     if (idx < 0) return;
     const [removed] = cart.splice(idx, 1);
     saveCart();
     renderCart();
     refreshCards();
     toast(`U hoq: ${esc(byId[id].name)}`, { label: "Anulo", fn: () => { cart.splice(idx, 0, removed); saveCart(); renderCart(); refreshCards(); } });
+  }
+
+  /* ---- konfigurimet PC në shportë */
+  const SLOT_NAMES = { cpu: "Procesori", mb: "Pllaka amë", ram: "Memoria RAM", gpu: "Kartela grafike", cooler: "Ftohësi", ssd: "Disku SSD", psu: "Furnizimi me rrymë", case: "Kasa", asm: "Montimi dhe testimi" };
+  function addPc(cfg) {
+    const ids = [...Object.values(cfg.parts || {}), ...(cfg.assembly && byId["srv-assembly"] ? ["srv-assembly"] : [])];
+    const short = ids.find((id) => !byId[id] || isQuote(byId[id]) || cartQty(id) + 1 > byId[id].stock);
+    if (short) { toast(`Nuk u shtua: ${esc(byId[short]?.name || short)} nuk ka mjaftueshëm në stok`); return null; }
+    const pc = "pc" + Date.now().toString(36);
+    pcs[pc] = { name: cfg.name || `PC‑ja ${Object.keys(pcs).length + 1}`, parts: { ...cfg.parts }, color: cfg.color || 0, rgb: cfg.rgb ?? null, assembly: !!cfg.assembly };
+    ids.forEach((id) => cart.push({ id, qty: 1, pc }));
+    saveCart();
+    renderCart();
+    refreshCards();
+    bump("#cartCount");
+    announce(`${pcs[pc].name} u shtua në shportë`);
+    return pc;
+  }
+  function setPcQty(pc, n) {
+    const ls = cart.filter((l) => l.pc === pc);
+    if (!ls.length) return;
+    if (n <= 0) return removePc(pc);
+    const over = ls.find((l) => cartQty(l.id) - l.qty + n > byId[l.id].stock);
+    if (over) { toast(`Në stok kemi vetëm ${byId[over.id].stock} copë nga ${esc(byId[over.id].name)}`); return; }
+    ls.forEach((l) => { l.qty = n; });
+    saveCart();
+    renderCart();
+  }
+  function removePc(pc) {
+    const before = cart.slice(), meta = pcs[pc];
+    cart = cart.filter((l) => l.pc !== pc);
+    delete pcs[pc];
+    saveCart();
+    renderCart();
+    refreshCards();
+    toast(`U hoq konfigurimi: ${esc(meta?.name || "PC")}`, { label: "Anulo", fn: () => { cart = before; pcs[pc] = meta; saveCart(); renderCart(); refreshCards(); } });
+  }
+  // Rreshtat e zakonshëm një nga një; rreshtat e një PC-je bashkë, në vendin ku u shtuan.
+  function cartBlocks() {
+    const out = [], seen = new Set();
+    for (const l of cart) {
+      if (!l.pc) out.push({ line: l });
+      else if (!seen.has(l.pc)) { seen.add(l.pc); out.push({ pc: l.pc, lines: cart.filter((x) => x.pc === l.pc) }); }
+    }
+    return out;
+  }
+  const pcName = (l) => (l.pc ? pcs[l.pc]?.name || "PC" : "");
+  function pcBlock(b, page = false) {
+    const meta = pcs[b.pc] || { parts: {} };
+    const n = b.lines[0].qty;
+    const sum = b.lines.reduce((s, l) => s + byId[l.id].price * l.qty, 0);
+    const caseP = byId[meta.parts.case];
+    const slotOf = (id) => Object.keys(meta.parts).find((k) => meta.parts[k] === id) || (id === "srv-assembly" ? "asm" : "");
+    const parts = b.lines.map((l) => `<li><small>${SLOT_NAMES[slotOf(l.id)] || ""}</small><span>${esc(byId[l.id].name)}</span><b class="num">${fmt(byId[l.id].price)}</b></li>`).join("");
+    return `<li class="pcgroup${page ? " pcgroup--page" : ""}">
+      <div class="pcgroup__head">
+        ${caseP ? `<span class="pcgroup__img">${media(caseP, "", false, "thumb")}</span>` : ""}
+        <div class="pcgroup__title"><small>Konfigurim PC · ${plural(b.lines.length, "artikull", "artikuj")}</small><${page ? "h2" : "h3"}>${esc(meta.name)}</${page ? "h2" : "h3"}><span class="muted">${fmt(sum / n)} / PC</span></div>
+        <b class="num pcgroup__sum">${fmt(sum)}</b>
+      </div>
+      <details class="pcgroup__parts"${page ? " open" : ""}><summary>Pjesët e konfigurimit</summary><ul>${parts}</ul></details>
+      <div class="pcgroup__ctl">
+        <div class="qty" role="group" aria-label="Numri i PC-ve: ${esc(meta.name)}">
+          <button type="button" data-pcqty="${b.pc}" data-d="-1" aria-label="Zvogëlo numrin e PC-ve">−</button>
+          <span>${n}</span>
+          <button type="button" data-pcqty="${b.pc}" data-d="1" aria-label="Rrit numrin e PC-ve">+</button>
+        </div>
+        <button type="button" class="link-btn" data-pcopen="${b.pc}">Hap në konfigurues</button>
+        <button type="button" class="link-btn" data-pcremove="${b.pc}">Hiq</button>
+      </div>
+    </li>`;
   }
 
   // Kodi i zbritjes që klienti ka shkruar (ruhet në shfletues derisa ta heqë ose ta përdorë).
@@ -1119,7 +1195,9 @@
     $("#shipMeter").innerHTML = (left > 0 ? `Shtoni edhe <b>${fmt(left)}</b> për dërgesë falas` : "<strong>Dërgesa juaj është falas</strong>") +
       `<div class="bar"><i style="width:${Math.min(100, (t.subtotal / S.freeShippingFrom) * 100)}%"></i></div>`;
 
-    $("#cartList").innerHTML = cart.map((l) => {
+    $("#cartList").innerHTML = cartBlocks().map((b) => {
+      if (b.pc) return pcBlock(b);
+      const l = b.line;
       const p = byId[l.id];
       return `<li class="cart-item">
         ${media(p, "", false, "thumb")}
@@ -1923,7 +2001,7 @@
     });
   }
   function openBusiness() {
-    const items = cart.length ? cart.map((l) => `${l.qty} × ${byId[l.id].name}`).join("\n") : "";
+    const items = cart.length ? cart.map((l) => `${l.qty} × ${byId[l.id].name}${l.pc ? ` [${pcName(l)}]` : ""}`).join("\n") : "";
     openForm({
       title: "Kërko ofertë për biznes",
       intro: "Trego çfarë i duhet kompanisë. Ofertën me çmime për sasi, faturë me TVSH dhe afatet ta dërgojmë brenda një dite pune.",
@@ -2077,7 +2155,12 @@
   const summaryHTML = (t, cta) => `
     <aside class="sum" aria-label="Përmbledhja">
       <h2>Përmbledhja</h2>
-      <ul class="sum__lines">${cart.map((l) => { const p = byId[l.id]; const v = PRODUCTS.includes(p) ? variantOf(p) : ""; return `<li><span>${l.qty} × ${esc(p.name)}<small class="sum__sku">${esc(p.id.toUpperCase())}${v ? ` · ${esc(v)}` : ""}</small></span><span class="num">${fmt(p.price * l.qty)}</span></li>`; }).join("")}</ul>
+      <ul class="sum__lines">${cartBlocks().map((b) => {
+        // Një PC nga konfiguruesi = një rresht me numrin e pjesëve; pjesët janë në shportë dhe në porosi.
+        if (b.pc) { const n = b.lines[0].qty; return `<li><span>${n} × ${esc(pcs[b.pc]?.name || "PC")}<small class="sum__sku">Konfigurim PC · ${b.lines.length} pjesë</small></span><span class="num">${fmt(b.lines.reduce((s, l) => s + byId[l.id].price * l.qty, 0))}</span></li>`; }
+        const l = b.line, p = byId[l.id]; const v = PRODUCTS.includes(p) ? variantOf(p) : "";
+        return `<li><span>${l.qty} × ${esc(p.name)}<small class="sum__sku">${esc(p.id.toUpperCase())}${v ? ` · ${esc(v)}` : ""}</small></span><span class="num">${fmt(p.price * l.qty)}</span></li>`;
+      }).join("")}</ul>
       <div id="promoSlot">${promoHTML(t)}</div>
       <dl class="sum__totals" id="sumRows">${sumRows(t)}</dl>
       <p class="sum__vat" id="sumVat">Përfshirë TVSH ${Math.round(S.vatRate * 100)}% (${fmt(t.vat)}).</p>
@@ -2131,7 +2214,9 @@
       <div class="flow">
         <div class="flow__main">
           ${left > 0 ? `<p class="ship-note">Shto edhe <b>${fmt(left)}</b> për dërgesë falas.</p>` : `<p class="ship-note ship-note--ok">Dërgesa jote është falas.</p>`}
-          <ul class="cline-list">${cart.map((l) => {
+          <ul class="cline-list">${cartBlocks().map((b) => {
+            if (b.pc) return pcBlock(b, true);
+            const l = b.line;
             const p = byId[l.id];
             return `<li class="cline">
               <a href="${productHref(p.id)}" class="cline__img" tabindex="-1" aria-hidden="true">${media(p, "", false, "thumb")}</a>
@@ -2264,7 +2349,7 @@
         const delLabel = { standard: "Dërgesë standarde", express: "Dërgesë e shpejtë", pickup: "Marrje në dyqan" }[delivery()];
         const lines = [
           "Përshëndetje ITCOM, dua të porosis:",
-          ...cart.map((l) => `• ${l.qty} × ${byId[l.id].name} (${byId[l.id].id.toUpperCase()}) – ${fmt(byId[l.id].price * l.qty)}`),
+          ...cart.map((l) => `• ${l.qty} × ${byId[l.id].name} (${byId[l.id].id.toUpperCase()}) – ${fmt(byId[l.id].price * l.qty)}${l.pc ? ` [${pcName(l)}]` : ""}`),
           ...(t.applied.length ? [`Zbritje: ${t.applied.map((a) => `${a.title}${a.code ? ` (${a.code})` : ""} −${fmt(a.amount)}`).join(", ")}`] : []),
           `Totali: ${fmt(t.total)} (${delLabel}, ${payLabel})`,
           "",
@@ -2277,10 +2362,11 @@
         toast("U hap WhatsApp me porosinë tuaj. Dërgojeni mesazhin për ta përfunduar.");
         return;
       }
-      const number = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty })), form: fields, totals: t, delivery: delivery(), pay: form.elements.pay.value })
+      const number = window.CMS?.saveOrder({ lines: cart.map((l) => ({ product: byId[l.id], qty: l.qty, ...(l.pc ? { pc: pcName(l) } : {}) })), form: fields, totals: t, delivery: delivery(), pay: form.elements.pay.value })
         || "ITC-" + Date.now().toString(36).toUpperCase().slice(-6);
-      try { sessionStorage.setItem("itcom:last-order", JSON.stringify({ number, total: t.total, email: fields.email, items: cart.map((l) => `${l.qty} × ${byId[l.id].name}`), delivery: delivery() })); } catch { /* ignore */ }
+      try { sessionStorage.setItem("itcom:last-order", JSON.stringify({ number, total: t.total, email: fields.email, items: cart.map((l) => `${l.qty} × ${byId[l.id].name}${l.pc ? ` [${pcName(l)}]` : ""}`), delivery: delivery() })); } catch { /* ignore */ }
       cart = [];
+      pcs = {};
       promo = "";
       saved.set("promo", "");
       saveCart();
@@ -2716,7 +2802,7 @@
   // API për ndërtuesin e PC‑së (js/builder.js)
   window.ITCOM = Object.assign(window.ITCOM || {}, {
     $, $$, fmt, fmt0, esc, svg, ICON, byId, media, imgSrc, brandMark, saved, toast,
-    openModal, closeModal, openCart, addToCart, openAccount,
+    openModal, closeModal, openCart, addToCart, addPc, openAccount,
     account: Account,
   });
 
@@ -2800,7 +2886,7 @@
     const copy = e.target.closest("[data-copy]");
     if (copy) { navigator.clipboard?.writeText(copy.dataset.copy).then(() => toast(`U kopjua kodi <b>${esc(copy.dataset.copy)}</b>`), () => {}); return; }
     if (e.target.closest("[data-promo-remove]")) { applyPromo(""); return; }
-    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-mega],[data-slide],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-builder],[data-business],[data-ask],[data-account],[data-build-open],[data-build-cart],[data-build-del]");
+    const t = e.target.closest("[data-add],[data-open],[data-wish],[data-cmp],[data-qty],[data-remove],[data-cat],[data-chip],[data-page],[data-brand],[data-mega],[data-slide],[data-uncmp],[data-sgall],[data-sgcat],[data-close],[data-close-modal],[data-info],[data-slide-dir],[data-builder],[data-business],[data-ask],[data-account],[data-build-open],[data-build-cart],[data-build-del],[data-pcqty],[data-pcremove],[data-pcopen]");
     if (!e.target.closest(".search")) hideSuggest();
     if (!e.target.closest("#mega, #megaBtn, #menuBtnM")) toggleMega(false);
     if (!t) return;
@@ -2809,7 +2895,10 @@
     else if (d.wish) toggleWish(d.wish);
     else if (d.cmp) toggleCompare(d.cmp);
     else if (d.open) go(productHref(d.open));
-    else if (d.qty) setQty(d.qty, cartQty(d.qty) + Number(d.d));
+    else if (d.pcqty) setPcQty(d.pcqty, (cart.find((l) => l.pc === d.pcqty)?.qty || 0) + Number(d.d));
+    else if (d.pcremove) removePc(d.pcremove);
+    else if (d.pcopen) { const m = pcs[d.pcopen]; if (m) { closeCart(); window.ITCOM.openBuilder?.({ parts: { ...m.parts }, color: m.color, rgb: m.rgb, assembly: m.assembly }); } }
+    else if (d.qty) setQty(d.qty, (cart.find((l) => l.id === d.qty && !l.pc)?.qty || 0) + Number(d.d));
     else if (d.remove) removeLine(d.remove);
     else if (d.uncmp) { compare = compare.filter((x) => x !== d.uncmp); saveCompare(); if ("reopen" in d) compare.length >= 2 ? openCompare() : closeModal(); }
     else if (d.cat) { closeModal(); toggleMega(false); resetFilters(d.cat); go(`#/kategoria/${catSlug(d.cat)}`); }

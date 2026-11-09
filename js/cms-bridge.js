@@ -419,7 +419,7 @@
       var service = /^srv-/.test(p.id);
       return {
         productId: service ? "" : p.id, sku: p.id.toUpperCase(), name: p.name, image: p.img ? (/^(data:|https?:)/.test(p.img) ? p.img : new URL(p.img, document.baseURI).pathname) : "",
-        unit: "kom", qty: l.qty, options: "", unitPrice: p.price, installation: false, installationPrice: 0,
+        unit: "kom", qty: l.qty, options: l.pc ? "Konfigurim PC: " + l.pc : "", unitPrice: p.price, installation: false, installationPrice: 0,
         lineTotal: round2(p.price * l.qty), discount: 0, allocations: [], custom: service || undefined,
       };
     });
