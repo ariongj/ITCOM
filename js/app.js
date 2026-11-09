@@ -1314,6 +1314,8 @@
     const under = () => { if (!view) { if (pid) renderProduct(pid); else showView("home"); } };
     closeCart(); closeFilters(); hideSuggest(); toggleMega(false);
     if (h === "builder") { under(); window.ITCOM.openBuilder?.(); return; }
+    // Lidhje e ndarë e një konfigurimi: #builder=<pjesët>~<ngjyra>~<rgb>~<montimi>
+    if (h.startsWith("builder=")) { under(); window.ITCOM.openBuilder?.({ code: h.slice(8) }); return; }
     if (h.startsWith("info-")) { under(); infoBack = infoBack || location.pathname + (pid ? "" : "#/"); openInfo(h.slice(5), true); return; }
     // Lidhjet e vjetra #lp-x1c12 → #/p/lp-x1c12
     const legacy = productId(h);
@@ -2802,7 +2804,7 @@
   // API për ndërtuesin e PC‑së (js/builder.js)
   window.ITCOM = Object.assign(window.ITCOM || {}, {
     $, $$, fmt, fmt0, esc, svg, ICON, byId, media, imgSrc, brandMark, saved, toast,
-    openModal, closeModal, openCart, addToCart, addPc, openAccount,
+    openModal, closeModal, openCart, addToCart, addPc, openAccount, openRequest,
     account: Account,
   });
 

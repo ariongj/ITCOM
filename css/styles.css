@@ -2753,3 +2753,25 @@ p.footer__demo { margin-block: 0; margin-inline: auto; }
 .pcgroup__parts summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
 .pcgroup__parts[open] summary::after { transform: translateY(2px) rotate(-135deg); }
 @media (prefers-reduced-motion: reduce) { .pcgroup__parts summary::after { transition: none; } }
+
+/* Konfiguruesi: "Ndaj" dhe "Pyet ekipin" në shiritin e sipërm */
+.builder__acts { display: flex; gap: 8px; order: 3; }
+.builder__act { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid rgb(255 255 255 / .22); border-radius: 999px; background: transparent; color: #fff; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.builder__act:hover { background: rgb(255 255 255 / .1); }
+.builder__act:focus-visible { outline: 3px solid #4b93ff; outline-offset: 2px; }
+.builder__act .icon { width: 18px; height: 18px; }
+.builder__presets { order: 2; }
+@media (max-width: 760px) {
+  .builder__acts { order: 2; margin-left: auto; }
+  .builder__presets { order: 3; }
+  .builder__act { width: 44px; height: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  .builder__act span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (max-width: 760px) {
+  .builder__title b { font-size: 16px; }
+  .builder__acts { gap: 6px; }
+}
+@media (max-width: 400px) {
+  .builder__back { width: 44px; justify-content: center; padding: 0; }
+  .builder__back span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}

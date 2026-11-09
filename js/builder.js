@@ -218,12 +218,53 @@
     persist();
   }
 
+  /* ------------------------------------------------------------ lidhja e ndarë e konfigurimit */
+  // Kompakt dhe e lexueshme: pjesët sipas rendit të hapave, pastaj ngjyra e kasës, RGB-ja dhe montimi.
+  const encodeBuild = (s) => [SLOTS.map((x) => s.parts[x.key] || "").join(","), s.color || 0, s.rgb ? s.rgb.slice(1) : "", s.assembly ? 1 : 0].join("~");
+  function decodeBuild(code) {
+    const [ids = "", color = "0", rgb = "", asm = "1"] = decodeURIComponent(code || "").split("~");
+    const list = ids.split(",");
+    const parts = {}, missing = [];
+    SLOTS.forEach((s, i) => { const id = list[i]; if (id && SPECS[id] && SPECS[id].slot === s.key && byId[id]) parts[s.key] = id; else missing.push(s.label); });
+    return { parts, color: Math.max(0, parseInt(color, 10) || 0), rgb: /^[0-9a-f]{6}$/i.test(rgb) ? "#" + rgb.toLowerCase() : null, assembly: asm !== "0", missing };
+  }
+  const shareUrl = () => `${(window.STORE && window.STORE.siteUrl) || location.origin + location.pathname}#builder=${encodeBuild(st)}`;
+  async function shareBuild() {
+    const url = shareUrl();
+    const text = `PC‑ja ime në ITCOM · ${fmt(total())}`;
+    try {
+      if (navigator.share && matchMedia("(pointer: coarse)").matches) { await navigator.share({ title: "Konfigurim PC · ITCOM", text, url }); return; }
+      await navigator.clipboard.writeText(url);
+      A.toast("Lidhja e konfigurimit u kopjua. Kushdo që e hap sheh të njëjtat pjesë, ngjyra dhe çmimet aktuale.");
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+      window.prompt("Kopjoni lidhjen e konfigurimit:", url);
+    }
+  }
+  function askTeam() {
+    const lines = SLOTS.filter((s) => st.parts[s.key]).map((s) => `• ${s.label}: ${byId[st.parts[s.key]].name} (${st.parts[s.key].toUpperCase()}) – ${fmt(byId[st.parts[s.key]].price)}`);
+    if (st.assembly && byId["srv-assembly"]) lines.push(`• Montim dhe testim – ${fmt(byId["srv-assembly"].price)}`);
+    const look = $("#bLookLabel").textContent;
+    A.openRequest({
+      title: "Pyet ekipin për këtë PC",
+      intro: "Lista e pjesëve është shtuar te mesazhi. Shkruaj si do ta përdorësh PC‑në ose çfarë do të ndryshoje; ekipi ITCOM të kthen përgjigje, zakonisht brenda ditës së punës.",
+      message: `Konfigurimi im (${look}):\n${lines.join("\n")}\nTotali: ${fmt(total())}\n${shareUrl()}\n\nPyetja ime: `,
+      tags: ["konfigurues", "pc"],
+    });
+  }
+
   /* ------------------------------------------------------------ open / close */
   // Konfiguruesi është dialog në ekran të plotë: faqja pas tij bëhet inerte (Tab nuk del jashtë) dhe fokusi kthehet aty ku ishte.
   const KEEP = new Set(["builder", "modal", "toast", "announce", "cart", "overlay"]);
   let opener = null;
   const setBackground = (off) => [...document.body.children].forEach((el) => { if (!KEEP.has(el.id) && el.tagName !== "SCRIPT") el.inert = off; });
   function open(saved) {
+    // Nga një lidhje e ndarë: pjesët që nuk shiten më zëvendësohen me konfigurimin bazë dhe klienti njoftohet.
+    if (saved && saved.code) {
+      const d = decodeBuild(saved.code);
+      saved = { parts: validParts(d.parts), color: d.color, rgb: d.rgb, assembly: d.assembly };
+      if (d.missing.length && d.missing.length < SLOTS.length) setTimeout(() => A.toast(`Disa pjesë nuk janë më në katalog dhe u zëvendësuan: ${esc(d.missing.join(", "))}`), 400);
+    }
     // Nga faqja e produktit: "Provoje në konfigurues" vendos këtë pjesë në konfigurimin aktual ("cpu:cp-7800x3d").
     if (saved && saved.part) {
       const [slot, id] = String(saved.part).split(":");
@@ -434,6 +475,8 @@
   $("#bClose").addEventListener("click", close);
   $("#bAdd").addEventListener("click", addAllToCart);
   $("#bSave").addEventListener("click", saveBuild);
+  $("#bShare").addEventListener("click", shareBuild);
+  $("#bAsk").addEventListener("click", askTeam);
   $("#bReset").addEventListener("click", () => viewer?.resetView());
   $("#bSpin").addEventListener("click", (e) => {
     const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
@@ -443,4 +486,5 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !root.hidden && !document.querySelector("#modal[open]")) close(); });
 
   if (location.hash === "#builder") open();
+  else if (location.hash.startsWith("#builder=")) open({ code: location.hash.slice(9) });
 })();
