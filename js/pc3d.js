@@ -92,6 +92,22 @@ function cable(parent, pts, strands, spread, color, r = 0.17) {
 
 
 /* ------------------------------------------------------------------ fan */
+// One swept blade from the hub (r0) to the tip (r1): a thin curved surface, wider and flatter towards the tip.
+function bladeGeo(r0, r1, depth) {
+  const U = 7, V = 4, pos = [], idx = [];
+  for (let i = 0; i <= U; i++) for (let j = 0; j <= V; j++) {
+    const u = i / U, v = j / V;
+    const rad = r0 + (r1 - r0) * u;
+    const th = 0.8 * u + (v - 0.5) * 2 * (0.2 + 0.1 * u);
+    pos.push(rad * Math.cos(th), rad * Math.sin(th), (v - 0.5) * depth * (0.62 - 0.22 * u));
+  }
+  for (let i = 0; i < U; i++) for (let j = 0; j < V; j++) { const a = i * (V + 1) + j, b = a + V + 1; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
 // A fan facing +z, centred at the origin. size in cm (12 / 14).
 function fan(size = 12, { frame = "#16171a", blades = "#1d1f23", rgb = null, depth = 2.5 } = {}) {
   const g = new THREE.Group();
@@ -107,26 +123,23 @@ function fan(size = 12, { frame = "#16171a", blades = "#1d1f23", rgb = null, dep
   shroud.rotation.x = Math.PI / 2;
   // corner fill so the frame reads as one piece
   for (const [sx, sy] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) add(g, RB(size * 0.2, size * 0.2, depth, 0.2), frameMat, sx * size * 0.4, sy * size * 0.4, 0);
-  // rotor
+  // rotor: seven swept blades; on RGB fans the frosted blades carry the light
   const rotor = new THREE.Group();
   g.add(rotor);
-  const bladeMat = M.plastic(blades, 0.45);
-  const n = 9;
-  for (let i = 0; i < n; i++) {
-    const b = new THREE.Mesh(RB(r * 0.78, r * 0.34, 0.12, 0.06, 1), bladeMat);
-    b.geometry.translate(r * 0.5, 0, 0);
-    b.rotation.z = (i / n) * Math.PI * 2;
-    b.rotation.x = 0.35;
-    rotor.add(b);
-  }
-  add(rotor, CYL(r * 0.32, r * 0.32, depth * 0.8, 32), M.plastic(shade(blades, 0.06), 0.4)).rotation.x = Math.PI / 2;
-  add(rotor, CYL(r * 0.2, r * 0.2, 0.05, 32), M.plastic("#2a2c31", 0.3), 0, 0, depth * 0.41).rotation.x = Math.PI / 2;
+  const bladeMat = rgb
+    ? new THREE.MeshStandardMaterial({ color: rgb, emissive: rgb, emissiveIntensity: 0.3, roughness: 0.5, metalness: 0, side: THREE.DoubleSide })
+    : new THREE.MeshStandardMaterial({ color: shade(blades, isLight(blades) ? -0.04 : 0.07), roughness: 0.42, metalness: 0.1, side: THREE.DoubleSide });
+  const geo = bladeGeo(r * 0.3, r * 0.97, depth * 0.8);
+  const n = 7;
+  for (let i = 0; i < n; i++) { const b = new THREE.Mesh(geo, bladeMat); b.rotation.z = (i / n) * Math.PI * 2; rotor.add(b); }
+  add(rotor, CYL(r * 0.33, r * 0.33, depth * 0.8, 32), M.plastic(shade(blades, 0.06), 0.4)).rotation.x = Math.PI / 2;
+  add(rotor, CYL(r * 0.22, r * 0.22, 0.05, 32), M.metal("#3a3d44", 0.3, 0.7), 0, 0, depth * 0.41).rotation.x = Math.PI / 2;
   rotor.userData.spin = true; // the viewer that shows this fan turns it
   // RGB ring on the front edge; without RGB a satin rim keeps the fan readable against a dark case
-  if (!rgb) add(g, new THREE.TorusGeometry(r + 0.15, 0.12, 8, 72), M.metal(isLight(frame) ? "#b9bdc6" : "#4a4e57", 0.35, 0.6), 0, 0, depth / 2);
+  if (!rgb) add(g, new THREE.TorusGeometry(r + 0.15, 0.12, 8, 72), M.metal(isLight(frame) ? "#b9bdc6" : "#5a5f69", 0.35, 0.6), 0, 0, depth / 2);
   if (rgb) {
-    add(g, new THREE.TorusGeometry(r + 0.15, 0.22, 10, 72), M.glow(rgb, 2.6), 0, 0, depth / 2);
-    add(g, CYL(r * 0.22, r * 0.22, 0.06, 24), M.glow(rgb, 1.2), 0, 0, depth * 0.42).rotation.x = Math.PI / 2;
+    add(g, new THREE.TorusGeometry(r + 0.15, 0.2, 10, 72), M.glow(rgb, 2.6), 0, 0, depth / 2);
+    add(g, CYL(r * 0.2, r * 0.2, 0.06, 24), M.glow(rgb, 1.2), 0, 0, depth * 0.42).rotation.x = Math.PI / 2;
   }
   g.userData.rotor = rotor;
   return g;
@@ -187,7 +200,8 @@ function motherboard(spec = {}) {
   add(g, RB(8.9, 0.7, 0.9, 0.08, 1), darkMat, fx(1 + 4.45), fy(27), 0.55);
   // M.2 heatsinks with grooves, chipset cover with a badge
   for (const y of [17.2, 24.8]) {
-    add(g, RB(11, 1.7, 0.5, 0.15), accMat, fx(8.5), fy(y), 0.45);
+    const hs = add(g, RB(11, 1.7, 0.5, 0.15), y < 20 ? accMat.clone() : accMat, fx(8.5), fy(y), 0.45);
+    if (y < 20) hs.userData.slot = "ssd";
     for (let k = 0; k < 3; k++) add(g, RB(10.4, 0.08, 0.06, 0.02, 1), darkMat, fx(8.5), fy(y) - 0.45 + k * 0.45, 0.72);
   }
   add(g, RB(5.6, 5.2, 1, 0.3), accMat, fx(18.5), fy(24.5), 0.65);
@@ -349,8 +363,10 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   const g = new THREE.Group();
   const light = isLight(color);
   // satin aluminium for dark cases, powder‑coated steel for light ones
-  const shell = light ? M.metal(shade(color, -0.1), 0.45, 0.1) : M.metal(shade(color, -0.03), 0.5, 0.35);
-  const inner = light ? M.metal(shade(color, -0.16), 0.6, 0.1) : M.metal("#0f1013", 0.65, 0.25);
+  // A black case reads as graphite under studio light: a touch lighter than the paint chip, with a clear sheen on the edges.
+  const shell = light ? M.metal(shade(color, -0.14), 0.5, 0.1) : M.metal(shade(color, 0.012), 0.46, 0.5);
+  shell.userData.env = light ? 1 : 1.25;
+  const inner = light ? M.metal(shade(color, -0.2), 0.6, 0.1) : M.metal("#101115", 0.62, 0.3);
   const t = 0.5;
   add(g, RB(D, H, t, 0.2), inner, 0, H / 2, -W / 2 + t / 2);               // back
   add(g, RB(D, t, W, 0.25), shell, 0, H - t / 2, 0);                      // top
@@ -390,18 +406,23 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
     const wood = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.65 });
     for (let i = 0; i < 13; i++) add(g, RB(1.2, H - 3, 1.1, 0.25, 2), wood, D / 2 + 0.4, H / 2, -W / 2 + 1.6 + i * ((W - 3.2) / 12));
   } else if (front === "mesh") {
-    // Corsair 4000D Airflow: a raised front face with a triangular perforation, framed by chamfered side strips
-    add(g, RB(1.4, H, W, 0.4), shell, D / 2 - 0.7, H / 2, 0);
-    add(g, RB(1.1, H - 2.4, W - 5.2, 0.3), shell, D / 2 + 0.5, H / 2, 0);
-    const pat = canvasTex(256, 512, (c, w, h) => {
-      c.fillStyle = light ? "#c9ccd2" : "#08090b"; c.fillRect(0, 0, w, h); c.fillStyle = light ? "#f3f4f6" : "#2a2c31";
+    // Corsair 4000D Airflow: an open front frame with a real see-through triangular mesh (the intake fans show behind it),
+    // framed by chamfered side strips.
+    for (const y of [1.2, H - 1.2]) add(g, RB(1.4, 2.4, W, 0.4), shell, D / 2 - 0.7, y, 0);
+    for (const z of [-W / 2 + 1.5, W / 2 - 1.5]) add(g, RB(1.4, H, 3, 0.4), shell, D / 2 - 0.7, H / 2, z);
+    const holes = canvasTex(256, 512, (c, w, h) => {
+      c.fillStyle = "#ffffff"; c.fillRect(0, 0, w, h); c.fillStyle = "#000000";
       const s = 14, hh = s * 0.866;
       for (let row = 0, y = 0; y < h + hh; row++, y += hh) for (let x = -s; x < w + s; x += s) {
         const o = row % 2 ? s / 2 : 0;
-        c.beginPath(); c.moveTo(x + o, y + hh - 2); c.lineTo(x + o + s / 2 - 1.5, y + 1.5); c.lineTo(x + o + s - 3, y + hh - 2); c.closePath(); c.fill();
+        c.beginPath(); c.moveTo(x + o + 0.5, y + hh - 1.5); c.lineTo(x + o + s / 2 - 1, y + 1); c.lineTo(x + o + s - 2.5, y + hh - 1.5); c.closePath(); c.fill();
       }
     });
-    add(g, new THREE.PlaneGeometry(W - 6, H - 3.4), new THREE.MeshStandardMaterial({ map: pat, roughness: 0.7, metalness: 0.25 }), D / 2 + 1.07, H / 2, 0).rotation.y = Math.PI / 2;
+    holes.colorSpace = THREE.NoColorSpace;
+    holes.wrapS = holes.wrapT = THREE.RepeatWrapping; holes.repeat.set(1.7, 1.7);
+    const meshMat = new THREE.MeshStandardMaterial({ color: light ? "#e3e6ea" : "#23262b", alphaMap: holes, transparent: true, depthWrite: false, roughness: 0.55, metalness: 0.45, side: THREE.DoubleSide });
+    add(g, new THREE.PlaneGeometry(W - 5.6, H - 4.4), meshMat, D / 2 + 0.72, H / 2, 0).rotation.y = Math.PI / 2;
+    for (const y of [2.5, H - 2.5]) add(g, RB(0.5, 0.5, W - 5.4, 0.15, 1), shell, D / 2 + 0.55, y, 0);
     for (const z of [-W / 2 + 1.3, W / 2 - 1.3]) add(g, RB(1.6, H - 2.4, 1.6, 0.5), shell, D / 2 + 0.1, H / 2, z).rotation.y = z > 0 ? -0.5 : 0.5;
   } else {
     // NZXT H5 Flow: a clean solid face with a perforated intake strip down the side edge
@@ -422,7 +443,13 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
   // PSU shroud
   add(g, RB(D - 1, 10, W - 1.2, 0.3), shell, 0, 5, -0.4);
   const shroudLabel = canvasTex(512, 96, (c, w, h) => { c.fillStyle = light ? "rgba(0,0,0,.35)" : "rgba(255,255,255,.35)"; c.font = "bold 54px Arial"; c.fillText("ITCOM", 8, 66); });
-  add(g, new THREE.PlaneGeometry(9, 1.7), new THREE.MeshStandardMaterial({ map: shroudLabel, transparent: true }), D / 2 - 9, 5, W / 2 - 1.01);
+  add(g, new THREE.PlaneGeometry(9, 1.7), new THREE.MeshStandardMaterial({ map: shroudLabel, transparent: true }), D / 2 - 9, 5, W / 2 - 0.97);
+  // PSU vents and the wattage of the chosen power supply, towards the rear of the shroud
+  for (let i = 0; i < 9; i++) add(g, RB(0.32, 5.4, 0.12, 0.1, 1), M.plastic(light ? "#b9bdc4" : "#050506", 0.7), -D / 2 + 5 + i * 0.95, 5, W / 2 - 0.98);
+  if (spec.psuWatt) {
+    const wl = canvasTex(256, 96, (c, w, h) => { c.fillStyle = light ? "rgba(0,0,0,.5)" : "rgba(255,255,255,.55)"; c.font = "bold 50px Arial"; c.fillText(`${spec.psuWatt} W`, 6, 64); });
+    add(g, new THREE.PlaneGeometry(4.6, 1.7), new THREE.MeshStandardMaterial({ map: wl, transparent: true }), -D / 2 + 17, 5, W / 2 - 0.97);
+  }
   // cable grommets
   for (const y of [15, 24, 33]) add(g, RB(1, 4, 0.2, 0.4, 2), M.plastic("#08090a"), 5.2, y, -W / 2 + 0.62);
 
@@ -454,7 +481,7 @@ function caseShell(spec = {}, color = "#16171a", rgb, { withFans = true } = {}) 
 
 // Smoked tempered glass: dark tint, sharp reflections.
 function glassMat(light = false) {
-  return new THREE.MeshPhysicalMaterial({ color: light ? "#e6ebf2" : "#3a4250", transparent: true, opacity: light ? 0.07 : 0.1, roughness: 0.02, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.9, depthWrite: false });
+  return new THREE.MeshPhysicalMaterial({ color: light ? "#e6ebf2" : "#566173", transparent: true, opacity: light ? 0.05 : 0.045, roughness: 0.02, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.1, depthWrite: false });
 }
 
 /* ------------------------------------------------------------------ full PC */
@@ -465,7 +492,10 @@ export function assemble(b) {
   const root = new THREE.Group();
   const rgb = b.rgb || null;
   const cs = b.case || { front: "mesh" };
-  root.add(caseShell(cs, b.caseColor || "#16171a", rgb));
+  const shellGroup = caseShell({ ...cs, psuWatt: b.psu?.watt }, b.caseColor || "#16171a", rgb);
+  root.add(shellGroup);
+  // Për konfiguruesin: ku ndodhet çdo pjesë (kamera afrohet aty) dhe cilat objekte e përbëjnë (theksohen kur zgjidhen).
+  const parts = { case: [shellGroup] }, anchors = {};
 
   const zb = -W / 2 + 1.4;
   const mbX = -D / 2 + 2.2 + MB_W / 2;
@@ -474,17 +504,21 @@ export function assemble(b) {
     const mb = motherboard(b.mb);
     mb.position.set(mbX, mbY, zb);
     root.add(mb);
-    if (b.ram) { const r = ramSticks(b.ram, rgb); r.position.copy(mb.position); root.add(r); }
+    parts.mb = [mb]; anchors.mb = new THREE.Vector3(mbX, mbY, zb + 1);
+    parts.ssd = mb.children.filter((o) => o.userData.slot === "ssd"); anchors.ssd = new THREE.Vector3(mbX + fx(8.5), mbY + fy(17.2), zb + 1);
+    if (b.ram) { const r = ramSticks(b.ram, rgb); r.position.copy(mb.position); root.add(r); parts.ram = [r]; anchors.ram = new THREE.Vector3(mbX + fx(19.5), mbY + fy(8.8), zb + 3); }
   }
   const sock = new THREE.Vector3(mbX + SOCKET.x, mbY + SOCKET.y, zb + 0.7);
-  if (b.cpu) add(root, RB(3.9, 3.9, 0.35, 0.1), M.metal("#c9ccd2", 0.25, 0.95), sock.x, sock.y, sock.z);
+  if (b.cpu) { parts.cpu = [add(root, RB(3.9, 3.9, 0.35, 0.1), M.metal("#c9ccd2", 0.25, 0.95), sock.x, sock.y, sock.z)]; anchors.cpu = sock.clone(); }
   if (b.cooler) {
     if (b.cooler.kind === "aio") {
       const pump = pumpHead(b.cooler, rgb);
       pump.position.copy(sock); root.add(pump);
+      parts.cooler = [pump]; anchors.cooler = new THREE.Vector3(sock.x + 7, sock.y + 5, 3);
       const rad = radiator(b.cooler.rad, b.cooler, rgb);
       rad.position.set(D / 2 - 3.5 - rad.userData.len / 2, H - 2.3, 2.2);
       root.add(rad);
+      parts.cooler.push(rad);
       const end = new THREE.Vector3(rad.position.x - rad.userData.len / 2 + 1.6, H - 3.6, 2.2);
       for (const dz of [-1, 1]) {
         const curve = new THREE.CatmullRomCurve3([
@@ -493,17 +527,19 @@ export function assemble(b) {
           new THREE.Vector3(end.x + 2, end.y - 4, end.z + dz * 1.2),
           new THREE.Vector3(end.x, end.y, end.z + dz * 1.2),
         ]);
-        add(root, new THREE.TubeGeometry(curve, 40, 0.55, 12, false), M.plastic("#0e0f11", 0.7));
+        parts.cooler.push(add(root, new THREE.TubeGeometry(curve, 40, 0.55, 12, false), M.plastic("#0e0f11", 0.7)));
       }
     } else {
       const c = airCooler(b.cooler, rgb);
       c.position.copy(sock); root.add(c);
+      parts.cooler = [c]; anchors.cooler = new THREE.Vector3(sock.x, sock.y, sock.z + 8);
     }
   }
   if (b.gpu) {
     const gpu = graphicsCard({ ...b.gpu, label: b.gpuLabel }, rgb);
     gpu.position.set(-D / 2 + 1.2, mbY + PCIE_Y + 0.3, zb + 0.5);
     root.add(gpu);
+    parts.gpu = [gpu]; anchors.gpu = new THREE.Vector3(gpu.position.x + (b.gpu.len || 260) / 20, gpu.position.y - (b.gpu.slots || 2), zb + 9);
     if (b.psu) {
       const p = gpu.userData.power.clone().add(gpu.position);
       if (cs.front === "glass") {
@@ -524,12 +560,20 @@ export function assemble(b) {
     const eps = new THREE.Vector3(mbX + fx(2.4), mbY + fy(0.9) + 0.6, zb + 0.9);
     cable(root, [new THREE.Vector3(eps.x - 1, H - 1.2, zb + 0.2), new THREE.Vector3(eps.x - 0.5, H - 1.6, zb + 1.8), new THREE.Vector3(eps.x, eps.y + 0.8, zb + 1.4), eps], 8, new THREE.Vector3(1, 0, 0), sleeve(b), 0.13);
   }
+  anchors.psu = new THREE.Vector3(-D / 2 + 13, 6, W / 2);
+  const lightCase = isLight(b.caseColor || "#16171a");
+  // Neutral light inside the case (the top panel shades the key light): parts keep their own colours.
+  const inside = new THREE.PointLight(0xfff4e8, lightCase ? 6 : 24, 64, 1.6);
+  inside.position.set(8, H - 7, W / 2 - 2.5);
+  root.add(inside);
   if (rgb) {
-    // white cases bounce a lot of light: a weaker RGB fill keeps the parts readable
-    const glowLight = new THREE.PointLight(rgb, isLight(b.caseColor || "#16171a") ? 9 : 55, 60, 1.6);
-    glowLight.position.set(0, 26, 4);
+    // RGB is an accent: it tints the interior without flooding it
+    const glowLight = new THREE.PointLight(rgb, lightCase ? 6 : 20, 55, 1.6);
+    glowLight.position.set(0, 24, 3);
     root.add(glowLight);
   }
+  root.userData.parts = parts;
+  root.userData.anchors = anchors;
   return root;
 }
 
@@ -570,7 +614,7 @@ export function createViewer(container, opts = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.08;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -579,33 +623,36 @@ export function createViewer(container, opts = {}) {
   const scene = new THREE.Scene();
   const backdrop = canvasTex(1024, 1024, (c, w, h) => {
     const g = c.createRadialGradient(w * 0.5, h * 0.42, 0, w * 0.5, h * 0.5, w * 0.75);
-    g.addColorStop(0, "#2a2e37"); g.addColorStop(0.45, "#15171c"); g.addColorStop(1, "#060709");
+    g.addColorStop(0, "#36415a"); g.addColorStop(0.42, "#1a2132"); g.addColorStop(1, "#080a11");
     c.fillStyle = g; c.fillRect(0, 0, w, h);
   });
   scene.background = backdrop;
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
-  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(50, 90, 80);
+  // Key from the glass side and not too high, so it reaches into the case; a front kicker lights the front panel.
+  const key = new THREE.DirectionalLight(0xffffff, 2.5); key.position.set(55, 72, 100);
   key.castShadow = true;
   key.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
   Object.assign(key.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 40, far: 220 });
   key.shadow.bias = -0.0004; key.shadow.normalBias = 0.04; key.shadow.radius = 4;
   const rim = new THREE.DirectionalLight(0x9db8ff, 2.6); rim.position.set(-70, 60, -60);
-  const fill = new THREE.HemisphereLight(0xdfe6ff, 0x0b0c10, 0.35);
-  scene.add(key, rim, fill);
+  const fill = new THREE.HemisphereLight(0xdfe6ff, 0x10131a, 0.4);
+  const kicker = new THREE.DirectionalLight(0xcfdcff, 1.1); kicker.position.set(100, 34, 18);
+  scene.add(key, rim, fill, kicker);
 
   // glossy floor: a real reflection, faded into the backdrop at the edges
   const mirror = new Reflector(new THREE.CircleGeometry(160, 64), {
     textureWidth: Math.round((container.clientWidth || 800) * 0.6),
     textureHeight: Math.round((container.clientHeight || 600) * 0.6),
-    color: 0x4e5462, // a softer mirror: the reflection hints at the floor instead of doubling the PC
+    color: 0x5a6274, // a soft mirror: the reflection hints at the floor instead of doubling the PC
   });
   mirror.rotation.x = -Math.PI / 2; mirror.position.y = -1.15;
   scene.add(mirror);
   const veilTex = canvasTex(512, 512, (c, w, h) => {
     const g = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
-    g.addColorStop(0, "rgba(9,10,13,.62)"); g.addColorStop(0.35, "rgba(9,10,13,.8)"); g.addColorStop(0.75, "rgba(7,8,10,.98)"); g.addColorStop(1, "rgba(6,7,9,1)");
+    // a pool of light under the PC that falls off into the backdrop
+    g.addColorStop(0, "rgba(40,50,72,.5)"); g.addColorStop(0.2, "rgba(26,33,50,.72)"); g.addColorStop(0.5, "rgba(13,16,26,.94)"); g.addColorStop(0.8, "rgba(8,10,17,1)"); g.addColorStop(1, "rgba(8,10,17,1)");
     c.fillStyle = g; c.fillRect(0, 0, w, h);
   });
   const veil = new THREE.Mesh(new THREE.CircleGeometry(160, 64), new THREE.MeshBasicMaterial({ map: veilTex, transparent: true, depthWrite: false }));
@@ -621,7 +668,7 @@ export function createViewer(container, opts = {}) {
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.enablePan = false;
-  controls.minDistance = 60;
+  controls.minDistance = 42;
   controls.maxDistance = preview ? 400 : 170;
   controls.minPolarAngle = 0.25;
   controls.maxPolarAngle = Math.PI / 2 - 0.04;
@@ -629,8 +676,39 @@ export function createViewer(container, opts = {}) {
   if (preview) { controls.enableZoom = false; renderer.domElement.style.touchAction = "pan-y"; }
   const HOME = new THREE.Vector3(58, 46, 108), TARGET = new THREE.Vector3(0, 21, 0);
   let fit = 1;
-  const home = () => { camera.position.copy(HOME).sub(TARGET).multiplyScalar(fit).add(TARGET); controls.target.copy(TARGET); controls.update(); };
-  home();
+  const homePos = () => HOME.clone().sub(TARGET).multiplyScalar(fit).add(TARGET);
+  const home = () => { tween = null; camera.position.copy(homePos()); controls.target.copy(TARGET); controls.update(); };
+  // Lëvizje e butë e kamerës rreth modelit (jo përmes tij): interpolim i këndeve dhe i largësisë.
+  let tween = null;
+  function flyTo(pos, target, ms = 700) {
+    if (reduce) { camera.position.copy(pos); controls.target.copy(target); controls.update(); return; }
+    const s0 = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+    const s1 = new THREE.Spherical().setFromVector3(pos.clone().sub(target));
+    let dth = s1.theta - s0.theta;
+    if (dth > Math.PI) dth -= Math.PI * 2; else if (dth < -Math.PI) dth += Math.PI * 2;
+    tween = { s0, s1, dth, t0: controls.target.clone(), t1: target.clone(), start: performance.now(), ms };
+  }
+  controls.addEventListener("start", () => { tween = null; });
+  // Kamera për çdo hap: drejtimi nga pjesa (x = para, y = lart, z = xhami) dhe largësia.
+  const FOCUS = { cpu: [0.42, 0.3, 1, 60], mb: [0.3, 0.2, 1, 88], ram: [0.75, 0.3, 1, 58], gpu: [0.34, 0.1, 1, 70], cooler: [0.36, 0.3, 1, 78], ssd: [0.25, 0.26, 1, 54], psu: [0.3, 0.16, 1, 84] };
+  function focus(slot) {
+    const a = pc?.userData.anchors?.[slot], f = FOCUS[slot];
+    if (!a || !f) { flyTo(homePos(), TARGET); return; }
+    const k = Math.max(1, 1.05 / camera.aspect) * 1.25 * (30 / camera.fov); // pjesa në qendër, me kontekst përreth; kuti e ngushtë: pak më larg
+    flyTo(a.clone().add(new THREE.Vector3(f[0], f[1], f[2]).normalize().multiplyScalar(f[3] * k)), a);
+  }
+  // Theksim i shkurtër i pjesës së zgjedhur (drita blu ngrihet dhe shuhet).
+  let pulse = null;
+  function highlight(slot, ms = 1100) {
+    endPulse();
+    const objs = pc?.userData.parts?.[slot];
+    if (!objs || slot === "case") return;
+    const mats = new Set();
+    objs.forEach((o) => o.traverse((n) => { const m = n.material; if (n.isMesh && m && m.emissive && m.emissive.getHex() === 0 && !m.transparent) mats.add(m); }));
+    if (mats.size) pulse = { mats: [...mats], start: performance.now(), ms };
+  }
+  function endPulse() { if (pulse) pulse.mats.forEach((m) => m.emissive.setRGB(0, 0, 0)); pulse = null; }
+  camera.position.copy(homePos()); controls.target.copy(TARGET); controls.update();
 
   let composer = null, bloom = null, ao = null;
   try {
@@ -645,7 +723,7 @@ export function createViewer(container, opts = {}) {
       ao.overrideVisibility = () => { hide(); scene.traverse((o) => { if (o.isMesh && (o.material.transparent || o.userData.noAO)) o.visible = false; }); };
       composer.addPass(ao);
     }
-    bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 2.2);
+    bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.34, 0.32, 2.2);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
   } catch (e) { composer = null; }
@@ -658,10 +736,12 @@ export function createViewer(container, opts = {}) {
     });
   }
   function setBuild(b) {
+    endPulse();
     if (pc) { scene.remove(pc); disposeTree(pc); }
     pc = assemble(b);
     const light = isLight(b.caseColor || "#16171a");
-    if (bloom) bloom.strength = light ? 0.22 : 0.38;
+    if (bloom) bloom.strength = light ? 0.2 : 0.34;
+    renderer.toneMappingExposure = light ? 0.86 : 1.08; // white cases need less exposure to keep their detail
     spin = [];
     pc.traverse((o) => {
       if (o.userData.spin) spin.push(o);
@@ -669,7 +749,7 @@ export function createViewer(container, opts = {}) {
       const m = o.material;
       o.castShadow = !m.transparent && !(m.emissiveIntensity > 1);
       o.receiveShadow = !m.transparent;
-      if (!m.transparent) m.envMapIntensity = light ? 0.4 : 0.6; // deeper blacks; less glare on white cases
+      if (!m.transparent) m.envMapIntensity = (m.userData.env || 1) * (light ? 0.4 : 0.6); // deep blacks, clear case edges, less glare on white
     });
     scene.add(pc);
   }
@@ -705,6 +785,18 @@ export function createViewer(container, opts = {}) {
     if (preview && now - last < 30) return; // ballina: deri në ~30 kuadro/s mjaftojnë për rrotullimin e ngadaltë
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (!reduce) spin.forEach((r) => { r.rotation.z += dt * 9; });
+    if (tween) {
+      const k = Math.min(1, (now - tween.start) / tween.ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      const sp = new THREE.Spherical(tween.s0.radius + (tween.s1.radius - tween.s0.radius) * e, tween.s0.phi + (tween.s1.phi - tween.s0.phi) * e, tween.s0.theta + tween.dth * e);
+      controls.target.lerpVectors(tween.t0, tween.t1, e);
+      camera.position.setFromSpherical(sp).add(controls.target);
+      if (k >= 1) tween = null;
+    }
+    if (pulse) {
+      const k = Math.max(0, (now - pulse.start) / pulse.ms);
+      if (k >= 1) endPulse();
+      else { const v = Math.sin(k * Math.PI) * 0.26; pulse.mats.forEach((m) => m.emissive.setRGB(0.05 * v, 0.42 * v, 1.0 * v)); }
+    }
     draw();
   }
   requestAnimationFrame(loop);
@@ -712,7 +804,10 @@ export function createViewer(container, opts = {}) {
   return {
     setBuild,
     setAutoRotate(v) { controls.autoRotate = !!v && !reduce; },
-    resetView: home,
+    resetView: () => flyTo(homePos(), TARGET),
+    homeNow: home,
+    focus,
+    highlight,
     snapshot: (type = "image/jpeg", q = 0.85) => renderer.domElement.toDataURL(type, q),
     // one frame without starting the loop: compiles the shaders while the model is still off screen
     renderOnce: draw,

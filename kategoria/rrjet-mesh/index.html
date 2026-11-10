@@ -414,11 +414,12 @@
         <div class="builder__canvas" id="bCanvas"></div>
         <div class="builder__loading" id="bLoading" hidden>Duke ngarkuar modelin 3D…</div>
         <div class="builder__updating" aria-hidden="true">Duke përditësuar pamjen…</div>
-        <div class="builder__tools">
-          <button class="icon-btn" id="bSpin" aria-pressed="false" aria-label="Rrotullim automatik"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
-          <button class="icon-btn" id="bReset" aria-label="Kthe pamjen fillestare"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/><circle cx="12" cy="12" r="4"/></svg></button>
+        <div class="builder__tools" role="group" aria-label="Kontrollet e pamjes 3D">
+          <button type="button" class="vbtn" id="bSpin" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg><span>Rrotullo</span></button>
+          <button type="button" class="vbtn" id="bReset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/><circle cx="12" cy="12" r="4"/></svg><span>Rikthe pamjen</span></button>
+          <button type="button" class="vbtn" id="bFull" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><span>Pamje e plotë</span></button>
         </div>
-        <p class="builder__hint">Pamje orientuese 3D: forma dhe ngjyrat e pjesëve reale mund të ndryshojnë · tërhiqeni për ta rrotulluar</p>
+        <p class="builder__hint">Pamje orientuese 3D: forma dhe ngjyrat e pjesëve reale mund të ndryshojnë · tërhiqe për ta rrotulluar</p>
         <div class="builder__look">
           <div><span class="builder__lookt">Ngjyra e kasës</span><div class="swatches" id="bColors"></div></div>
           <div><span class="builder__lookt">Ndriçimi RGB</span><div class="swatches" id="bRgb"></div></div>

@@ -176,8 +176,9 @@
   }
   const scene = () => sceneOf(st);
   // Gjatë ndërrimit pamja e mëparshme zbehet me një shënim të shkurtër, që të mos ngatërrohet me zgjedhjen e re.
-  let updTimer = 0;
-  function update3d() {
+  let updTimer = 0, afterBuild = null;
+  function update3d(after) {
+    if (after) afterBuild = after;
     if (!viewer || pending) return;
     pending = true;
     const stage = root.querySelector(".builder__stage");
@@ -186,12 +187,21 @@
     requestAnimationFrame(() => requestAnimationFrame(() => {
       pending = false;
       try { viewer.setBuild(scene()); } catch (e) { console.error(e); }
+      const f = afterBuild; afterBuild = null;
+      try { f && f(); } catch (e) { console.error(e); }
       clearTimeout(updTimer);
       updTimer = setTimeout(() => stage.classList.remove("is-updating"), Math.max(0, 260 - (performance.now() - t0)));
     }));
   }
+  // Fotoja e renderuar e konfigurimit me të njëjtën kasë dhe ngjyrë (gjatë ngarkimit ose kur 3D nuk hapet).
+  function posterFigure(caption, cls = "") {
+    const ref = PRESETS.find((p) => p.parts.case === st.parts.case && (p.color || 0) === (st.color || 0));
+    if (!ref) return "";
+    return `<figure class="builder__poster ${cls}"><img src="assets/builds/${ref.key}-720.webp" alt="Pamje orientuese e PC-së në kasën ${esc(byId[st.parts.case]?.name || "")}" width="720" height="600" /><figcaption>${caption}</figcaption></figure>`;
+  }
   function load3d() {
     if (loading) return loading;
+    $("#bLoading").innerHTML = posterFigure("Duke ngarkuar modelin 3D…", "is-loading") || "Duke ngarkuar modelin 3D…";
     $("#bLoading").hidden = false;
     loading = import(BASE + "pc3d.js").then((mod) => {
       viewer = mod.createViewer($("#bCanvas"));
@@ -201,8 +211,8 @@
     }).catch((err) => {
       console.error(err);
       // Pa WebGL: fotoja e konfigurimit me të njëjtën kasë (render i të njëjtit model), me emrin e saktë; lista mbetet funksionale.
-      const ref = PRESETS.find((p) => p.parts.case === st.parts.case);
       const caseName = byId[st.parts.case]?.name || "";
+      const ref = PRESETS.find((p) => p.parts.case === st.parts.case);
       $("#bLoading").innerHTML = ref
         ? `<figure class="builder__poster"><img src="assets/builds/${ref.key}-720.webp" alt="Pamje orientuese e PC-së në kasën ${esc(caseName)}" width="720" height="600" /><figcaption>Pamje orientuese · ${esc(caseName)}. Pamja 3D nuk ngarkohet në këtë pajisje; konfigurimi funksionon njësoj.</figcaption></figure>`
         : "Pamja 3D nuk mund të ngarkohet në këtë pajisje. Mund ta ndërtoni PC‑në edhe pa të.";
@@ -210,13 +220,15 @@
     return loading;
   }
 
-  function renderAll() {
+  function renderAll(after) {
     renderSteps();
     renderLook();
     renderSummary();
-    update3d();
+    update3d(after);
     persist();
   }
+  // Kamera afrohet te pjesa dhe pjesa theksohet shkurt (kur hapet hapi ose ndërrohet pjesa).
+  const showPart = (slot) => { if (!viewer) return; viewer.focus(slot); viewer.highlight(slot); };
 
   /* ------------------------------------------------------------ lidhja e ndarë e konfigurimit */
   // Kompakt dhe e lexueshme: pjesët sipas rendit të hapave, pastaj ngjyra e kasës, RGB-ja dhe montimi.
@@ -285,6 +297,9 @@
     requestAnimationFrame(() => { if (!root.hidden && !root.contains(document.activeElement)) $("#bClose").focus(); });
   }
   function close() {
+    root.classList.remove("is-full");
+    $("#bFull").setAttribute("aria-pressed", "false");
+    $("#bFull span").textContent = "Pamje e plotë";
     root.hidden = true;
     setBackground(false);
     document.body.classList.remove("builder-open");
@@ -376,7 +391,7 @@
     if (slot === "case") st.color = 0;
     const i = SLOTS.findIndex((s) => s.key === slot);
     st.open = SLOTS[i + 1]?.key || null;
-    renderAll();
+    renderAll(() => showPart(slot));
     root.querySelector(`[data-bslot="${slot}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
@@ -465,9 +480,9 @@
     const t = e.target.closest("[data-bslot],[data-bpick],[data-bpreset],[data-bcolor],[data-brgb]");
     if (!t) return;
     const d = t.dataset;
-    if (d.bslot) { st.open = st.open === d.bslot ? null : d.bslot; renderSteps(); persist(); }
+    if (d.bslot) { st.open = st.open === d.bslot ? null : d.bslot; renderSteps(); persist(); if (st.open) showPart(st.open); }
     else if (d.bpick) { const [slot, id] = d.bpick.split("|"); pick(slot, id); }
-    else if (d.bpreset) { const p = PRESETS.find((x) => x.key === d.bpreset); st.parts = { ...p.parts }; st.rgb = p.rgb; st.color = p.color; st.open = null; renderAll(); A.toast(`U ngarkua konfigurimi “${esc(p.name)}”`); }
+    else if (d.bpreset) { const p = PRESETS.find((x) => x.key === d.bpreset); st.parts = { ...p.parts }; st.rgb = p.rgb; st.color = p.color; st.open = null; renderAll(() => viewer?.focus(null)); A.toast(`U ngarkua konfigurimi “${esc(p.name)}”`); }
     else if (d.bcolor) { st.color = Number(d.bcolor); renderLook(); update3d(); persist(); }
     else if ("brgb" in d) { st.rgb = d.brgb || null; renderLook(); update3d(); persist(); }
   });
@@ -478,12 +493,22 @@
   $("#bShare").addEventListener("click", shareBuild);
   $("#bAsk").addEventListener("click", askTeam);
   $("#bReset").addEventListener("click", () => viewer?.resetView());
+  // Pamje e plotë: lista fshihet dhe modeli merr gjithë hapësirën; Escape ose i njëjti buton e kthen.
+  const setFull = (on) => {
+    root.classList.toggle("is-full", on);
+    $("#bFull").setAttribute("aria-pressed", on);
+    $("#bFull span").textContent = on ? "Mbyll pamjen e plotë" : "Pamje e plotë";
+  };
+  $("#bFull").addEventListener("click", () => setFull(!root.classList.contains("is-full")));
   $("#bSpin").addEventListener("click", (e) => {
     const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
     e.currentTarget.setAttribute("aria-pressed", on);
     viewer?.setAutoRotate(on);
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !root.hidden && !document.querySelector("#modal[open]")) close(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || root.hidden || document.querySelector("#modal[open]")) return;
+    if (root.classList.contains("is-full")) setFull(false); else close();
+  });
 
   if (location.hash === "#builder") open();
   else if (location.hash.startsWith("#builder=")) open({ code: location.hash.slice(9) });
